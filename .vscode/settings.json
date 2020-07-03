@@ -1,0 +1,15 @@
+{
+  "search.exclude": {
+    "**/node_modules/": true
+  },
+  "eslint.packageManager": "yarn",
+  "eslint.alwaysShowStatus": true,
+  "javascript.validate.enable": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "prettier.configPath": ".prettierrc",
+  "eslint.format.enable": true
+}
