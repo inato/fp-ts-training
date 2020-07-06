@@ -15,6 +15,7 @@
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "decod": "^6.1.6",
     "fp-ts": "^2.6.7",
     "tslib": "^2.0.0"
   },
