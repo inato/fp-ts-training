@@ -1,10 +1,11 @@
 // `fp-ts` training Exercice 2
 // Let's have fun with combinators!
 
-import { Either } from 'fp-ts/Either';
+import { either, option, readonlyArray } from 'fp-ts';
+import { flow, pipe } from 'fp-ts/function';
 import { Option } from 'fp-ts/Option';
+
 import { Failure } from '../Failure';
-import { unimplemented } from '../utils';
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   SETUP                                   //
@@ -117,17 +118,45 @@ export const invalidTargetFailure = Failure.builder(
 // common operations done with the `Either` type and it is available through
 // the `chain` operator and its slightly relaxed variant `chainW`.
 
-export const checkTargetAndSmash: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+const checkSelected = either.fromOption(() =>
+  noTargetFailure('No unit currently selected'),
+);
 
-export const checkTargetAndBurn: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+const checkWarrior = either.fromPredicate(isWarrior, (character) =>
+  invalidTargetFailure(`${character.toString()} cannot perform smash`),
+);
 
-export const checkTargetAndShoot: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+const checkWizard = either.fromPredicate(isWizard, (character) =>
+  invalidTargetFailure(`${character.toString()} cannot perform burn`),
+);
+
+const checkArcher = either.fromPredicate(isArcher, (character) =>
+  invalidTargetFailure(`${character.toString()} cannot perform shoot`),
+);
+
+const smash = flow(
+  checkWarrior,
+  either.map((warrior) => warrior.smash()),
+);
+
+const burn = flow(
+  checkWizard,
+  either.map((wizard) => wizard.burn()),
+);
+
+const shoot = flow(
+  checkArcher,
+  either.map((archer) => archer.shoot()),
+);
+
+export const checkTargetAndSmash = (target: Option<Character>) =>
+  pipe(target, checkSelected, either.chainW(smash));
+
+export const checkTargetAndBurn = (target: Option<Character>) =>
+  pipe(target, checkSelected, either.chainW(burn));
+
+export const checkTargetAndShoot = (target: Option<Character>) =>
+  pipe(target, checkSelected, either.chainW(shoot));
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
@@ -146,14 +175,11 @@ export const checkTargetAndShoot: (
 // BONUS POINTS: If you properly defined small private helpers in the previous
 // section, they should be easily reused for those use-cases.
 
-export const smashOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const smashOption = flow(smash, option.fromEither);
 
-export const burnOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const burnOption = flow(burn, option.fromEither);
 
-export const shootOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const shootOption = flow(shoot, option.fromEither);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   ARRAY                                   //
@@ -174,5 +200,8 @@ export interface TotalDamage {
   [Damage.Ranged]: number;
 }
 
-export const attack: (army: ReadonlyArray<Character>) => TotalDamage =
-  unimplemented;
+export const attack = (army: ReadonlyArray<Character>) => ({
+  [Damage.Physical]: pipe(army, readonlyArray.filterMap(smashOption)).length,
+  [Damage.Magical]: pipe(army, readonlyArray.filterMap(burnOption)).length,
+  [Damage.Ranged]: pipe(army, readonlyArray.filterMap(shootOption)).length,
+});
