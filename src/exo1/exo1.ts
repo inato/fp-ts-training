@@ -4,10 +4,10 @@
 // - Either
 // - TaskEither
 
-import { Either } from 'fp-ts/Either';
-import { Option } from 'fp-ts/Option';
-import { TaskEither } from 'fp-ts/TaskEither';
-import { unimplemented, sleep, unimplementedAsync } from '../utils';
+import { either, option, taskEither } from 'fp-ts';
+import { flow } from 'fp-ts/function';
+
+import { sleep } from '../utils';
 
 export const divide = (a: number, b: number): number => {
   return a / b;
@@ -24,8 +24,13 @@ export const divide = (a: number, b: number): number => {
 // - `option.some(value)`
 // - `option.none`
 
-export const safeDivide: (a: number, b: number) => Option<number> =
-  unimplemented;
+export const safeDivide = (a: number, b: number) => {
+  if (b === 0) {
+    return option.none;
+  }
+
+  return option.some(a / b);
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
@@ -46,10 +51,10 @@ export const safeDivide: (a: number, b: number) => Option<number> =
 export type DivisionByZeroError = 'Error: Division by zero';
 export const DivisionByZero = 'Error: Division by zero' as const;
 
-export const safeDivideWithError: (
-  a: number,
-  b: number,
-) => Either<DivisionByZeroError, number> = unimplemented;
+export const safeDivideWithError = flow(
+  safeDivide,
+  either.fromOption(() => DivisionByZero),
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
@@ -74,7 +79,8 @@ export const asyncDivide = async (a: number, b: number) => {
 // a TaskEither<Error, T>:
 // - `taskEither.tryCatch(f: () => promise, onReject: reason => leftValue)`
 
-export const asyncSafeDivideWithError: (
-  a: number,
-  b: number,
-) => TaskEither<DivisionByZeroError, number> = unimplementedAsync;
+export const asyncSafeDivideWithError = (a: number, b: number) =>
+  taskEither.tryCatch(
+    () => asyncDivide(a, b),
+    () => DivisionByZero,
+  );
