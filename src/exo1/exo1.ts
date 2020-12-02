@@ -75,7 +75,7 @@ export const asyncDivide = async (a: number, b: number) => {
 //
 // HINT: TaskEither has a special constructor to transform a Promise<T> into
 // a TaskEither<Error, T>:
-// - `TaskEither.tryCatch(onReject: err => leftValue, onResolve: val => rightValue)(promise)`
+// - `TaskEither.tryCatch(f: () => promise, onReject: reason => leftValue)`
 
 export const asyncSafeDivideWithError: (
   a: number,
