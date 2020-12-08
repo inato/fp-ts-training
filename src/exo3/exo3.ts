@@ -111,7 +111,10 @@ export const sortPersonsByAge: (
 //                          COMBINE SORTING SCHEMES                          //
 ///////////////////////////////////////////////////////////////////////////////
 
-// TBD
+// Now, we want to sort the array first by age, but for people of the same age,
+// we want to sort them by name.
+//
+// HINT: Take a look at `ReadonlyArray.sortBy`
 
 export const sortPersonsByAgeThenByName: (
   person: ReadonlyArray<Person>,
