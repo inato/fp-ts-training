@@ -12,7 +12,8 @@
   "homepage": "https://github.com/inato/fp-ts-training",
   "scripts": {
     "build": "yarn tsc -b",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watch"
   },
   "dependencies": {
     "decod": "^6.1.6",
