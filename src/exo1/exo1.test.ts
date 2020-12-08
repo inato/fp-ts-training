@@ -16,8 +16,9 @@ describe('exo1', () => {
       expect(divide(25, 5)).toEqual(5);
     });
 
-    it('should return Infinity if the denominator is zero', () => {
+    it('should return Infinity or -Infinity if the denominator is zero', () => {
       expect(divide(25, 0)).toBe(Infinity);
+      expect(divide(-25, 0)).toBe(-Infinity);
     });
   });
 
@@ -28,6 +29,7 @@ describe('exo1', () => {
 
     it('should return Option.none if the denominator is zero', () => {
       expect(safeDivide(25, 0)).toStrictEqual(Option.none);
+      expect(safeDivide(-25, 0)).toStrictEqual(Option.none);
     });
   });
 
@@ -38,6 +40,9 @@ describe('exo1', () => {
 
     it('should return Either.left(DivisionByZero) if the denominator is zero', () => {
       expect(safeDivideWithError(25, 0)).toStrictEqual(
+        Either.left(DivisionByZero),
+      );
+      expect(safeDivideWithError(-25, 0)).toStrictEqual(
         Either.left(DivisionByZero),
       );
     });
@@ -52,6 +57,7 @@ describe('exo1', () => {
 
     it('should eventually return Infinity if the denominator is zero', async () => {
       await expect(asyncDivide(25, 0)).rejects.toThrow();
+      await expect(asyncDivide(-25, 0)).rejects.toThrow();
     });
   });
 
@@ -63,9 +69,11 @@ describe('exo1', () => {
     });
 
     it('should eventually return Either.left(DivisionByZero) if the denominator is zero', async () => {
-      const result = await asyncSafeDivideWithError(25, 0)();
+      const resultA = await asyncSafeDivideWithError(25, 0)();
+      const resultB = await asyncSafeDivideWithError(-25, 0)();
 
-      expect(result).toStrictEqual(Either.left(DivisionByZero));
+      expect(resultA).toStrictEqual(Either.left(DivisionByZero));
+      expect(resultB).toStrictEqual(Either.left(DivisionByZero));
     });
   });
 });
