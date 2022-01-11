@@ -24,7 +24,7 @@
 // - `flow(f) === f`
 // - `pipe(x, f) === f(x)`
 
-import { unimplemented } from '../utils';
+import { flow, pipe } from 'fp-ts/function';
 
 export const isEven = (value: number) => value % 2 === 0;
 
@@ -42,9 +42,9 @@ export const not = (value: boolean) => !value;
 // `pipe` or `flow`), write the function `isOdd` that checks if a number is
 // odd.
 
-export const isOddP: (value: number) => boolean = unimplemented;
+export const isOddP = (value: number) => pipe(value, isEven, not);
 
-export const isOddF: (value: number) => boolean = unimplemented;
+export const isOddF = flow(isEven, not);
 
 // The Collatz conjecture: https://en.wikipedia.org/wiki/Collatz_conjecture
 //
@@ -55,17 +55,26 @@ export const isOddF: (value: number) => boolean = unimplemented;
 //
 // Below is the functional equivalent of the control flow statement if-else.
 
-export const ifThenElse = <A>(onTrue: () => A, onFalse: () => A) => (
-  condition: boolean,
-) => (condition ? onTrue() : onFalse());
+export const ifThenElse =
+  <A>(onTrue: () => A, onFalse: () => A) =>
+  (condition: boolean) =>
+    condition ? onTrue() : onFalse();
 
 // Using `pipe` the function that computes the next step in the Collatz
 // sequence.
 
-export const next: (value: number) => number = unimplemented;
+export const next = (value: number) =>
+  pipe(
+    value,
+    isEven,
+    ifThenElse(
+      () => value / 2,
+      () => value * 3 + 1,
+    ),
+  );
 
 // Using only `flow` and `next`, write the function that for any given number
 // a_n from the Collatz sequence, returns the number a_n+3 (ie. the number
 // three steps ahead in the sequence).
 
-export const next3: (value: number) => number = unimplemented;
+export const next3 = flow(next, next, next);
