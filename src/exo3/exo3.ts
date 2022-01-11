@@ -1,8 +1,7 @@
 // `fp-ts` training Exercice 3
 // Sort things out with `Ord`
 
-import * as Option from 'fp-ts/lib/Option';
-
+import { Option } from 'fp-ts/Option';
 import { unimplemented } from '../utils';
 
 // Have you ever looked at the methods provided by `fp-ts` own `Array` and
@@ -13,7 +12,7 @@ import { unimplemented } from '../utils';
 // The difference with JavaScript's native `Array.prototype` methods is that
 // these are more `fp-ts` friendly.
 //
-// In the following exercice, we will take a look at `Array.sort`. Contrary to
+// In the following exercice, we will take a look at `array.sort`. Contrary to
 // its JavaScript counterpart, `fp-ts` sort takes as an argument something of
 // type `Ord<T>` where `T` is the type of elements contained in the collection.
 //
@@ -27,13 +26,13 @@ import { unimplemented } from '../utils';
 // like `string` or `number` and return a new array with those values but
 // sorted.
 //
-// Obviously, we want to call `ReadonlyArray.sort` (the `fp-ts` version! no
+// Obviously, we want to call `readonlyArray.sort` (the `fp-ts` version! no
 // cheating). But, contrary to `ReadonlyArray.prototype.sort` which takes an
 // ordering function, this sort will only accept an `Ord<T>`.
 //
-// HINT: The `Ord` module from `fp-ts` exposes some preconstructed instances
-// of `Ord<T>` for a few primitive `T`s such as `ordString: Ord<string>` or
-// `ordNumber: Ord<number>`.
+// HINT: The primitive type modules from `fp-ts` (`number`, `string`...)
+// expose some preconstructed instances of `Ord<T>` for said primitives such as
+// `string.Ord: Ord<string>` or `number.Ord: Ord<number>`.
 
 export const sortStrings: (
   strings: ReadonlyArray<string>,
@@ -48,12 +47,13 @@ export const sortNumbers: (
 ///////////////////////////////////////////////////////////////////////////////
 
 // This next function will sort an array of numbers but in descending order
-// (which unfortunately is the reverse ordering from the provided `ordNumber`).
+// (which unfortunately is the reverse ordering from the one provided by
+// `number.Ord`).
 //
 // Sure, we could just use `sortNumbers` defined earlier and then reverse the
 // whole array but that would be horribly inefficient wouldn't it?
 //
-// HINT: Any ordering can be reversed with a simple function `Ord.getDualOrd`.
+// HINT: Any ordering can be reversed with a simple function `ord.reverse`.
 
 export const sortNumbersDescending: (
   numbers: ReadonlyArray<number>,
@@ -64,18 +64,18 @@ export const sortNumbersDescending: (
 ///////////////////////////////////////////////////////////////////////////////
 
 // This next function will sort an array of numbers wrapped in `Option` with
-// the following constraint: `Option.none` < `Option.some(_)`.
+// the following constraint: `option.none` < `option.some(_)`.
 //
-// As such, we cannot simply use `ordNumber` because it has type `Ord<number>`
+// As such, we cannot simply use `number.Ord` because it has type `Ord<number>`
 // and we need an instance of `Ord<Option<number>>`.
 //
 // HINT: Some of `fp-ts` wrapper types such as `Option` do already have a way
 // of building an `Ord` instance for their qualified inner type. You may want
-// to take a look at `Option.getOrd`.
+// to take a look at `option.getOrd`.
 
 export const sortOptionalNumbers: (
-  optionalNumbers: ReadonlyArray<Option.Option<number>>,
-) => ReadonlyArray<Option.Option<number>> = unimplemented;
+  optionalNumbers: ReadonlyArray<Option<number>>,
+) => ReadonlyArray<Option<number>> = unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                           SORT COMPLEX OBJECTS                            //
@@ -92,11 +92,11 @@ export const sortOptionalNumbers: (
 //
 // HINT: You can build an instance of `Ord` specialized for a field for a
 // record with many fields by declaring how to access that field and which
-// primitive `Ord` instance to use. This can be achieved with `Ord.contramap`.
+// primitive `Ord` instance to use. This can be achieved with `ord.contramap`.
 
 export interface Person {
   readonly name: string;
-  readonly age: Option.Option<number>;
+  readonly age: Option<number>;
 }
 
 export const sortPersonsByName: (
@@ -114,7 +114,7 @@ export const sortPersonsByAge: (
 // Now, we want to sort the array first by age, but for people of the same age,
 // we want to sort them by name.
 //
-// HINT: Take a look at `ReadonlyArray.sortBy`
+// HINT: Take a look at `readonlyArray.sortBy`
 
 export const sortPersonsByAgeThenByName: (
   person: ReadonlyArray<Person>,

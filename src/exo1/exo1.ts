@@ -4,10 +4,9 @@
 // - Either
 // - TaskEither
 
-import * as Option from 'fp-ts/lib/Option';
-import * as Either from 'fp-ts/lib/Either';
-import * as TaskEither from 'fp-ts/lib/TaskEither';
-
+import { Either } from 'fp-ts/Either';
+import { Option } from 'fp-ts/Option';
+import { TaskEither } from 'fp-ts/TaskEither';
 import { unimplemented, sleep, unimplementedAsync } from '../utils';
 
 export const divide = (a: number, b: number): number => {
@@ -22,13 +21,11 @@ export const divide = (a: number, b: number): number => {
 // safeDivide : (a: number, b: number) => Option<number>
 //
 // HINT: Option has two basic contructors:
-// - `Option.some(value)`
-// - `Option.none`
+// - `option.some(value)`
+// - `option.none`
 
-export const safeDivide: (
-  a: number,
-  b: number,
-) => Option.Option<number> = unimplemented;
+export const safeDivide: (a: number, b: number) => Option<number> =
+  unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
@@ -40,10 +37,10 @@ export const safeDivide: (
 // BONUS POINT: Implement `safeDivideWithError` in terms of `safeDivide`.
 //
 // HINT : Either has two basic constructors:
-// - `Either.left(leftValue)`
-// - `Either.right(rightValue)`
+// - `either.left(leftValue)`
+// - `either.right(rightValue)`
 // as well as "smarter" constructors like:
-// - `Either.fromOption(() => leftValue)(option)`
+// - `either.fromOption(() => leftValue)(option)`
 
 // Here is an simple error type to help you:
 export type DivisionByZeroError = 'Error: Division by zero';
@@ -52,7 +49,7 @@ export const DivisionByZero = 'Error: Division by zero' as const;
 export const safeDivideWithError: (
   a: number,
   b: number,
-) => Either.Either<DivisionByZeroError, number> = unimplemented;
+) => Either<DivisionByZeroError, number> = unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
@@ -75,9 +72,9 @@ export const asyncDivide = async (a: number, b: number) => {
 //
 // HINT: TaskEither has a special constructor to transform a Promise<T> into
 // a TaskEither<Error, T>:
-// - `TaskEither.tryCatch(f: () => promise, onReject: reason => leftValue)`
+// - `taskEither.tryCatch(f: () => promise, onReject: reason => leftValue)`
 
 export const asyncSafeDivideWithError: (
   a: number,
   b: number,
-) => TaskEither.TaskEither<DivisionByZeroError, number> = unimplementedAsync;
+) => TaskEither<DivisionByZeroError, number> = unimplementedAsync;

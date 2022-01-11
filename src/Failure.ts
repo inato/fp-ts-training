@@ -1,8 +1,5 @@
 import * as decod from 'decod';
-import * as Either from 'fp-ts/lib/Either';
-import * as TaskEither from 'fp-ts/lib/TaskEither';
-import * as Task from 'fp-ts/lib/Task';
-import { pipe } from 'fp-ts/lib/pipeable';
+import { either, task } from 'fp-ts';
 
 const decodeErrorMessage = decod.at('message', decod.string);
 
@@ -70,16 +67,9 @@ export class Failure<T extends string = FailureType> {
     throw failure.toError();
   };
 
-  static eitherUnsafeGet = <A>(either: Either.Either<Failure, A>): A =>
-    pipe(either, Either.getOrElseW(Failure.throw));
+  static eitherUnsafeGet = either.getOrElseW(Failure.throw);
 
-  static taskEitherUnsafeGet = <A>(
-    taskEither: TaskEither.TaskEither<Failure, A>,
-  ): Task.Task<A> =>
-    pipe(
-      taskEither,
-      TaskEither.getOrElseW((failure) => async () => Failure.throw(failure)),
-    );
+  static taskEitherUnsafeGet = task.map(this.eitherUnsafeGet);
 }
 
 export type FailureTypes<F extends Record<string, string>> = F[keyof F];

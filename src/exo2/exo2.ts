@@ -1,9 +1,8 @@
 // `fp-ts` training Exercice 2
 // Let's have fun with combinators!
 
-import * as Option from 'fp-ts/lib/Option';
-import * as Either from 'fp-ts/lib/Either';
-
+import { Either } from 'fp-ts/Either';
+import { Option } from 'fp-ts/Option';
 import { Failure } from '../Failure';
 import { unimplemented } from '../utils';
 
@@ -100,12 +99,12 @@ export const invalidTargetFailure = Failure.builder(
 // return the expected damage type if appropriate.
 //
 // If no unit is selected, it should return
-// `Either.left(noTargetFailure('No unit currently selected'))`
+// `either.left(noTargetFailure('No unit currently selected'))`
 //
 // If a unit of the wrong type is selected, it should return
-// `Either.left(invalidTargetFailure('<unit_type> cannot perform <action>'))`
+// `either.left(invalidTargetFailure('<unit_type> cannot perform <action>'))`
 //
-// Otherwise, it should return `Either.right(<expected_damage_type>)`
+// Otherwise, it should return `either.right(<expected_damage_type>)`
 //
 // HINT: These functions represent the public API. But it is heavily
 // recommended to break those down into smaller private functions that can be
@@ -119,25 +118,16 @@ export const invalidTargetFailure = Failure.builder(
 // the `chain` operator and its slightly relaxed variant `chainW`.
 
 export const checkTargetAndSmash: (
-  target: Option.Option<Character>,
-) => Either.Either<
-  NoTargetFailure | InvalidTargetFailure,
-  Damage
-> = unimplemented;
+  target: Option<Character>,
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
 
 export const checkTargetAndBurn: (
-  target: Option.Option<Character>,
-) => Either.Either<
-  NoTargetFailure | InvalidTargetFailure,
-  Damage
-> = unimplemented;
+  target: Option<Character>,
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
 
 export const checkTargetAndShoot: (
-  target: Option.Option<Character>,
-) => Either.Either<
-  NoTargetFailure | InvalidTargetFailure,
-  Damage
-> = unimplemented;
+  target: Option<Character>,
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
@@ -156,17 +146,14 @@ export const checkTargetAndShoot: (
 // BONUS POINTS: If you properly defined small private helpers in the previous
 // section, they should be easily reused for those use-cases.
 
-export const smashOption: (
-  character: Character,
-) => Option.Option<Damage> = unimplemented;
+export const smashOption: (character: Character) => Option<Damage> =
+  unimplemented;
 
-export const burnOption: (
-  character: Character,
-) => Option.Option<Damage> = unimplemented;
+export const burnOption: (character: Character) => Option<Damage> =
+  unimplemented;
 
-export const shootOption: (
-  character: Character,
-) => Option.Option<Damage> = unimplemented;
+export const shootOption: (character: Character) => Option<Damage> =
+  unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   ARRAY                                   //
@@ -187,6 +174,5 @@ export interface TotalDamage {
   [Damage.Ranged]: number;
 }
 
-export const attack: (
-  army: ReadonlyArray<Character>,
-) => TotalDamage = unimplemented;
+export const attack: (army: ReadonlyArray<Character>) => TotalDamage =
+  unimplemented;

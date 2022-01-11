@@ -1,6 +1,4 @@
-import * as Either from 'fp-ts/lib/Either';
-import * as Option from 'fp-ts/lib/Option';
-
+import { either, option } from 'fp-ts';
 import {
   divide,
   DivisionByZero,
@@ -24,26 +22,26 @@ describe('exo1', () => {
 
   describe('safeDivide', () => {
     it('should return the result of dividing two numbers', () => {
-      expect(safeDivide(25, 5)).toStrictEqual(Option.some(5));
+      expect(safeDivide(25, 5)).toStrictEqual(option.some(5));
     });
 
-    it('should return Option.none if the denominator is zero', () => {
-      expect(safeDivide(25, 0)).toStrictEqual(Option.none);
-      expect(safeDivide(-25, 0)).toStrictEqual(Option.none);
+    it('should return option.none if the denominator is zero', () => {
+      expect(safeDivide(25, 0)).toStrictEqual(option.none);
+      expect(safeDivide(-25, 0)).toStrictEqual(option.none);
     });
   });
 
   describe('safeDivideWithError', () => {
     it('should return the result of dividing two numbers', () => {
-      expect(safeDivideWithError(25, 5)).toStrictEqual(Either.right(5));
+      expect(safeDivideWithError(25, 5)).toStrictEqual(either.right(5));
     });
 
-    it('should return Either.left(DivisionByZero) if the denominator is zero', () => {
+    it('should return either.left(DivisionByZero) if the denominator is zero', () => {
       expect(safeDivideWithError(25, 0)).toStrictEqual(
-        Either.left(DivisionByZero),
+        either.left(DivisionByZero),
       );
       expect(safeDivideWithError(-25, 0)).toStrictEqual(
-        Either.left(DivisionByZero),
+        either.left(DivisionByZero),
       );
     });
   });
@@ -65,15 +63,15 @@ describe('exo1', () => {
     it('should eventually return the result of dividing two numbers', async () => {
       const result = await asyncSafeDivideWithError(25, 5)();
 
-      expect(result).toStrictEqual(Either.right(5));
+      expect(result).toStrictEqual(either.right(5));
     });
 
-    it('should eventually return Either.left(DivisionByZero) if the denominator is zero', async () => {
+    it('should eventually return either.left(DivisionByZero) if the denominator is zero', async () => {
       const resultA = await asyncSafeDivideWithError(25, 0)();
       const resultB = await asyncSafeDivideWithError(-25, 0)();
 
-      expect(resultA).toStrictEqual(Either.left(DivisionByZero));
-      expect(resultB).toStrictEqual(Either.left(DivisionByZero));
+      expect(resultA).toStrictEqual(either.left(DivisionByZero));
+      expect(resultB).toStrictEqual(either.left(DivisionByZero));
     });
   });
 });

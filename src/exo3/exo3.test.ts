@@ -1,5 +1,4 @@
-import * as Option from 'fp-ts/lib/Option';
-
+import { option } from 'fp-ts';
 import {
   sortStrings,
   sortNumbers,
@@ -46,10 +45,10 @@ describe('exo3', () => {
 
   describe('sortOptionalNumbers', () => {
     it('should return a sorted array of optional numbers', () => {
-      const optionalNumbers = [Option.some(1337), Option.none, Option.some(42)];
+      const optionalNumbers = [option.some(1337), option.none, option.some(42)];
 
       const result = sortOptionalNumbers(optionalNumbers);
-      const expected = [Option.none, Option.some(42), Option.some(1337)];
+      const expected = [option.none, option.some(42), option.some(1337)];
 
       expect(result).toStrictEqual(expected);
     });
@@ -57,9 +56,9 @@ describe('exo3', () => {
 
   describe('sortPersonsByName', () => {
     it('should return an array of persons alphabetically sorted by their name', () => {
-      const alice = { name: 'Alice', age: Option.none };
-      const bob = { name: 'Bob', age: Option.none };
-      const crystal = { name: 'Crystal', age: Option.none };
+      const alice = { name: 'Alice', age: option.none };
+      const bob = { name: 'Bob', age: option.none };
+      const crystal = { name: 'Crystal', age: option.none };
 
       const persons = [crystal, alice, bob];
 
@@ -72,9 +71,9 @@ describe('exo3', () => {
 
   describe('sortPersonsByName', () => {
     it('should return an array of persons sorted by their age', () => {
-      const alice = { name: 'Alice', age: Option.some(42) };
-      const bob = { name: 'Bob', age: Option.none };
-      const crystal = { name: 'Crystal', age: Option.some(29) };
+      const alice = { name: 'Alice', age: option.some(42) };
+      const bob = { name: 'Bob', age: option.none };
+      const crystal = { name: 'Crystal', age: option.some(29) };
 
       const persons = [crystal, alice, bob];
 
@@ -87,11 +86,11 @@ describe('exo3', () => {
 
   describe('sortPersonsByName', () => {
     it('should return an array of persons sorted first by age and then by name', () => {
-      const alice = { name: 'Alice', age: Option.some(42) };
-      const bob = { name: 'Bob', age: Option.none };
-      const crystal = { name: 'Crystal', age: Option.some(29) };
-      const dorian = { name: 'Dorian', age: Option.some(29) };
-      const edgar = { name: 'Edgar', age: Option.none };
+      const alice = { name: 'Alice', age: option.some(42) };
+      const bob = { name: 'Bob', age: option.none };
+      const crystal = { name: 'Crystal', age: option.some(29) };
+      const dorian = { name: 'Dorian', age: option.some(29) };
+      const edgar = { name: 'Edgar', age: option.none };
 
       const persons = [dorian, alice, edgar, bob, crystal];
 
