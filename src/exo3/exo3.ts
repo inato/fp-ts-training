@@ -1,7 +1,7 @@
 // `fp-ts` training Exercice 3
 // Sort things out with `Ord`
 
-import { readonlyArray, string, number, option, ord, monoid } from 'fp-ts';
+import { readonlyArray, string, number, option, ord } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
 import { Option } from 'fp-ts/Option';
 
@@ -130,11 +130,21 @@ export const sortPersonsByAge: (
 //
 // HINT: Take a look at `readonlyArray.sortBy`
 
-const byAgeThenByName = monoid.concatAll(ord.getMonoid<Person>())([
-  byAge,
-  byName,
-]);
+// Below is the full low-level method. Easier to just use `sortBy`
+//
+// ```ts
+// import { monoid } from 'fp-ts';
+//
+// const byAgeThenByName = monoid.concatAll(ord.getMonoid<Person>())([
+//   byAge,
+//   byName,
+// ]);
+//
+// export const sortPersonsByAgeThenByName: (
+//   person: ReadonlyArray<Person>,
+// ) => ReadonlyArray<Person> = readonlyArray.sort(byAgeThenByName);
+// ```
 
 export const sortPersonsByAgeThenByName: (
   person: ReadonlyArray<Person>,
-) => ReadonlyArray<Person> = readonlyArray.sort(byAgeThenByName);
+) => ReadonlyArray<Person> = readonlyArray.sortBy([byAge, byName]);
