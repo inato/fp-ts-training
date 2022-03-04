@@ -82,19 +82,35 @@ export const naiveGiveCurrencyOfCountryToUser = (
 // currency.
 // Let's do better than that!
 
-// Use `traverse` to implement `giveCurrencyOfCountryToUser` below which returns
-// a `Task<Option<Currency>>`.
+// First we need a way to transform our `Option<Task<Currency>>` to
+// `Task<Option<Currency>>`
+// That's precisely what traverse is about.
+// Use `option.traverse` to implement `getCountryCurrencyOfOptionalCountryCode`
+// below. This function takes an `Option<CountryCode>`, should apply
+// `getCountryCurrency` to the `CountryCode` and make it so that the result
+// is `Task<Option<Currency>>`
 //
-// HINT: Take a look at `option.traverse` to transform an `Option<Task>` to
-// a `Task<Option>`
-// HINT: you can find an applicative functor of `Task` in `task.ApplicativePar`
+// HINT: `option.traverse` asks for an Applicative as the first parameter. You
+// can find it for `Task` in `task.ApplicativePar`
+
+export const getCountryCurrencyOfOptionalCountryCode: (
+  optionalCountryCode: Option<CountryCode>,
+) => Task<Option<Currency>> = unimplementedAsync;
+
+// Let's now use this function in our naive implementation's pipe to how it
+// improves it.
+// Implement `giveCurrencyOfCountryToUser` below so that it returns a
+// `Task<Option<Currency>>`
+//
+// HINT: You should be able to copy the pipe from naiveGiveCurrencyOfCountryToUser
+// and make only few updates of it
 
 export const giveCurrencyOfCountryToUser: (
   countryNameFromUserMock: string,
-) => Task<Option<Currency>> = () => unimplementedAsync();
+) => Task<Option<Currency>> = unimplementedAsync;
 
 // BONUS: We don't necessarily need `traverse` to do this. Try implementing
-// `giveCurrencyOfCountryToUser` by lifting all the functions' results to
+// `giveCurrencyOfCountryToUser` by lifting some of the functions' results to
 // `TaskOption`
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -168,7 +184,7 @@ const createSimulatedAsyncMethod = (): ((toAdd: number) => Task<number>) => {
 export const simulatedAsyncMethodForParallel = createSimulatedAsyncMethod();
 export const performAsyncComputationInParallel: (
   numbers: ReadonlyArray<number>,
-) => Task<ReadonlyArray<number>> = () => unimplementedAsync();
+) => Task<ReadonlyArray<number>> = unimplementedAsync;
 
 // Write a method to traverse an array by running the method
 // `simulatedAsyncMethodForSequence: (toAdd: number) => Task<number>`
@@ -180,4 +196,4 @@ export const performAsyncComputationInParallel: (
 export const simulatedAsyncMethodForSequence = createSimulatedAsyncMethod();
 export const performAsyncComputationInSequence: (
   numbers: ReadonlyArray<number>,
-) => Task<ReadonlyArray<number>> = () => unimplementedAsync();
+) => Task<ReadonlyArray<number>> = unimplementedAsync;

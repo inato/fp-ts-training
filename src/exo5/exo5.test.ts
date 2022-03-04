@@ -1,5 +1,6 @@
 import { option } from 'fp-ts';
 import {
+  getCountryCurrencyOfOptionalCountryCode,
   getValidCountryCodeOfCountryNames,
   giveCurrencyOfCountryToUser,
   performAsyncComputationInParallel,
@@ -7,6 +8,23 @@ import {
 } from './exo5';
 
 describe('exo5', () => {
+  describe('getCountryCurrencyOfOptionalCountryCode', () => {
+    it('should return a Task<None> if given a None', async () => {
+      const result = await getCountryCurrencyOfOptionalCountryCode(
+        option.none,
+      )();
+
+      expect(result).toStrictEqual(option.none);
+    });
+
+    it('should return a Task<Option> with the currency if given a Some', async () => {
+      const result = await getCountryCurrencyOfOptionalCountryCode(
+        option.some('FR'),
+      )();
+
+      expect(result).toStrictEqual(option.some('EUR'));
+    });
+  });
   describe('giveCurrencyOfCountryToUser', () => {
     it('should return Some<EUR> if provided string is "France"', async () => {
       const result = await giveCurrencyOfCountryToUser('France')();
