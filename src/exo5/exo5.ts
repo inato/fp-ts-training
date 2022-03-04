@@ -6,9 +6,19 @@ import { pipe } from 'fp-ts/lib/function';
 import { Option } from 'fp-ts/lib/Option';
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord';
 import { Task } from 'fp-ts/lib/Task';
-import { unimplemented, unimplementedAsync } from '../utils';
+import { sleep, unimplemented, unimplementedAsync } from '../utils';
 
-// TBD
+// When using many different Functors in a complex application, we can easily
+// get to a point when we have many nested types that we would like to 'merge',
+// like `Task<Option<Task<A>>>` or `Either<E,ReadonlyArray<Either<E,A>>>`
+// It would be nice to have a way to 'move up' the similar types in order to
+// chain them, like merging the `Task` to have a `Task<Option<A>>` or the
+// `Either` to have a `Either<E,ReadonlyArray<A>>`
+//
+// That's precisely the concept of `traverse`. It will allow us to transform
+// a `Option<Task<A>>` to a `Task<Option<A>>` so we can chain it with another
+// `Task` for example, or to transform a `ReadonlyArray<Either<E,A>>` to a
+// `Either<E,ReadonlyArray<A>>`
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                 SETUP                                     //
@@ -25,10 +35,9 @@ export const countryNameToCountryCode: ReadonlyRecord<string, CountryCode> = {
 
 // Let's simulate the call to an api which would return the currency when
 // providing a country code. For the sake of simplicity, let's consider that it
-// cannot fail so the signature is
-// `getCountryCurrency: (countryCode: CountryCode) => Task<Currency>`
+// cannot fail.
 type Currency = 'EUR' | 'DOLLAR';
-export const getCountryCurrency =
+export const getCountryCurrency: (countryCode: CountryCode) => Task<Currency> =
   (countryCode: CountryCode): Task<Currency> =>
   async () => {
     if (countryCode === 'US') {
@@ -37,19 +46,19 @@ export const getCountryCurrency =
     return 'EUR';
   };
 
-// Let's simulate a request to the user to provide a country name
+// Let's simulate a way for the user to provide a country name.
 // Let's consider that it cannot fail and let's add the possibility to set
-// user's response as a parameter for easier testing
-// `getCountryNameFromUser: (countryName: string) => Task<string>`
-export const getCountryNameFromUser = (countryName: string) =>
-  task.of(countryName);
+// the user's response as a parameter for easier testing.
+export const getCountryNameFromUser: (countryName: string) => Task<string> = (
+  countryName: string,
+) => task.of(countryName);
 
 // Here's a function to retrieve the countryCode from a country name if it is
-// matching a country we support. This method returns an `option` as we cannot
+// matching a country we support. This method returns an `Option` as we cannot
 // return anything if the given string is not matching a country name we know
-// `getCountryCode: (countryName: string) => Option<CountryCode>`
-export const getCountryCode = (countryName: string) =>
-  readonlyRecord.lookup(countryName)(countryNameToCountryCode);
+export const getCountryCode: (countryName: string) => Option<CountryCode> = (
+  countryName: string,
+) => readonlyRecord.lookup(countryName)(countryNameToCountryCode);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                            TRAVERSING OPTIONS                             //
@@ -57,8 +66,8 @@ export const getCountryCode = (countryName: string) =>
 
 // With all these functions, we can simulate a program that would ask for a
 // country name and return its currency if it knows the country.
-// A naive implementation would be mapping on each `task` and `option` to call the
-// correct method:
+// A naive implementation would be mapping on each `Task` and `Option` to call
+// the correct method:
 export const naiveGiveCurrencyOfCountryToUser = (
   countryNameFromUserMock: string,
 ) =>
@@ -68,12 +77,13 @@ export const naiveGiveCurrencyOfCountryToUser = (
     task.map(option.map(getCountryCurrency)),
   );
 // The result type of this method is: `Task<Option<Task<Currency>>>`
-// Not ideal, right? We would need to await the first `task`, then check if it's
-// `Some` to get the `task` inside and finally await the `task` to retrieve the
+// Not ideal, right? We would need to await the first `Task`, then check if it's
+// `Some` to get the `Task` inside and finally await the `Task` to retrieve the
 // currency.
+// Let's do better than that!
 
-// Use traverse to implement giveCurrencyOfCountryToUser below which returns
-// a Task<Option<Currency>>.
+// Use `traverse` to implement `giveCurrencyOfCountryToUser` below which returns
+// a `Task<Option<Currency>>`.
 //
 // HINT: Take a look at `option.traverse` to transform an `Option<Task>` to
 // a `Task<Option>`
@@ -83,7 +93,7 @@ export const giveCurrencyOfCountryToUser: (
   countryNameFromUserMock: string,
 ) => Task<Option<Currency>> = () => unimplementedAsync();
 
-// BONUS: We don't necessarily need traverse to do this. Try implementing
+// BONUS: We don't necessarily need `traverse` to do this. Try implementing
 // `giveCurrencyOfCountryToUser` by lifting all the functions' results to
 // `TaskOption`
 
@@ -92,14 +102,14 @@ export const giveCurrencyOfCountryToUser: (
 ///////////////////////////////////////////////////////////////////////////////
 
 // Let's say we want to ask multiple countries to the user. We'll have an array
-// of country names as string and we want to retrieve the country code of each.
+// of country names as `string` and we want to retrieve the country code of each.
 // Looks pretty easy:
 export const getCountryCodeOfCountryNames = (
   countryNames: ReadonlyArray<string>,
 ) => countryNames.map(getCountryCode);
-// As expected, we end up with an array of `Option<CountryCode>`. We know for each
-// item of the array if we have been able to find the corresponding country code
-// or not.
+// As expected, we end up with a `ReadonlyArray<Option<CountryCode>>`. We know for
+// each item of the array if we have been able to find the corresponding country
+// code or not.
 // While this can be useful, you need to handle the option anytime you want to
 // perform any operation on each country code (let's say you want get the currency
 // of each)
@@ -112,8 +122,8 @@ export const getCountryCodeOfCountryNames = (
 // `Option<ReadonlyArray<CountryCode>>`
 // This is what traversing array is about.
 
-// Let's write a method that gets the country code of each element of a country
-// name array and returns an option of an array of country codes.
+// Let's write a method that gets the country code for each element of an array
+// of country names and returns an option of an array of country codes.
 //
 // HINT: while `readonlyArray.traverse` exists, you have a shortcut in the `option`
 // module: `option.traverseArray`
@@ -121,3 +131,53 @@ export const getCountryCodeOfCountryNames = (
 export const getValidCountryCodeOfCountryNames: (
   countryNames: ReadonlyArray<string>,
 ) => Option<ReadonlyArray<CountryCode>> = unimplemented();
+
+///////////////////////////////////////////////////////////////////////////////
+//                   TRAVERSING ARRAYS ASYNCHRONOUSLY                        //
+///////////////////////////////////////////////////////////////////////////////
+
+// We've seen how to traverse an `array` of `option`s but this is not something
+// specific to `option`. We can traverse an `array` of any applicative functor,
+// like `either` or `task` for example.
+// When dealing with functors that perform asynchronous side effects, like
+//`task`, comes the question of parallelization. Do we want to run the
+// computation on each item of the array in parallel or one after the other?
+// Both are equally feasible with fp-ts, let's discover it!
+
+// Let's simulate a method that reads a number in a database, does some async
+// computation with it, replaces this number in the database by the result of
+// the computation and returns it
+const createSimulatedAsyncMethod = (): ((toAdd: number) => Task<number>) => {
+  let number = 0;
+
+  return (toAdd: number) => async () => {
+    const currentValue = number;
+    await sleep(100);
+    number = currentValue + toAdd;
+    return number;
+  };
+};
+
+// Write a method to traverse an array by running the method
+// `simulatedAsyncMethodForParallel: (toAdd: number) => Task<number>`
+// defined below on each item in parallel.
+//
+// HINT: as was the case for `option`, you have a few helpers in the `task`
+// module to traverse arrays
+
+export const simulatedAsyncMethodForParallel = createSimulatedAsyncMethod();
+export const performAsyncComputationInParallel: (
+  numbers: ReadonlyArray<number>,
+) => Task<ReadonlyArray<number>> = () => unimplementedAsync();
+
+// Write a method to traverse an array by running the method
+// `simulatedAsyncMethodForSequence: (toAdd: number) => Task<number>`
+// defined below on each item in sequence.
+//
+// HINT: as was the case for `option`, you have a few helpers in the `task`
+// module to traverse arrays
+
+export const simulatedAsyncMethodForSequence = createSimulatedAsyncMethod();
+export const performAsyncComputationInSequence: (
+  numbers: ReadonlyArray<number>,
+) => Task<ReadonlyArray<number>> = () => unimplementedAsync();

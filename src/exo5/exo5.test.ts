@@ -2,6 +2,8 @@ import { option } from 'fp-ts';
 import {
   getValidCountryCodeOfCountryNames,
   giveCurrencyOfCountryToUser,
+  performAsyncComputationInParallel,
+  performAsyncComputationInSequence,
 } from './exo5';
 
 describe('exo5', () => {
@@ -36,6 +38,21 @@ describe('exo5', () => {
       const result = getValidCountryCodeOfCountryNames(['France', 'Germany']);
 
       expect(result).toStrictEqual(option.none);
+    });
+  });
+
+  describe('performAsyncComputationInParallel', () => {
+    it('should return the same value for each element with the same value', async () => {
+      const result = await performAsyncComputationInParallel([1, 1, 1])();
+
+      expect(result).toStrictEqual([1, 1, 1]);
+    });
+  });
+  describe('performAsyncComputationInSequence', () => {
+    it('should return an increasing value for each element with the same value', async () => {
+      const result = await performAsyncComputationInSequence([1, 1, 1])();
+
+      expect(result).toStrictEqual([1, 2, 3]);
     });
   });
 });
