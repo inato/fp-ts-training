@@ -5,6 +5,8 @@ import {
   giveCurrencyOfCountryToUser,
   performAsyncComputationInParallel,
   performAsyncComputationInSequence,
+  sequenceOptionArray,
+  sequenceOptionTask,
 } from './exo5';
 
 describe('exo5', () => {
@@ -71,6 +73,29 @@ describe('exo5', () => {
       const result = await performAsyncComputationInSequence([1, 1, 1])();
 
       expect(result).toStrictEqual([1, 2, 3]);
+    });
+  });
+  describe('sequenceOptionTask', () => {
+    it('should return a None if called with a None', async () => {
+      const result = await sequenceOptionTask(option.none)();
+      expect(result).toStrictEqual(option.none);
+    });
+    it('should return a Some if called with a Some', async () => {
+      const result = await sequenceOptionTask(option.some(async () => 'EUR'))();
+      expect(result).toStrictEqual(option.some('EUR'));
+    });
+  });
+  describe('sequenceOptionArray', () => {
+    it('should return a None if one of the option in the array is None', () => {
+      const result = sequenceOptionArray([option.none, option.some('FR')]);
+      expect(result).toStrictEqual(option.none);
+    });
+    it('should return a Some if all the options in the arrat are Some', () => {
+      const result = sequenceOptionArray([
+        option.some('FR'),
+        option.some('SP'),
+      ]);
+      expect(result).toStrictEqual(option.some(['FR', 'SP']));
     });
   });
 });

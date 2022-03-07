@@ -146,7 +146,7 @@ export const getCountryCodeOfCountryNames = (
 
 export const getValidCountryCodeOfCountryNames: (
   countryNames: ReadonlyArray<string>,
-) => Option<ReadonlyArray<CountryCode>> = unimplemented();
+) => Option<ReadonlyArray<CountryCode>> = unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                   TRAVERSING ARRAYS ASYNCHRONOUSLY                        //
@@ -197,3 +197,32 @@ export const simulatedAsyncMethodForSequence = createSimulatedAsyncMethod();
 export const performAsyncComputationInSequence: (
   numbers: ReadonlyArray<number>,
 ) => Task<ReadonlyArray<number>> = unimplementedAsync;
+
+///////////////////////////////////////////////////////////////////////////////
+//                               SEQUENCE                                    //
+///////////////////////////////////////////////////////////////////////////////
+
+// `traverse` is nice when you need to get the value inside a container (let's
+// say `Option`), apply a method to it that return another container type (let's
+// say `Task`) and 'invert' the container (to get a `Task<Option>` instead of a
+// `Option<Task>` in our example)
+// Sometimes, you just have two nested containers that you want to 'invert'. It
+// can be because both order of container are meaningful (like `Either<Option>`
+// and `Option<Either>`) of because you got them from an external api, as
+// examples.
+// In that case, what you need is `sequence`, which you can find in the modules
+// that have `traverse`.
+//
+// Use the `sequence` methods from the `option` module to implement the two
+// functions below
+
+export const sequenceOptionTask: (
+  optionOfTask: Option<Task<Currency>>,
+) => Task<Option<Currency>> = unimplementedAsync;
+
+export const sequenceOptionArray: (
+  arrayOfOptions: ReadonlyArray<Option<CountryCode>>,
+) => Option<ReadonlyArray<CountryCode>> = unimplemented;
+
+// BONUS: try using these two functions in the exercices 'TRAVERSING OPTIONS'
+// and 'TRAVERSING ARRAYS' above
