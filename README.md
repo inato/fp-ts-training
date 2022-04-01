@@ -28,7 +28,7 @@ $ yarn test[:watch] exoN
 The exercices are organized into `exoN` folders and most of what is required to
 complete each is detailed in the comments.
 
-## fp-ts typescript style guide
+## code style guide
 
 - Use `flow` instead of `pipe` when possible
 
@@ -41,7 +41,7 @@ const myFunc = flow(getUserName, formatUserName);
 ```
 
 - Avoid using `boolean` method `match` when unecessary
-  > Why? boolean.match can reduce the global understanding of a method and enforce nested pipes. Using classic `if/else` is often the best option
+  > Why? boolean.match can lower the global understanding of a method and enforce nested pipes. Using classic `if/else` is often the best option
 
 ```typescript
 // Bad
