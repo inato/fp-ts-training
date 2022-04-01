@@ -30,14 +30,17 @@ complete each is detailed in the comments.
 
 ## code style guide
 
+For readability purpose, we replace `ReaderTaskEither` by `rte`
+
 - Use `flow` instead of `pipe` when possible
 
 ```typescript
 // Bad
-const myFunc = (user: User) => pipe(user, getUserName, formatUserName);
+const formatUserPhoneNumber = (user: User) =>
+  pipe(user, User.phoneNumber, User.formatPhoneNumber);
 
 // Good
-const myFunc = flow(getUserName, formatUserName);
+const formatUserPhoneNumber = flow(User.phoneNumber, User.formatPhoneNumber);
 ```
 
 - Avoid using `boolean` method `match` when unecessary
@@ -45,63 +48,70 @@ const myFunc = flow(getUserName, formatUserName);
 
 ```typescript
 // Bad
-const myFunc = (condition: boolean) => pipe(
-  condition === true,
-  boolean.match(
-    () => doSomethingOnFalse(...),
-    () => doSomethingOnTrue(...)
-  )
-);
+const triggerEmailCampaign = ({
+  user,
+  ...emailSettings
+}: {
+  user: User & EmailSettings;
+}) =>
+  pipe(
+    user.nationality === 'FR',
+    boolean.match(
+      () => triggerGlobalEmailCampain({ to: user.email, emailSettings }),
+      () => triggerFrenchEmailCampaign({ to: user.email, emailSettings }),
+    ),
+  );
 
 // Good
-const myFunc = (condition: boolean) => {
-  if (condition === true) {
-    return doSomethingOnTrue(...);
+const triggerEmailCampaign = ({
+  user,
+  ...otherProps
+}: {
+  user: User & OtherProps;
+}) => {
+  if (user.nationality === 'FR') {
+    return triggerFrenchEmailCampaign({ to: user.email, emailSettings });
   }
-  return doSomethingOnFalse(...);
+  return triggerGlobalEmailCampain({ to: user.email, emailSettings });
 };
 ```
 
-- Split piping from logical actions
-  > Why? Mixing them makes it harder to understand and read the code. We want to favor the usage of atomic methods that do not know anything about the piping
+- Avoid nested pipes
+  > Why? They lower global understanding of the code. We allow ourselves 2 levels of piping maximum per function and tend to do atomic functions instead
 
 ```typescript
 // Bad
-const myFunc = () => pipe(
-  rte.Do,
-  rte.bind('aggregate', () => getAggregateById(...)),
-  rte.bindW(...),
-  ...,
-  rte.chainW(({ aggregate }) => pipe(
-    aggregate.something,
-    doSomething,
-    doSomethingElse,
-    ...
-    )
-  ),
-  rte.chainW(storeAggregate),
-);
+const renewUserToken = (user: User) =>
+  pipe(
+    user.token,
+    option.match(
+      () => AuthClient.createToken(user),
+      (token) =>
+        flow(
+          AuthClient.renewToken(user),
+          rte.chainW(({ newToken }) =>
+            pipe(newToken.hash, user.updateToken, rte.chainEitherKW(storeUser)),
+          ),
+        ),
+    ),
+  );
 
 // Good
-const myFunc = () => pipe(
-  rte.Do,
-  rte.bind('aggregate', () => getAggregateById(...)),
-  rte.bindW(...),
-  ...,
-  rte.chainW(doEverything),
-  rte.chainW(storeAggregate),
-);
+const updateUserToken = (user: User) => (newToken: Token) =>
+  pipe(newToken.hash, user.updateToken, rte.chainEitherKW(storeUser));
 
-// Best
-const buildProps = (...) => pipe(
-  rte.Do,
-  rte.bind('aggregate', () => getAggregateById(...)),
-  rte.bindW(...),
-  ...
-);
-const myFunc = () => pipe(
-  buildProps(...),
-  rte.chainW(doEverything),
-  rte.chainW(storeAggregate),
-);
+const renewAndUpdateUserToken = (user: User) =>
+  flow(
+    AuthClient.renewToken(user),
+    rte.chainW(({ newToken }) => updateUserToken(user)),
+  );
+
+const renewUserToken = (user: User) =>
+  pipe(
+    user.token,
+    option.match(
+      () => AuthClient.createToken(user),
+      renewAndUpdateUserToken(user),
+    ),
+  );
 ```
