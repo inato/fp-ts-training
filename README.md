@@ -33,6 +33,7 @@ complete each is detailed in the comments.
 For readability purpose, we replace `ReaderTaskEither` by `rte`
 
 - Use `flow` instead of `pipe` when possible
+  > Why? Using flow reduces the amount of variables to declare in a method, hence the visibility and readability of the code
 
 ```typescript
 // Bad
@@ -52,8 +53,7 @@ const triggerEmailCampaign = ({
   user,
   ...emailSettings
 }: {
-  user: User & EmailSettings;
-}) =>
+  user: User} & EmailSettings) =>
   pipe(
     user.nationality === 'FR',
     boolean.match(
@@ -65,15 +65,12 @@ const triggerEmailCampaign = ({
 // Good
 const triggerEmailCampaign = ({
   user,
-  ...otherProps
-}: {
-  user: User & OtherProps;
-}) => {
+  ...emailSettings
+}: { user: User } & EmailSettings) => {
   if (user.nationality === 'FR') {
     return triggerFrenchEmailCampaign({ to: user.email, emailSettings });
   }
   return triggerGlobalEmailCampain({ to: user.email, emailSettings });
-};
 ```
 
 - Avoid nested pipes
@@ -81,14 +78,14 @@ const triggerEmailCampaign = ({
 
 ```typescript
 // Bad
-const renewUserToken = (user: User) =>
+const refreshUserToken = (user: User) =>
   pipe(
     user.token,
     option.match(
       () => AuthClient.createToken(user),
       (token) =>
-        flow(
-          AuthClient.renewToken(user),
+        pipe(
+          AuthClient.refreshToken({ user, token }),
           rte.chainW(({ newToken }) =>
             pipe(newToken.hash, user.updateToken, rte.chainEitherKW(storeUser)),
           ),
@@ -97,16 +94,16 @@ const renewUserToken = (user: User) =>
   );
 
 // Good
-const updateUserToken = (user: User) => (newToken: Token) =>
-  pipe(newToken.hash, user.updateToken, rte.chainEitherKW(storeUser));
+const updateUserToken = (user: User) =>
+  flow(user.updateToken, rte.chainEitherKW(storeUser));
 
-const renewAndUpdateUserToken = (user: User) =>
-  flow(
-    AuthClient.renewToken(user),
-    rte.chainW(({ newToken }) => updateUserToken(user)),
+const refreshAndUpdateUserToken = (user: User) => (token: Token) =>
+  pipe(
+    AuthClient.refreshToken({ user, token }),
+    rte.chainW(({ newToken }) => updateUserToken(user)(newToken.hash)),
   );
 
-const renewUserToken = (user: User) =>
+const refreshUserToken = (user: User) =>
   pipe(
     user.token,
     option.match(
