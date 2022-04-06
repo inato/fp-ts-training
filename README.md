@@ -57,7 +57,7 @@ const triggerEmailCampaign = ({
   pipe(
     user.nationality === 'FR',
     boolean.match(
-      () => triggerGlobalEmailCampain({ to: user.email, emailSettings }),
+      () => triggerGlobalEmailCampaign({ to: user.email, emailSettings }),
       () => triggerFrenchEmailCampaign({ to: user.email, emailSettings }),
     ),
   );
@@ -70,7 +70,7 @@ const triggerEmailCampaign = ({
   if (user.nationality === 'FR') {
     return triggerFrenchEmailCampaign({ to: user.email, emailSettings });
   }
-  return triggerGlobalEmailCampain({ to: user.email, emailSettings });
+  return triggerGlobalEmailCampaign({ to: user.email, emailSettings });
 ```
 
 - Avoid nested pipes
@@ -78,7 +78,7 @@ const triggerEmailCampaign = ({
 
 ```typescript
 // Bad
-const convertDollarAmountInCountryCurrency = ({
+export const convertDollarAmountInCountryCurrency = ({
   countryName,
   amountInDollar,
 }: {
@@ -91,10 +91,9 @@ const convertDollarAmountInCountryCurrency = ({
       countryCode =>
         pipe(
           getCountryCurrency(countryCode),
-          option.map(currency =>
-            pipe(
-              amountInDollar,
-              converFromDollar(currency),
+          option.map(
+            flow(
+              convertFromDollarAmount(amountInDollar),
               convertedAmount =>
                 console.log(
                   `converted amount for country ${countryCode} is ${convertedAmount}`,
@@ -107,35 +106,21 @@ const convertDollarAmountInCountryCurrency = ({
   );
 
 // Good
-const convertDollarAmountInCountryCodeCurrency = ({
-  amountInDollar,
-  countryCode,
-}: {
-  amountInDollar: number;
-  countryCode: CountryCode;
-}) =>
-  pipe(
-    getCurrencyFromCountryCode(countryCode),
-    option.map(currency => {
-      const convertedDollarAmount = convertFromDollar(currency)(currency);
-      console.log(
-        `converted amount for country ${countryCode} is ${convertedAmount}`,
-      );
-    }),
+export const convertDollarAmountInCountryCurrency = (amountInDollar: number) =>
+  flow(
+    getCountryCode,
+    either.map(convertDollarAmountToCountryCodeCurrency(amountInDollar)),
   );
 
-const convertDollarAmountInCountryCurrency = ({
-  amountInDollar,
-  countryName,
-}: {
-  amountInDollar: number;
-  countryName: CountryName;
-}) =>
-  pipe(
-    getCountryCode(countryName),
-    either.map(countryCode =>
-      convertDollarAmountToCountryCodeCurrency({ amountInDollar, countryCode }),
-    ),
-  );
-
+const convertDollarAmountInCountryCodeCurrency =
+  (amountInDollar: number) => (countryCode: CountryCode) =>
+    pipe(
+      getCurrencyFromCountryCode(countryCode),
+      option.map(convertFromDollarAmount(amountInDollar)),
+      option.map(convertedAmount =>
+        console.log(
+          `converted amount for country ${countryCode} is ${convertedAmount}`,
+        ),
+      ),
+    );
 ```
