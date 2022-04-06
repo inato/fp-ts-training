@@ -78,37 +78,64 @@ const triggerEmailCampaign = ({
 
 ```typescript
 // Bad
-const refreshUserToken = (user: User) =>
+const convertDollarAmountInCountryCurrency = ({
+  countryName,
+  amountInDollar,
+}: {
+  countryName: CountryName;
+  amountInDollar: number;
+}) =>
   pipe(
-    user.token,
-    option.match(
-      () => AuthClient.createToken(user),
-      (token) =>
+    getCountryCode(countryName),
+    either.map(
+      countryCode =>
         pipe(
-          AuthClient.refreshToken({ user, token }),
-          rte.chainW(({ newToken }) =>
-            pipe(newToken.hash, user.updateToken, rte.chainEitherKW(storeUser)),
+          getCountryCurrency(countryCode),
+          option.map(currency =>
+            pipe(
+              amountInDollar,
+              converFromDollar(currency),
+              convertedAmount =>
+                console.log(
+                  `converted amount for country ${countryCode} is ${convertedAmount}`,
+                ),
+              ),
+            ),
           ),
         ),
     ),
   );
 
 // Good
-const updateUserToken = (user: User) =>
-  flow(user.updateToken, rte.chainEitherKW(storeUser));
-
-const refreshAndUpdateUserToken = (user: User) => (token: Token) =>
+const convertDollarAmountInCountryCodeCurrency = ({
+  amountInDollar,
+  countryCode,
+}: {
+  amountInDollar: number;
+  countryCode: CountryCode;
+}) =>
   pipe(
-    AuthClient.refreshToken({ user, token }),
-    rte.chainW(({ newToken }) => updateUserToken(user)(newToken.hash)),
+    getCurrencyFromCountryCode(countryCode),
+    option.map(currency => {
+      const convertedDollarAmount = convertFromDollar(currency)(currency);
+      console.log(
+        `converted amount for country ${countryCode} is ${convertedAmount}`,
+      );
+    }),
   );
 
-const refreshUserToken = (user: User) =>
+const convertDollarAmountInCountryCurrency = ({
+  amountInDollar,
+  countryName,
+}: {
+  amountInDollar: number;
+  countryName: CountryName;
+}) =>
   pipe(
-    user.token,
-    option.match(
-      () => AuthClient.createToken(user),
-      renewAndUpdateUserToken(user),
+    getCountryCode(countryName),
+    either.map(countryCode =>
+      convertDollarAmountToCountryCodeCurrency({ amountInDollar, countryCode }),
     ),
   );
+
 ```
