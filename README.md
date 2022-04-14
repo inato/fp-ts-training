@@ -6,6 +6,8 @@ to onboard people on using `fp-ts` efficiently.
 The exercices consist of unimplemented functions and their associated failing
 tests.
 
+But first, it is essential to understand why we are using `fp-ts`. I suggest you read this [article](https://medium.com/inato/our-journey-to-functional-programing-36854a370de1) and then start the exercices.
+
 To run the tests, simply run
 
 ```sh
