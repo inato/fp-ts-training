@@ -1,4 +1,4 @@
-// `fp-ts` training Exercice 1
+// `fp-ts` training Exercise 1
 // Basic types:
 // - Option
 // - Either

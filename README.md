@@ -3,10 +3,10 @@
 This repo is a work in progress toward having a comprehensive training material
 to onboard people on using `fp-ts` efficiently.
 
-The exercices consist of unimplemented functions and their associated failing
+The exercises consist of unimplemented functions and their associated failing
 tests.
 
-But first, it is essential to understand why we are using `fp-ts`. I suggest you read this [article](https://medium.com/inato/our-journey-to-functional-programing-36854a370de1) and then start the exercices.
+But first, it is essential to understand why we are using `fp-ts`. I suggest you read this [article](https://medium.com/inato/our-journey-to-functional-programing-36854a370de1) and then start the exercises.
 
 To run the tests, simply run
 
@@ -20,14 +20,14 @@ You can also run them in watch mode:
 $ yarn test:watch
 ```
 
-Finally, if you wish to only run the tests for a given exercice `exoN`, you can
+Finally, if you wish to only run the tests for a given exercise `exoN`, you can
 run the following:
 
 ```sh
 $ yarn test[:watch] exoN
 ```
 
-The exercices are organized into `exoN` folders and most of what is required to
+The exercises are organized into `exoN` folders and most of what is required to
 complete each is detailed in the comments.
 
 ## code style guide

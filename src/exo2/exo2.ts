@@ -1,4 +1,4 @@
-// `fp-ts` training Exercice 2
+// `fp-ts` training Exercise 2
 // Let's have fun with combinators!
 
 import { Either } from 'fp-ts/Either';
