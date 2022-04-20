@@ -51,7 +51,7 @@ export const isOddF: (value: number) => boolean = unimplemented;
 // - if n is even => divide it by two
 // - if n is odd  => triple it and add one
 //
-// This sequence is knows as The Collatz conjecture: https://en.wikipedia.org/wiki/Collatz_conjecture
+// This sequence is the object of The Collatz conjecture: https://en.wikipedia.org/wiki/Collatz_conjecture
 //
 // Below is the functional equivalent of the control flow statement if-else.
 
