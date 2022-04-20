@@ -114,10 +114,10 @@ export const convertDollarAmountInCountryCurrency = (amountInDollar: number) =>
     either.map(convertDollarAmountToCountryCodeCurrency(amountInDollar)),
   );
 
-const convertDollarAmountInCountryCodeCurrency =
+const convertDollarAmountToCountryCodeCurrency =
   (amountInDollar: number) => (countryCode: CountryCode) =>
     pipe(
-      getCurrencyFromCountryCode(countryCode),
+      getCountryCurrency(countryCode),
       option.map(convertFromDollarAmount(amountInDollar)),
       option.map(convertedAmount =>
         console.log(
