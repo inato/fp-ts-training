@@ -97,13 +97,13 @@ export const getCountryCurrencyOfOptionalCountryCode: (
   optionalCountryCode: Option<CountryCode>,
 ) => Task<Option<Currency>> = unimplementedAsync;
 
-// Let's now use this function in our naive implementation's pipe to how it
+// Let's now use this function in our naive implementation's pipe to see how it
 // improves it.
 // Implement `giveCurrencyOfCountryToUser` below so that it returns a
 // `Task<Option<Currency>>`
 //
 // HINT: You should be able to copy the pipe from naiveGiveCurrencyOfCountryToUser
-// and make only few updates of it
+// and make only few updates of it. `task.chain` helper may be usefull.
 
 export const giveCurrencyOfCountryToUser: (
   countryNameFromUserMock: string,
@@ -117,7 +117,7 @@ export const giveCurrencyOfCountryToUser: (
 //                             TRAVERSING ARRAYS                             //
 ///////////////////////////////////////////////////////////////////////////////
 
-// Let's say we want to ask multiple countries to the user. We'll have an array
+// Let's say we want to ask the user to provide multiple countries. We'll have an array
 // of country names as `string` and we want to retrieve the country code of each.
 // Looks pretty easy:
 export const getCountryCodeOfCountryNames = (
@@ -207,9 +207,9 @@ export const performAsyncComputationInSequence: (
 // say `Task`) and 'invert' the container (to get a `Task<Option>` instead of a
 // `Option<Task>` in our example)
 // Sometimes, you just have two nested containers that you want to 'invert'. It
-// can be because both order of container are meaningful (like `Either<Option>`
-// and `Option<Either>`) of because you got them from an external api, as
-// examples.
+// can be because the order of containers is meaningful (like `Either<Option>`
+// and `Option<Either>`) because you got them from an external api, as
+// in the examples.
 // In that case, what you need is `sequence`, which you can find in the modules
 // that have `traverse`.
 //

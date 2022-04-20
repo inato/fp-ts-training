@@ -8,6 +8,12 @@ tests.
 
 But first, it is essential to understand why we are using `fp-ts`. I suggest you read this [article](https://medium.com/inato/our-journey-to-functional-programing-36854a370de1) and then start the exercises.
 
+After cloning the repository, setup the project by running
+
+```sh
+$ yarn
+```
+
 To run the tests, simply run
 
 ```sh

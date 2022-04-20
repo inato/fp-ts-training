@@ -46,12 +46,12 @@ export const isOddP: (value: number) => boolean = unimplemented;
 
 export const isOddF: (value: number) => boolean = unimplemented;
 
-// The Collatz conjecture: https://en.wikipedia.org/wiki/Collatz_conjecture
-//
 // We will write a function that for any given number, computes the next
 // one according to the following rules:
 // - if n is even => divide it by two
 // - if n is odd  => triple it and add one
+//
+// This sequence is knows as The Collatz conjecture: https://en.wikipedia.org/wiki/Collatz_conjecture
 //
 // Below is the functional equivalent of the control flow statement if-else.
 
@@ -60,7 +60,7 @@ export const ifThenElse =
   (condition: boolean) =>
     condition ? onTrue() : onFalse();
 
-// Using `pipe`, write the function that computes the next step in the Collatz
+// Using `pipe` and `ifThenElse`, write the function that computes the next step in the Collatz
 // sequence.
 
 export const next: (value: number) => number = unimplemented;
