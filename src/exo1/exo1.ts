@@ -17,7 +17,7 @@ export const divide = (a: number, b: number): number => {
 //                                  OPTION                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// Write the safe version (meaning it handles the case when b is 0) of `divide` with signature:
+// Write the safe version (meaning it handles the case where b is 0) of `divide` with signature:
 // safeDivide : (a: number, b: number) => Option<number>
 //
 // HINT: Option has two basic contructors:
