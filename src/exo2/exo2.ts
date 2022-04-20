@@ -95,7 +95,7 @@ export const invalidTargetFailure = Failure.builder(
 //                                  EITHER                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// The next three function take the currently targeted unit by the player and
+// The next three functions take the unit currently targeted by the player and
 // return the expected damage type if appropriate.
 //
 // If no unit is selected, it should return
@@ -134,7 +134,7 @@ export const checkTargetAndShoot: (
 ///////////////////////////////////////////////////////////////////////////////
 
 // The next three function take a `Character` and optionally return the
-// expected damage type if the unit match the expected character type.
+// expected damage type if the unit matches the expected character type.
 //
 // HINT: These functions represent the public API. But it is heavily
 // recommended to break those down into smaller private functions that can be

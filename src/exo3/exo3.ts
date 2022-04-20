@@ -100,11 +100,11 @@ export interface Person {
 }
 
 export const sortPersonsByName: (
-  person: ReadonlyArray<Person>,
+  persons: ReadonlyArray<Person>,
 ) => ReadonlyArray<Person> = unimplemented;
 
 export const sortPersonsByAge: (
-  person: ReadonlyArray<Person>,
+  persons: ReadonlyArray<Person>,
 ) => ReadonlyArray<Person> = unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -117,5 +117,5 @@ export const sortPersonsByAge: (
 // HINT: Take a look at `readonlyArray.sortBy`
 
 export const sortPersonsByAgeThenByName: (
-  person: ReadonlyArray<Person>,
+  persons: ReadonlyArray<Person>,
 ) => ReadonlyArray<Person> = unimplemented;

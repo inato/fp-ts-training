@@ -17,7 +17,7 @@ export const divide = (a: number, b: number): number => {
 //                                  OPTION                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// Write the safe version of `divide` with signature:
+// Write the safe version (meaning it handles the case where b is 0) of `divide` with signature:
 // safeDivide : (a: number, b: number) => Option<number>
 //
 // HINT: Option has two basic contructors:
@@ -67,7 +67,7 @@ export const asyncDivide = async (a: number, b: number) => {
   return a / b;
 };
 
-// Write the safe version of `divide` with signature:
+// Write the safe version of `asyncDivide` with signature:
 // asyncSafeDivideWithError : (a: number, b: number) => TaskEither<DivideByZeroError, number>
 //
 // HINT: TaskEither has a special constructor to transform a Promise<T> into
