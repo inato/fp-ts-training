@@ -1,4 +1,4 @@
-// `fp-ts` training Exercice 2
+// `fp-ts` training Exercise 2
 // Let's have fun with combinators!
 
 import { Either } from 'fp-ts/Either';
@@ -133,7 +133,7 @@ export const checkTargetAndShoot: (
 //                                  OPTION                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// The next three function take a `Character` and optionnaly return the
+// The next three function take a `Character` and optionally return the
 // expected damage type if the unit match the expected character type.
 //
 // HINT: These functions represent the public API. But it is heavily

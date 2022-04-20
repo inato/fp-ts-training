@@ -1,4 +1,4 @@
-// `fp-ts` training Exercice 3
+// `fp-ts` training Exercise 3
 // Sort things out with `Ord`
 
 import { Option } from 'fp-ts/Option';
@@ -12,7 +12,7 @@ import { unimplemented } from '../utils';
 // The difference with JavaScript's native `Array.prototype` methods is that
 // these are more `fp-ts` friendly.
 //
-// In the following exercice, we will take a look at `array.sort`. Contrary to
+// In the following exercise, we will take a look at `array.sort`. Contrary to
 // its JavaScript counterpart, `fp-ts` sort takes as an argument something of
 // type `Ord<T>` where `T` is the type of elements contained in the collection.
 //

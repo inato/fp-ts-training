@@ -1,4 +1,4 @@
-// `fp-ts` training Exercice 4
+// `fp-ts` training Exercise 4
 // Dependency injection with `Reader`
 
 import { Reader } from 'fp-ts/Reader';

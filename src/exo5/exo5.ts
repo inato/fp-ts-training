@@ -1,4 +1,4 @@
-// `fp-ts` training Exercice 5
+// `fp-ts` training Exercise 5
 // Managing nested effectful data with `traverse`
 
 import { option, readonlyRecord, task } from 'fp-ts';
@@ -224,5 +224,5 @@ export const sequenceOptionArray: (
   arrayOfOptions: ReadonlyArray<Option<CountryCode>>,
 ) => Option<ReadonlyArray<CountryCode>> = unimplemented;
 
-// BONUS: try using these two functions in the exercices 'TRAVERSING OPTIONS'
+// BONUS: try using these two functions in the exercises 'TRAVERSING OPTIONS'
 // and 'TRAVERSING ARRAYS' above

@@ -1,4 +1,4 @@
-// `fp-ts` training Exercice 1
+// `fp-ts` training Exercise 1
 // Basic types:
 // - Option
 // - Either
@@ -17,7 +17,7 @@ export const divide = (a: number, b: number): number => {
 //                                  OPTION                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// Write the safe version of `divide` whith signature:
+// Write the safe version of `divide` with signature:
 // safeDivide : (a: number, b: number) => Option<number>
 //
 // HINT: Option has two basic contructors:
@@ -31,7 +31,7 @@ export const safeDivide: (a: number, b: number) => Option<number> =
 //                                  EITHER                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// Write the safe version of `divide` whith signature:
+// Write the safe version of `divide` with signature:
 // safeDivideWithError : (a: number, b: number) => Either<DivideByZeroError, number>
 //
 // BONUS POINT: Implement `safeDivideWithError` in terms of `safeDivide`.
@@ -67,7 +67,7 @@ export const asyncDivide = async (a: number, b: number) => {
   return a / b;
 };
 
-// Write the safe version of `divide` whith signature:
+// Write the safe version of `divide` with signature:
 // asyncSafeDivideWithError : (a: number, b: number) => TaskEither<DivideByZeroError, number>
 //
 // HINT: TaskEither has a special constructor to transform a Promise<T> into

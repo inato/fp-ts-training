@@ -8,10 +8,10 @@
 // result of the first one to the second one. By applying this composition
 // over and over you can chain multiple functions together.
 //
-// The `fp-ts` library provides to helpers to do that:
+// The `fp-ts` library provides helpers to do that:
 // - `pipe` which first needs to be fed a value to start the pipe and then
 //   any number of functions to be applied sequentially.
-// - `flow` which is the same thing but were we do not have to provide the
+// - `flow` which is the same thing but where we do not have to provide the
 //   first value. It will then return a function which will expect that value
 //   to be provided
 //
@@ -55,11 +55,12 @@ export const isOddF: (value: number) => boolean = unimplemented;
 //
 // Below is the functional equivalent of the control flow statement if-else.
 
-export const ifThenElse = <A>(onTrue: () => A, onFalse: () => A) => (
-  condition: boolean,
-) => (condition ? onTrue() : onFalse());
+export const ifThenElse =
+  <A>(onTrue: () => A, onFalse: () => A) =>
+  (condition: boolean) =>
+    condition ? onTrue() : onFalse();
 
-// Using `pipe` the function that computes the next step in the Collatz
+// Using `pipe`, write the function that computes the next step in the Collatz
 // sequence.
 
 export const next: (value: number) => number = unimplemented;
