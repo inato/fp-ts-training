@@ -74,22 +74,6 @@ export const safeDivideWithError = flow(
 );
 
 
-// COMMENT ON BONUS: 
-// You can see here we combined not functional programming (safeDivide written with if) 
-// and functional programming (using safeDivide in a pipe)
-// Try to re-write safeDivideWithError with only functional programming now (no if)
-// And check test are still passing
-// 
-// HINT: have a look at either `fromPredicate` constructor
-
-
-export const safeDivideWithErrorBonus = (a: number, b: number) => 
-pipe(
-  b,
-  either.fromPredicate(n => n != 0, () => DivisionByZero),
-  either.map(() => a / b)
-)
-
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
 ///////////////////////////////////////////////////////////////////////////////
