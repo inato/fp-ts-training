@@ -5,7 +5,7 @@
 // - TaskEither
 
 import { either, option, taskEither } from 'fp-ts';
-import { flow } from 'fp-ts/function';
+import { flow, pipe } from 'fp-ts/function';
 
 import { sleep } from '../utils';
 
@@ -32,16 +32,21 @@ export const safeDivide = (a: number, b: number) => {
   return option.some(a / b);
 };
 
-
 // You probably wrote `safeDivide` using `if` statements and it's perfectly valid!
 // There are ways to not use `if` statements.
-// Keep in mind that extracting small functions out of pipes and using `if` statements in them 
+// Keep in mind that extracting small functions out of pipes and using `if` statements in them
 // is perfectly fine and is sometimes more readable than not using `if`.
 //
 // BONUS: Try now to re-write `safeDivide` without any `if`
 //
 // HINT: Have a look at `fromPredicate` constructor
 
+export const safeDivideBonus = (a: number, b: number) =>
+  pipe(
+    b,
+    option.fromPredicate(n => n != 0),
+    option.map(b => a / b),
+  );
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
