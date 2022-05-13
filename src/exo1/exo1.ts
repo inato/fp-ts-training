@@ -5,7 +5,7 @@
 // - TaskEither
 
 import { either, option, taskEither } from 'fp-ts';
-import { flow } from 'fp-ts/function';
+import { flow, pipe } from 'fp-ts/function';
 
 import { sleep } from '../utils';
 
@@ -55,6 +55,23 @@ export const safeDivideWithError = flow(
   safeDivide,
   either.fromOption(() => DivisionByZero),
 );
+
+
+// COMMENT ON BONUS: 
+// You can see here we combined not functional programming (safeDivide written with if) 
+// and functional programming (using safeDivide in a pipe)
+// Try to re-write safeDivideWithError with only functional programming now (no if)
+// And check test are still passing
+// 
+// HINT: have a look at either `fromPredicate` constructor
+
+
+export const safeDivideWithErrorBonus = (a: number, b: number) => 
+pipe(
+  b,
+  either.fromPredicate(n => n != 0, () => DivisionByZero),
+  either.map(() => a / b)
+)
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
