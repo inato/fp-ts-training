@@ -28,7 +28,6 @@ export const safeDivide: (a: number, b: number) => Option<number> =
   unimplemented;
 
 
-
 // You probably wrote `safeDivide` using `if` statements and it's perfectly valid!
 // There are ways to not use `if` statements.
 // Keep in mind that extracting small functions out of pipes and using `if` statements in them 
@@ -37,7 +36,6 @@ export const safeDivide: (a: number, b: number) => Option<number> =
 // BONUS: Try now to re-write `safeDivide` without any `if`
 //
 // HINT: Have a look at `fromPredicate` constructor
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,8 +61,6 @@ export const safeDivideWithError: (
   a: number,
   b: number,
 ) => Either<DivisionByZeroError, number> = unimplemented;
-
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
