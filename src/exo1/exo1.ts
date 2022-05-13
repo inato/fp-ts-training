@@ -32,6 +32,23 @@ export const safeDivide = (a: number, b: number) => {
   return option.some(a / b);
 };
 
+
+
+// You probably write `safeDivide` using `if` statements
+// This is perfectly valid, we sometimes use extracted functions in pipes doing some `if` statements
+//
+// BONUS: Try now to re-write `safeDivide` using pure functional programming
+//
+// HINT: Have a look at `fromPredicate` constructor
+
+export const safeDivideBonus = (a: number, b: number) => 
+pipe(
+  b,
+  option.fromPredicate(n => n != 0),
+  option.map(b => a / b)
+)
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
 ///////////////////////////////////////////////////////////////////////////////
