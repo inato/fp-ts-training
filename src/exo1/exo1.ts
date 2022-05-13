@@ -33,7 +33,6 @@ export const safeDivide = (a: number, b: number) => {
 };
 
 
-
 // You probably wrote `safeDivide` using `if` statements and it's perfectly valid!
 // There are ways to not use `if` statements.
 // Keep in mind that extracting small functions out of pipes and using `if` statements in them 
@@ -49,7 +48,6 @@ pipe(
   option.fromPredicate(n => n != 0),
   option.map(b => a / b)
 )
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
