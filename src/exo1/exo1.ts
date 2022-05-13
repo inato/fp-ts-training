@@ -51,6 +51,17 @@ export const safeDivideWithError: (
   b: number,
 ) => Either<DivisionByZeroError, number> = unimplemented;
 
+
+// COMMENT ON BONUS: 
+// You can see here we combined not functional programming (safeDivide written with if) 
+// and functional programming (using safeDivide in a pipe)
+// Try to re-write safeDivideWithError with only functional programming now (no if)
+// And check test are still passing
+// 
+// HINT: have a look at either `fromPredicate` constructor
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
 ///////////////////////////////////////////////////////////////////////////////
