@@ -27,6 +27,17 @@ export const divide = (a: number, b: number): number => {
 export const safeDivide: (a: number, b: number) => Option<number> =
   unimplemented;
 
+
+
+// You probably write `safeDivide` using `if` statements
+// This is perfectly valid, we sometimes use extracted functions in pipes doing some `if` statements
+//
+// BONUS: Try now to re-write `safeDivide` using pure functional programming
+//
+// HINT: Have a look at `fromPredicate` constructor
+
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
 ///////////////////////////////////////////////////////////////////////////////
