@@ -26,6 +26,8 @@ You can also run them in watch mode:
 $ yarn test:watch
 ```
 
+You will have failing tests. And the exercice is to make them pass.
+
 Finally, if you wish to only run the tests for a given exercise `exoN`, you can
 run the following:
 

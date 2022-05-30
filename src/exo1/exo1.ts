@@ -4,10 +4,12 @@
 // - Either
 // - TaskEither
 
+import { either, option, taskEither } from 'fp-ts';
 import { Either } from 'fp-ts/Either';
+import { flow, pipe } from 'fp-ts/lib/function';
 import { Option } from 'fp-ts/Option';
 import { TaskEither } from 'fp-ts/TaskEither';
-import { unimplemented, sleep, unimplementedAsync } from '../utils';
+import { sleep } from '../utils';
 
 export const divide = (a: number, b: number): number => {
   return a / b;
@@ -24,19 +26,40 @@ export const divide = (a: number, b: number): number => {
 // - `option.some(value)`
 // - `option.none`
 
-export const safeDivide: (a: number, b: number) => Option<number> =
-  unimplemented;
+// const safeDivideWithIfElse: (a: number, b: number) => Option<number> = (
+//   a,
+//   b,
+// ) => {
+//   if (b === 0) {
+//     return option.none;
+//   } else {
+//     return option.some(a / b);
+//   }
+// };
 
+// We should suggest using option.map
+const safeDivideUsingfromPredicate: (a: number, b: number) => Option<number> = (
+  a,
+  b,
+) => {
+  const isNotZero = (number: number) => number !== 0;
+  return pipe(
+    b,
+    option.fromPredicate(isNotZero),
+    option.map(x => a / x),
+  );
+};
+
+export const safeDivide = safeDivideUsingfromPredicate;
 
 // You probably wrote `safeDivide` using `if` statements and it's perfectly valid!
 // There are ways to not use `if` statements.
-// Keep in mind that extracting small functions out of pipes and using `if` statements in them 
+// Keep in mind that extracting small functions out of pipes and using `if` statements in them
 // is perfectly fine and is sometimes more readable than not using `if`.
 //
 // BONUS: Try now to re-write `safeDivide` without any `if`
 //
 // HINT: Have a look at `fromPredicate` constructor
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
@@ -53,14 +76,29 @@ export const safeDivide: (a: number, b: number) => Option<number> =
 // as well as "smarter" constructors like:
 // - `either.fromOption(() => leftValue)(option)`
 
-// Here is an simple error type to help you:
+// Here is a simple error type to help you:
 export type DivisionByZeroError = 'Error: Division by zero';
 export const DivisionByZero = 'Error: Division by zero' as const;
+
+// export const safeDivideWithError: (
+//   a: number,
+//   b: number,
+// ) => Either<DivisionByZeroError, number> = (a, b) => {
+//   const isNotZero = (number: number) => number !== 0;
+//   return pipe(
+//     b,
+//     either.fromPredicate(isNotZero, () => DivisionByZero),
+//     either.map(x => a / x),
+//   );
+// };
 
 export const safeDivideWithError: (
   a: number,
   b: number,
-) => Either<DivisionByZeroError, number> = unimplemented;
+) => Either<DivisionByZeroError, number> = flow(
+  safeDivide,
+  either.fromOption(() => DivisionByZero),
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
@@ -88,4 +126,12 @@ export const asyncDivide = async (a: number, b: number) => {
 export const asyncSafeDivideWithError: (
   a: number,
   b: number,
-) => TaskEither<DivisionByZeroError, number> = unimplementedAsync;
+) => TaskEither<DivisionByZeroError, number> = (a: number, b: number) =>
+  taskEither.tryCatch(
+    () => asyncDivide(a, b),
+    () => DivisionByZero,
+  );
+
+// I like this explanation here :
+// We know a Task is an asynchronous operation that can't fail. We also know an Either is a synchronous operation that can fail. Putting the two together, a TaskEither is an asynchronous operation that can fail.
+// https://rlee.dev/practical-guide-to-fp-ts-part-3

@@ -1,10 +1,11 @@
 // `fp-ts` training Exercise 2
 // Let's have fun with combinators!
 
-import { Either } from 'fp-ts/Either';
+import { either, option, readonlyArray } from 'fp-ts';
+import { chain, chainW, Either } from 'fp-ts/Either';
+import { flow, pipe } from 'fp-ts/lib/function';
 import { Option } from 'fp-ts/Option';
 import { Failure } from '../Failure';
-import { unimplemented } from '../utils';
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   SETUP                                   //
@@ -61,6 +62,7 @@ export class Archer {
 // We also have convenient type guards to help us differentiate between
 // character types when given a `Character`.
 
+// I have to learn about type guard functions
 export const isWarrior = (character: Character): character is Warrior => {
   return (character as Warrior).smash !== undefined;
 };
@@ -97,6 +99,7 @@ export const invalidTargetFailure = Failure.builder(
 
 // The next three functions take the unit currently targeted by the player and
 // return the expected damage type if appropriate.
+// I had to read the tests file to understand what is expected
 //
 // If no unit is selected, it should return
 // `either.left(noTargetFailure('No unit currently selected'))`
@@ -117,17 +120,58 @@ export const invalidTargetFailure = Failure.builder(
 // common operations done with the `Either` type and it is available through
 // the `chain` operator and its slightly relaxed variant `chainW`.
 
+const eitherIsX = (isX: (character: Character) => boolean, action: string) =>
+  either.fromPredicate(isX, (character: Character) => {
+    const unitType = character.toString();
+    return invalidTargetFailure(`${unitType} cannot perform ${action}`);
+  });
+
+const eitherIsWarrior = eitherIsX(isWarrior, 'smash');
+const eitherIsWizard = eitherIsX(isWizard, 'burn');
+const eitherIsArcher = eitherIsX(isArcher, 'shoot');
+
+const eitherExists = either.fromOption(() =>
+  noTargetFailure('No unit currently selected'),
+);
+
 export const checkTargetAndSmash: (
   target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = (
+  target: Option<Character>,
+) => {
+  return pipe(
+    target,
+    eitherExists, // I do not understand why there is an alert when I used chain instead of chainW
+    chainW(eitherIsWarrior),
+    chainW(() => either.right(Damage.Physical)),
+  );
+};
 
 export const checkTargetAndBurn: (
   target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = (
+  target: Option<Character>,
+) => {
+  return pipe(
+    target,
+    eitherExists,
+    chainW(eitherIsWizard),
+    chainW(() => either.right(Damage.Magical)),
+  );
+};
 
 export const checkTargetAndShoot: (
   target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = (
+  target: Option<Character>,
+) => {
+  return pipe(
+    target,
+    eitherExists,
+    chainW(eitherIsArcher),
+    chainW(() => either.right(Damage.Ranged)),
+  );
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
@@ -135,6 +179,7 @@ export const checkTargetAndShoot: (
 
 // The next three function take a `Character` and optionally return the
 // expected damage type if the unit matches the expected character type.
+// I read the tests to understand what is expected
 //
 // HINT: These functions represent the public API. But it is heavily
 // recommended to break those down into smaller private functions that can be
@@ -146,14 +191,23 @@ export const checkTargetAndShoot: (
 // BONUS POINTS: If you properly defined small private helpers in the previous
 // section, they should be easily reused for those use-cases.
 
-export const smashOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const smashOption: (character: Character) => Option<Damage> = flow(
+  eitherIsWarrior,
+  chain(() => either.right(Damage.Physical)),
+  option.fromEither,
+);
 
-export const burnOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const burnOption: (character: Character) => Option<Damage> = flow(
+  eitherIsWizard,
+  chain(() => either.right(Damage.Magical)),
+  option.fromEither,
+);
 
-export const shootOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const shootOption: (character: Character) => Option<Damage> = flow(
+  eitherIsArcher,
+  chain(() => either.right(Damage.Ranged)),
+  option.fromEither,
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   ARRAY                                   //
@@ -174,5 +228,27 @@ export interface TotalDamage {
   [Damage.Ranged]: number;
 }
 
-export const attack: (army: ReadonlyArray<Character>) => TotalDamage =
-  unimplemented;
+export const attack: (army: ReadonlyArray<Character>) => TotalDamage = (
+  army: ReadonlyArray<Character>,
+) => {
+  const physical = pipe(
+    army,
+    readonlyArray.filterMap(smashOption),
+    readonlyArray.reduce(0, prev => prev + 1), // Am I supposed to use reduce ?
+  );
+  const magical = pipe(
+    army,
+    readonlyArray.filterMap(burnOption),
+    readonlyArray.reduce(0, prev => prev + 1),
+  );
+  const ranged = pipe(
+    army,
+    readonlyArray.filterMap(shootOption),
+    readonlyArray.reduce(0, prev => prev + 1),
+  );
+  return {
+    [Damage.Physical]: physical,
+    [Damage.Magical]: magical,
+    [Damage.Ranged]: ranged,
+  };
+};
