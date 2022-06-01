@@ -2,7 +2,7 @@
 // Let's have fun with combinators!
 
 import { either, option, readonlyArray } from 'fp-ts';
-import { chain, chainW, Either } from 'fp-ts/Either';
+import { Either } from 'fp-ts/Either';
 import { flow, pipe } from 'fp-ts/lib/function';
 import { Option } from 'fp-ts/Option';
 import { Failure } from '../Failure';
@@ -142,8 +142,8 @@ export const checkTargetAndSmash: (
   return pipe(
     target,
     eitherExists, // I do not understand why there is an alert when I used chain instead of chainW
-    chainW(eitherIsWarrior),
-    chainW(() => either.right(Damage.Physical)),
+    either.chainW(eitherIsWarrior),
+    either.chainW(() => either.right(Damage.Physical)),
   );
 };
 
@@ -155,8 +155,8 @@ export const checkTargetAndBurn: (
   return pipe(
     target,
     eitherExists,
-    chainW(eitherIsWizard),
-    chainW(() => either.right(Damage.Magical)),
+    either.chainW(eitherIsWizard),
+    either.chainW(() => either.right(Damage.Magical)),
   );
 };
 
@@ -168,8 +168,8 @@ export const checkTargetAndShoot: (
   return pipe(
     target,
     eitherExists,
-    chainW(eitherIsArcher),
-    chainW(() => either.right(Damage.Ranged)),
+    either.chainW(eitherIsArcher),
+    either.chainW(() => either.right(Damage.Ranged)),
   );
 };
 
@@ -193,19 +193,19 @@ export const checkTargetAndShoot: (
 
 export const smashOption: (character: Character) => Option<Damage> = flow(
   eitherIsWarrior,
-  chain(() => either.right(Damage.Physical)),
+  either.chain(() => either.right(Damage.Physical)),
   option.fromEither,
 );
 
 export const burnOption: (character: Character) => Option<Damage> = flow(
   eitherIsWizard,
-  chain(() => either.right(Damage.Magical)),
+  either.chain(() => either.right(Damage.Magical)),
   option.fromEither,
 );
 
 export const shootOption: (character: Character) => Option<Damage> = flow(
   eitherIsArcher,
-  chain(() => either.right(Damage.Ranged)),
+  either.chain(() => either.right(Damage.Ranged)),
   option.fromEither,
 );
 
