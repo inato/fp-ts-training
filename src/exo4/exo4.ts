@@ -1,9 +1,9 @@
 // `fp-ts` training Exercise 4
 // Dependency injection with `Reader`
 
+import { reader } from 'fp-ts';
+import { flow, pipe } from 'fp-ts/lib/function';
 import { Reader } from 'fp-ts/Reader';
-
-import { unimplemented } from '../utils';
 
 // Sometimes, a function can have a huge amount of dependencies (services,
 // repositories, ...) and it is often impractical (not to say truly annoying)
@@ -44,8 +44,29 @@ export enum Country {
 //
 // HINT: Take a look at `reader.ask` to access the environment value
 
-export const exclamation: (sentence: string) => Reader<Country, string> =
-  unimplemented();
+const exclamationString: (sentence: string, country: Country) => string = (
+  sentence: string,
+  country: Country,
+) => {
+  switch (country) {
+    case Country.France:
+      return sentence + ' !';
+      break;
+    case Country.Spain:
+      return '¡' + sentence + '!';
+      break;
+    default:
+      return sentence + '!';
+  }
+};
+export const exclamation: (sentence: string) => Reader<Country, string> = (
+  sentence: string,
+) => {
+  return pipe(
+    reader.ask<Country>(),
+    reader.map(country => exclamationString(sentence, country)),
+  );
+};
 
 // Obviously, different countries often mean different languages and so
 // different words for saying "Hello":
@@ -70,7 +91,13 @@ export const sayHello = (country: Country): string => {
 // HINT: You can look into `reader.map` to modify the output of a `Reader`
 // action.
 
-export const greet: (name: string) => Reader<Country, string> = unimplemented();
+export const greet: (name: string) => Reader<Country, string> = (
+  name: string,
+) =>
+  pipe(
+    reader.ask<Country>(),
+    reader.map(country => `${sayHello(country)}, ${name}`),
+  );
 
 // Finally, we are going to compose multiple `Reader`s together.
 //
@@ -84,5 +111,7 @@ export const greet: (name: string) => Reader<Country, string> = unimplemented();
 // HINT: As with other wrapper types in `fp-ts`, `reader` offers a way of
 // composing effects with `reader.chain`.
 
-export const excitedlyGreet: (name: string) => Reader<Country, string> =
-  unimplemented();
+export const excitedlyGreet: (name: string) => Reader<Country, string> = flow(
+  greet,
+  reader.chain(exclamation),
+);
