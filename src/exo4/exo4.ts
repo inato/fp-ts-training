@@ -1,9 +1,11 @@
 // `fp-ts` training Exercise 4
 // Dependency injection with `Reader`
 
-import { Reader } from 'fp-ts/Reader';
+import { pipe } from 'fp-ts/lib/function';
+import { reader } from 'fp-ts';
 
-import { unimplemented } from '../utils';
+// import { unimplemented } from '../utils';
+import { Reader } from 'fp-ts/lib/Reader';
 
 // Sometimes, a function can have a huge amount of dependencies (services,
 // repositories, ...) and it is often impractical (not to say truly annoying)
@@ -45,7 +47,18 @@ export enum Country {
 // HINT: Take a look at `reader.ask` to access the environment value
 
 export const exclamation: (sentence: string) => Reader<Country, string> =
-  unimplemented();
+  function (sentence: string) {
+    return pipe(reader.ask<Country>(), () => (country: Country) => {
+      switch (country) {
+        case Country.France:
+          return `${sentence} !`;
+        case Country.Spain:
+          return `¡${sentence}!`;
+        case Country.USA:
+          return `${sentence}!`;
+      }
+    });
+  };
 
 // Obviously, different countries often mean different languages and so
 // different words for saying "Hello":
@@ -70,7 +83,15 @@ export const sayHello = (country: Country): string => {
 // HINT: You can look into `reader.map` to modify the output of a `Reader`
 // action.
 
-export const greet: (name: string) => Reader<Country, string> = unimplemented();
+export const greet: (name: string) => Reader<Country, string> = function (
+  name: string,
+) {
+  return pipe(
+    reader.ask<Country>(),
+    reader.map(sayHello),
+    reader.map(greet => `${greet}, ${name}`),
+  );
+};
 
 // Finally, we are going to compose multiple `Reader`s together.
 //
@@ -85,4 +106,11 @@ export const greet: (name: string) => Reader<Country, string> = unimplemented();
 // composing effects with `reader.chain`.
 
 export const excitedlyGreet: (name: string) => Reader<Country, string> =
-  unimplemented();
+  function (name: string) {
+    return pipe(
+      reader.ask<Country>(),
+      reader.map(() => name),
+      reader.chain(greet),
+      reader.chain(exclamation),
+    );
+  };
