@@ -1,7 +1,7 @@
 // `fp-ts` training Exercice 2
 // Let's have fun with combinators!
 
-import { either, option, readonlyArray } from 'fp-ts';
+import { either, option, readonlyArray, separated } from 'fp-ts';
 import { flow, pipe } from 'fp-ts/function';
 import { Option } from 'fp-ts/Option';
 
@@ -200,8 +200,14 @@ export interface TotalDamage {
   [Damage.Ranged]: number;
 }
 
+const getSeparatedRight = flow(readonlyArray.separate, separated.right);
+
+const smashSeparatedRight = flow(readonlyArray.map(smash), getSeparatedRight);
+const burnSeparatedRight = flow(readonlyArray.map(burn), getSeparatedRight);
+const shootSeparatedRight = flow(readonlyArray.map(shoot), getSeparatedRight);
+
 export const attack = (army: ReadonlyArray<Character>) => ({
-  [Damage.Physical]: pipe(army, readonlyArray.filterMap(smashOption)).length,
-  [Damage.Magical]: pipe(army, readonlyArray.filterMap(burnOption)).length,
-  [Damage.Ranged]: pipe(army, readonlyArray.filterMap(shootOption)).length,
+  [Damage.Physical]: pipe(army, smashSeparatedRight).length,
+  [Damage.Magical]: pipe(army, burnSeparatedRight).length,
+  [Damage.Ranged]: pipe(army, shootSeparatedRight).length,
 });
