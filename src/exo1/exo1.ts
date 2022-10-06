@@ -4,10 +4,12 @@
 // - Either
 // - TaskEither
 
+import { either, option, taskEither } from 'fp-ts';
 import { Either } from 'fp-ts/Either';
-import { Option } from 'fp-ts/Option';
+import { pipe } from 'fp-ts/lib/function';
+import { fromPredicate, Option } from 'fp-ts/Option';
 import { TaskEither } from 'fp-ts/TaskEither';
-import { unimplemented, sleep, unimplementedAsync } from '../utils';
+import { sleep, unimplementedAsync } from '../utils';
 
 export const divide = (a: number, b: number): number => {
   return a / b;
@@ -24,19 +26,25 @@ export const divide = (a: number, b: number): number => {
 // - `option.some(value)`
 // - `option.none`
 
-export const safeDivide: (a: number, b: number) => Option<number> =
-  unimplemented;
+const getOption = fromPredicate((b: number) => b != 0);
 
+export const safeDivide: (a: number, b: number) => Option<number> = (
+  a: number,
+  b: number,
+) =>
+  pipe(
+    getOption(b),
+    option.map(b => divide(a, b)),
+  );
 
 // You probably wrote `safeDivide` using `if` statements and it's perfectly valid!
 // There are ways to not use `if` statements.
-// Keep in mind that extracting small functions out of pipes and using `if` statements in them 
+// Keep in mind that extracting small functions out of pipes and using `if` statements in them
 // is perfectly fine and is sometimes more readable than not using `if`.
 //
 // BONUS: Try now to re-write `safeDivide` without any `if`
 //
 // HINT: Have a look at `fromPredicate` constructor
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
@@ -60,7 +68,8 @@ export const DivisionByZero = 'Error: Division by zero' as const;
 export const safeDivideWithError: (
   a: number,
   b: number,
-) => Either<DivisionByZeroError, number> = unimplemented;
+) => Either<DivisionByZeroError, number> = (a: number, b: number) =>
+  either.fromOption(() => DivisionByZero)(safeDivide(a, b));
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
@@ -88,4 +97,8 @@ export const asyncDivide = async (a: number, b: number) => {
 export const asyncSafeDivideWithError: (
   a: number,
   b: number,
-) => TaskEither<DivisionByZeroError, number> = unimplementedAsync;
+) => TaskEither<DivisionByZeroError, number> = (a: number, b: number) =>
+  taskEither.tryCatch(
+    () => asyncDivide(a, b),
+    () => DivisionByZero,
+  );
