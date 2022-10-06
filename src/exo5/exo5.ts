@@ -95,7 +95,12 @@ export const naiveGiveCurrencyOfCountryToUser = (
 
 export const getCountryCurrencyOfOptionalCountryCode: (
   optionalCountryCode: Option<CountryCode>,
-) => Task<Option<Currency>> = unimplementedAsync;
+) => Task<Option<Currency>> = (optionalCountryCode: Option<CountryCode>) =>
+  pipe(
+    option.traverse(task.ApplicativePar)(getCountryCurrency)(
+      optionalCountryCode,
+    ),
+  );
 
 // Let's now use this function in our naive implementation's pipe to see how it
 // improves it.
@@ -107,7 +112,12 @@ export const getCountryCurrencyOfOptionalCountryCode: (
 
 export const giveCurrencyOfCountryToUser: (
   countryNameFromUserMock: string,
-) => Task<Option<Currency>> = unimplementedAsync;
+) => Task<Option<Currency>> = (countryNameFromUserMock: string) =>
+  pipe(
+    getCountryNameFromUser(countryNameFromUserMock),
+    task.map(getCountryCode),
+    task.chain(getCountryCurrencyOfOptionalCountryCode),
+  );
 
 // BONUS: We don't necessarily need `traverse` to do this. Try implementing
 // `giveCurrencyOfCountryToUser` by lifting some of the functions' results to
@@ -146,7 +156,9 @@ export const getCountryCodeOfCountryNames = (
 
 export const getValidCountryCodeOfCountryNames: (
   countryNames: ReadonlyArray<string>,
-) => Option<ReadonlyArray<CountryCode>> = unimplemented;
+) => Option<ReadonlyArray<CountryCode>> = (
+  countryNames: ReadonlyArray<string>,
+) => option.traverseArray(getCountryCode)(countryNames);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                   TRAVERSING ARRAYS ASYNCHRONOUSLY                        //
@@ -182,9 +194,12 @@ const createSimulatedAsyncMethod = (): ((toAdd: number) => Task<number>) => {
 // module to traverse arrays
 
 export const simulatedAsyncMethodForParallel = createSimulatedAsyncMethod();
+
+//TODO(vincent): Ask someone if it is the equivalent of Promise.all ?
 export const performAsyncComputationInParallel: (
   numbers: ReadonlyArray<number>,
-) => Task<ReadonlyArray<number>> = unimplementedAsync;
+) => Task<ReadonlyArray<number>> = (numbers: ReadonlyArray<number>) =>
+  task.traverseArray(simulatedAsyncMethodForParallel)(numbers);
 
 // Write a method to traverse an array by running the method
 // `simulatedAsyncMethodForSequence: (toAdd: number) => Task<number>`
@@ -196,7 +211,8 @@ export const performAsyncComputationInParallel: (
 export const simulatedAsyncMethodForSequence = createSimulatedAsyncMethod();
 export const performAsyncComputationInSequence: (
   numbers: ReadonlyArray<number>,
-) => Task<ReadonlyArray<number>> = unimplementedAsync;
+) => Task<ReadonlyArray<number>> = (numbers: ReadonlyArray<number>) =>
+  task.traverseSeqArray(simulatedAsyncMethodForSequence)(numbers);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                               SEQUENCE                                    //
@@ -218,11 +234,14 @@ export const performAsyncComputationInSequence: (
 
 export const sequenceOptionTask: (
   optionOfTask: Option<Task<Currency>>,
-) => Task<Option<Currency>> = unimplementedAsync;
+) => Task<Option<Currency>> = (optionOfTask: Option<Task<Currency>>) =>
+  option.sequence(task.ApplicativeSeq)(optionOfTask);
 
 export const sequenceOptionArray: (
   arrayOfOptions: ReadonlyArray<Option<CountryCode>>,
-) => Option<ReadonlyArray<CountryCode>> = unimplemented;
+) => Option<ReadonlyArray<CountryCode>> = (
+  arrayOfOptions: ReadonlyArray<Option<CountryCode>>,
+) => option.sequenceArray(arrayOfOptions);
 
 // BONUS: try using these two functions in the exercises 'TRAVERSING OPTIONS'
 // and 'TRAVERSING ARRAYS' above
