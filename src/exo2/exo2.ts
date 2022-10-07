@@ -1,12 +1,9 @@
 // `fp-ts` training Exercise 2
 // Let's have fun with combinators!
-
-import { is } from 'decod';
-import { chain, either, option, readonlyArray } from 'fp-ts';
+import { either, option, readonlyArray } from 'fp-ts';
 import { Either } from 'fp-ts/Either';
-import { filterMap } from 'fp-ts/lib/Filterable';
 import { pipe } from 'fp-ts/lib/function';
-import { fromPredicate, Option } from 'fp-ts/Option';
+import { Option } from 'fp-ts/Option';
 import { Failure } from '../Failure';
 import { unimplemented } from '../utils';
 
@@ -131,36 +128,30 @@ const _checkTargetIsSelectedOrError = either.fromOption(() =>
   noTargetFailure(Exo2FailureMessage.NoTarget()),
 );
 
-const _validateWarriorOrError = either.chainW(
-  either.fromPredicate(isWarrior, character =>
-    invalidTargetFailure(
-      Exo2FailureMessage.InvalidTarget({
-        target: character.toString(),
-        action: 'smash',
-      }),
-    ),
+const _checkIsWarrior = either.fromPredicate(isWarrior, character =>
+  invalidTargetFailure(
+    Exo2FailureMessage.InvalidTarget({
+      target: character.toString(),
+      action: 'smash',
+    }),
   ),
 );
 
-const _validateWizardOrError = either.chainW(
-  either.fromPredicate(isWizard, character =>
-    invalidTargetFailure(
-      Exo2FailureMessage.InvalidTarget({
-        target: character.toString(),
-        action: 'burn',
-      }),
-    ),
+const _checkIsWizard = either.fromPredicate(isWizard, character =>
+  invalidTargetFailure(
+    Exo2FailureMessage.InvalidTarget({
+      target: character.toString(),
+      action: 'burn',
+    }),
   ),
 );
 
-const _validateArcherOrError = either.chainW(
-  either.fromPredicate(isArcher, character =>
-    invalidTargetFailure(
-      Exo2FailureMessage.InvalidTarget({
-        target: character.toString(),
-        action: 'shoot',
-      }),
-    ),
+const _checkIsArcher = either.fromPredicate(isArcher, character =>
+  invalidTargetFailure(
+    Exo2FailureMessage.InvalidTarget({
+      target: character.toString(),
+      action: 'shoot',
+    }),
   ),
 );
 
@@ -172,7 +163,7 @@ export const checkTargetAndSmash: (
   pipe(
     target,
     _checkTargetIsSelectedOrError,
-    _validateWarriorOrError,
+    either.chainW(_checkIsWarrior),
     either.map(character => character.smash()),
   );
 
@@ -184,7 +175,7 @@ export const checkTargetAndBurn: (
   pipe(
     target,
     _checkTargetIsSelectedOrError,
-    _validateWizardOrError,
+    either.chainW(_checkIsWizard),
     either.map(character => character.burn()),
   );
 
@@ -196,7 +187,7 @@ export const checkTargetAndShoot: (
   pipe(
     target,
     _checkTargetIsSelectedOrError,
-    _validateArcherOrError,
+    either.chainW(_checkIsArcher),
     either.map(character => character.shoot()),
   );
 
