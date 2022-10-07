@@ -5,8 +5,6 @@ import { reader } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { Reader } from 'fp-ts/Reader';
 
-import { unimplemented } from '../utils';
-
 // Sometimes, a function can have a huge amount of dependencies (services,
 // repositories, ...) and it is often impractical (not to say truly annoying)
 // to thread those values through multiple levels of the call stack.
@@ -108,9 +106,4 @@ export const greet: (name: string) => Reader<Country, string> = (
 
 export const excitedlyGreet: (name: string) => Reader<Country, string> = (
   name: string,
-) =>
-  pipe(
-    reader.ask<Country>(),
-    reader.map((country: Country) => `${sayHello(country)}, ${name}`),
-    reader.chain(exclamation),
-  );
+) => pipe(greet(name), reader.chain(exclamation));
