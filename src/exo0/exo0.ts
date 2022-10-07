@@ -42,9 +42,10 @@ export const not = (value: boolean) => !value;
 // `pipe` or `flow`), write the function `isOdd` that checks if a number is
 // odd.
 
-export const isOddP: (value: number) => boolean = (value: number) => pipe(value, isEven, not);
+export const isOddP: (value: number) => boolean = (value: number) =>
+  pipe(value, isEven, not);
 
-export const isOddF: (value: number) => boolean = (value: number) => flow(isEven, not)(value);
+export const isOddF: (value: number) => boolean = flow(isEven, not);
 
 // We will write a function that for any given number, computes the next
 // one according to the following rules:
@@ -63,10 +64,18 @@ export const ifThenElse =
 // Using `pipe` and `ifThenElse`, write the function that computes the next step in the Collatz
 // sequence.
 
-export const next: (value: number) => number = (value: number) => pipe(value, isEven, ifThenElse(() => value / 2, () => 3 * value + 1));
+export const next: (value: number) => number = (value: number) =>
+  pipe(
+    value,
+    isEven,
+    ifThenElse(
+      () => value / 2,
+      () => 3 * value + 1,
+    ),
+  );
 
 // Using only `flow` and `next`, write the function that for any given number
 // a_n from the Collatz sequence, returns the number a_n+3 (ie. the number
 // three steps ahead in the sequence).
 
-export const next3: (value: number) => number = (value: number) => flow(next, next, next)(value);
+export const next3: (value: number) => number = flow(next, next, next);
