@@ -6,7 +6,7 @@ import { pipe } from 'fp-ts/lib/function';
 import { Option } from 'fp-ts/lib/Option';
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord';
 import { Task } from 'fp-ts/lib/Task';
-import { sleep, unimplemented, unimplementedAsync } from '../utils';
+import { sleep } from '../utils';
 
 // When using many different Functors in a complex application, we can easily
 // get to a point when we have many nested types that we would like to 'merge',
@@ -156,9 +156,7 @@ export const getCountryCodeOfCountryNames = (
 
 export const getValidCountryCodeOfCountryNames: (
   countryNames: ReadonlyArray<string>,
-) => Option<ReadonlyArray<CountryCode>> = (
-  countryNames: ReadonlyArray<string>,
-) => option.traverseArray(getCountryCode)(countryNames);
+) => Option<ReadonlyArray<CountryCode>> = option.traverseArray(getCountryCode);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                   TRAVERSING ARRAYS ASYNCHRONOUSLY                        //
@@ -195,7 +193,6 @@ const createSimulatedAsyncMethod = (): ((toAdd: number) => Task<number>) => {
 
 export const simulatedAsyncMethodForParallel = createSimulatedAsyncMethod();
 
-//TODO(vincent): Ask someone if it is the equivalent of Promise.all ?
 export const performAsyncComputationInParallel: (
   numbers: ReadonlyArray<number>,
 ) => Task<ReadonlyArray<number>> = (numbers: ReadonlyArray<number>) =>
