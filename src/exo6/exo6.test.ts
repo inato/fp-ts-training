@@ -1,6 +1,6 @@
 import { either } from 'fp-ts';
 import { NodeTimeService } from './application/services/NodeTimeService';
-import { InMemoryUserRepository } from './domain/User/Repository/InMemoryUserRepository';
+import { User } from './domain';
 import {
   getCapitalizedUserName,
   getConcatenationOfTheBestFriendNameAndUserName,
@@ -11,7 +11,7 @@ import {
 describe('exo6', () => {
   it('should return the capitalized user name', async () => {
     const usecase = getCapitalizedUserName({ userId: '1' })({
-      userRepository: new InMemoryUserRepository([
+      userRepository: new User.Repository.InMemoryUserRepository([
         { id: '1', name: 'rob', bestFriendId: '' },
       ]),
     });
@@ -26,7 +26,7 @@ describe('exo6', () => {
       userIdOne: '1',
       userIdTwo: '2',
     })({
-      userRepository: new InMemoryUserRepository([
+      userRepository: new User.Repository.InMemoryUserRepository([
         { id: '1', name: 'rob', bestFriendId: '' },
         { id: '2', name: 'scott', bestFriendId: '' },
       ]),
@@ -41,7 +41,7 @@ describe('exo6', () => {
     const usecase = getConcatenationOfTheBestFriendNameAndUserName({
       userIdOne: '1',
     })({
-      userRepository: new InMemoryUserRepository([
+      userRepository: new User.Repository.InMemoryUserRepository([
         { id: '1', name: 'rob', bestFriendId: '2' },
         { id: '2', name: 'scott', bestFriendId: '1' },
       ]),
@@ -58,7 +58,7 @@ describe('exo6', () => {
     const usecase = getConcatenationOfUserNameAndYear({
       userIdOne: '1',
     })({
-      userRepository: new InMemoryUserRepository([
+      userRepository: new User.Repository.InMemoryUserRepository([
         { id: '1', name: 'rob', bestFriendId: '2' },
         { id: '2', name: 'scott', bestFriendId: '1' },
       ]),

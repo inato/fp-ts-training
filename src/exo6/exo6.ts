@@ -3,11 +3,8 @@
 
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither';
 import { unimplemented } from '../utils';
-import { TimeServiceAccess } from './application/services/TimeService';
-import {
-  UserNotFoundError,
-  UserRepositoryAccess,
-} from './domain/User/Repository/Repository';
+import { Application } from './application';
+import { User } from './domain';
 
 // In real world applications you will mostly manipulate `ReaderTaskEither` aka `rte` in the use-cases of the application.
 // `Reader` -> For dependency injection
@@ -26,8 +23,11 @@ import {
 
 export const getCapitalizedUserName: (args: {
   userId: string;
-}) => ReaderTaskEither<UserRepositoryAccess, UserNotFoundError, string> =
-  unimplemented;
+}) => ReaderTaskEither<
+  User.Repository.Access,
+  User.Repository.UserNotFoundError,
+  string
+> = unimplemented;
 
 // Sometimes you will need to get multiple data before performing an operation on them.
 // In this case, it is very convenient to use the `Do` notation.
@@ -45,8 +45,11 @@ export const getCapitalizedUserName: (args: {
 export const getConcatenationOfTheTwoUserNames: (args: {
   userIdOne: string;
   userIdTwo: string;
-}) => ReaderTaskEither<UserRepositoryAccess, UserNotFoundError, string> =
-  unimplemented;
+}) => ReaderTaskEither<
+  User.Repository.Access,
+  User.Repository.UserNotFoundError,
+  string
+> = unimplemented;
 
 // Sometimes, you will need to feed the current context with data that you can only retrieve after performing some operations.
 // For example, if you want to fetch the best friend of a user you will have to fetch the first user and then fetch its bestfriend.
@@ -55,13 +58,20 @@ export const getConcatenationOfTheTwoUserNames: (args: {
 
 export const getConcatenationOfTheBestFriendNameAndUserName: (args: {
   userIdOne: string;
-}) => ReaderTaskEither<UserRepositoryAccess, UserNotFoundError, string> =
-  unimplemented;
+}) => ReaderTaskEither<
+  User.Repository.Access,
+  User.Repository.UserNotFoundError,
+  string
+> = unimplemented;
 
 // Most of the time, you will need to use several external services.
 // The challenge of this usecase is to use TimeService in the flow of our `rte`
-type Dependencies = UserRepositoryAccess & TimeServiceAccess;
+type Dependencies = User.Repository.Access & Application.TimeService.Access;
 
 export const getConcatenationOfUserNameAndYear: (args: {
   userIdOne: string;
-}) => ReaderTaskEither<Dependencies, UserNotFoundError, string> = unimplemented;
+}) => ReaderTaskEither<
+  Dependencies,
+  User.Repository.UserNotFoundError,
+  string
+> = unimplemented;

@@ -4,15 +4,15 @@ import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither';
 import { User } from '../User';
 import { InMemoryUserRepository } from './InMemoryUserRepository';
 
-export interface UserRepositoryAccess {
+export interface Access {
   userRepository: InMemoryUserRepository;
 }
 
 export const getById = (
   userId: string,
-): ReaderTaskEither<UserRepositoryAccess, UserNotFoundError, User> =>
+): ReaderTaskEither<Access, UserNotFoundError, User> =>
   pipe(
-    reader.ask<UserRepositoryAccess>(),
+    reader.ask<Access>(),
     reader.map(({ userRepository }) => userRepository.getById(userId)),
   );
 

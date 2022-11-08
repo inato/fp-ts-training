@@ -4,10 +4,10 @@ export interface TimeService {
   thisYear: () => number;
 }
 
-export interface TimeServiceAccess {
+export interface Access {
   timeService: TimeService;
 }
 
 export const thisYear = getReaderMethod(
-  ({ timeService }: TimeServiceAccess) => timeService.thisYear,
+  ({ timeService }: Access) => timeService.thisYear,
 );
