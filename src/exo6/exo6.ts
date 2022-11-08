@@ -11,28 +11,29 @@ import {
 
 // In real world applications you will mostly manipulate `ReaderTaskEither` aka `rte` in the use-cases of the application.
 // `Reader` -> For dependency injection
-// `TaskEither` -> For async operation
+// `Task` -> For async operation
+// `Either` -> For computations that may fail
 //
 // Keep in Mind, A ReaderTaskEither is nothing more than a Reader of a Task of an Either
-// ReaderTaskEither<Env, Error, Value> === Reader<Env, Task<Either<Error, Value>>>
+// type ReaderTaskEither<Env, Error, Value> = Reader<Env, Task<Either<Error, Value>>>
 //
 // The ReaderTaskEither module from fp-ts gives us some useful methods to manipulate it.
 // You will learn the usage of the most common in the following usecases.
 
 // In the following usecase, you will learn the usage of `rte.map()`.
 // `rte.map()` allows you to perform an operation on the values stored in the current context.
-// In the following example, we need to fetch a user by its id and then we want to capitalize its name.
+// In the following example, we need to fetch a user by its id and then we want to return its capitalized.
 
 export const getCapitalizedUserName: (args: {
   userId: string;
 }) => ReaderTaskEither<UserRepositoryAccess, UserNotFoundError, string> =
   unimplemented;
 
-// Sometimes you will need to fetch multiple data before performing an operation on them.
+// Sometimes you will need to get multiple data before performing an operation on them.
 // In this case, it is very convenient to use the `Do` notation.
 //
-// The `Do` notation allows you to feed the context step-by-step by applicating the result
-// of operations on named variables using `rte.apS()` and `rte.apSW()`
+// The `Do` notation allows you to enrich the context step-by-step by binding the result
+// of an effect (in this case a RTE) to a named variable using `rte.apS` or `rte.apSW`.
 //
 // For example:
 // pipe(
