@@ -1,5 +1,5 @@
 import { either } from 'fp-ts';
-import { NodeTimeService } from './application/services/NodeTimeService';
+import { Application } from './application';
 import { User } from './domain';
 import {
   getCapitalizedUserName,
@@ -53,7 +53,7 @@ describe('exo6', () => {
   });
 
   it('should return the concatenation of the two capitalized user names based on the best friend relation', async () => {
-    const timeservice = new NodeTimeService();
+    const timeservice = new Application.NodeTimeService.NodeTimeService();
 
     const usecase = getConcatenationOfUserNameAndYear({
       userIdOne: '1',
