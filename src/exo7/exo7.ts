@@ -91,7 +91,7 @@ export const associativeArray: ReadonlyArray<[number, string]> = [
 // 4 => 'Denise'
 //
 // HINTS:
-// - You can look into `readonlySet.fromFoldable`
+// - You can look into `readonlyMap.fromFoldable`
 // - You need to provide an `Eq` instance for the key type
 // - You need to provide a `Magma` instance for the value type. In this case,
 //   the `Magma` instance should ignore the first value and return the second.
