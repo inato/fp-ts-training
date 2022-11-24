@@ -2,10 +2,10 @@
 // Managing nested effectful data with `traverse`
 
 import { option, readonlyRecord, task, taskOption } from 'fp-ts';
-import { pipe } from 'fp-ts/lib/function';
-import { Option } from 'fp-ts/lib/Option';
-import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord';
-import { Task } from 'fp-ts/lib/Task';
+import { pipe } from 'fp-ts/function';
+import { Option } from 'fp-ts/Option';
+import { ReadonlyRecord } from 'fp-ts/ReadonlyRecord';
+import { Task } from 'fp-ts/Task';
 import { sleep } from '../utils';
 
 // When using many different Functors in a complex application, we can easily
@@ -109,7 +109,7 @@ export const getCountryCurrencyOfOptionalCountryCode: (
 
 export const giveCurrencyOfCountryToUser: (
   countryNameFromUserMock: string,
-) => Task<Option<Currency>> = (countryNameFromUserMock) =>
+) => Task<Option<Currency>> = countryNameFromUserMock =>
   pipe(
     getCountryNameFromUser(countryNameFromUserMock),
     task.map(getCountryCode),
@@ -122,11 +122,11 @@ export const giveCurrencyOfCountryToUser: (
 
 export const giveCurrencyOfCountryToUserWithTaskOption: (
   countryNameFromUserMock: string,
-) => Task<Option<Currency>> = (countryNameFromUserMock) =>
+) => Task<Option<Currency>> = countryNameFromUserMock =>
   pipe(
     getCountryNameFromUser(countryNameFromUserMock),
     task.map(getCountryCode),
-    taskOption.chain((countryCode) =>
+    taskOption.chain(countryCode =>
       taskOption.fromTask(getCountryCurrency(countryCode)),
     ),
   );

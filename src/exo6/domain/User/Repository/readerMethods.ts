@@ -1,6 +1,6 @@
 import { reader } from 'fp-ts';
-import { pipe } from 'fp-ts/lib/function';
-import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither';
+import { pipe } from 'fp-ts/function';
+import { ReaderTaskEither } from 'fp-ts/ReaderTaskEither';
 import { User } from '../User';
 import { InMemoryUserRepository } from './InMemoryUserRepository';
 

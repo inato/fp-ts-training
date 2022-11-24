@@ -1,6 +1,6 @@
 import { taskEither } from 'fp-ts';
-import { pipe } from 'fp-ts/lib/function';
-import { TaskEither } from 'fp-ts/lib/TaskEither';
+import { pipe } from 'fp-ts/function';
+import { TaskEither } from 'fp-ts/TaskEither';
 import { User } from '../User';
 import { UserNotFoundError } from './readerMethods';
 

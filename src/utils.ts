@@ -1,6 +1,6 @@
 import { reader } from 'fp-ts';
-import { pipe } from 'fp-ts/lib/function';
-import { Reader } from 'fp-ts/lib/Reader';
+import { pipe } from 'fp-ts/function';
+import { Reader } from 'fp-ts/Reader';
 
 export const unimplemented = (..._args: any) => undefined as any;
 export const unimplementedAsync = () => () => undefined as any;
