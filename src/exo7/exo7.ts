@@ -1,7 +1,15 @@
 // `fp-ts` training Exercise 7
 // Manipulate collections with type-classes
 
-import { unimplemented } from '../utils';
+import {
+  number,
+  readonlyArray,
+  readonlyMap,
+  readonlySet,
+  semigroup,
+  string,
+} from 'fp-ts';
+import { pipe } from 'fp-ts/function';
 
 // In this exercise, we will learn how to manipulate essential collections
 // such as `Set` and `Map`.
@@ -41,7 +49,10 @@ export const numberArray: ReadonlyArray<number> = [7, 42, 1337, 1, 0, 1337, 42];
 // - `fp-ts` doesn't know how you want to define equality for the inner type
 //   and requires you to provide an `Eq` instance
 
-export const numberSet: ReadonlySet<number> = unimplemented();
+export const numberSet: ReadonlySet<number> = pipe(
+  numberArray,
+  readonlySet.fromReadonlyArray(number.Eq),
+);
 
 // Convert `numberSet` back to an an array in `numberArrayFromSet`.
 // You need to use the `ReadonlySet` module from `fp-ts` instead of the
@@ -57,7 +68,10 @@ export const numberSet: ReadonlySet<number> = unimplemented();
 //   the values to be ordered in the output array, by providing an `Ord`
 //   instance.
 
-export const numberArrayFromSet: ReadonlyArray<number> = unimplemented();
+export const numberArrayFromSet: ReadonlyArray<number> = pipe(
+  numberSet,
+  readonlySet.toReadonlyArray(number.Ord),
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                    MAP                                    //
@@ -101,7 +115,10 @@ export const associativeArray: ReadonlyArray<[number, string]> = [
 //   long as they implement `Foldable`. Here, you can simply pass the standard
 //   `readonlyArray.Foldable` instance.
 
-export const mapWithLastEntry: ReadonlyMap<number, string> = unimplemented();
+export const mapWithLastEntry: ReadonlyMap<number, string> = pipe(
+  associativeArray,
+  readonlyMap.fromFoldable(number.Eq, semigroup.last(), readonlyArray.Foldable),
+);
 
 // Same thing as above, except that upon key collision we don't want to simply
 // select the newest entry value but append it to the previous one.
@@ -121,8 +138,10 @@ export const mapWithLastEntry: ReadonlyMap<number, string> = unimplemented();
 // Did you find something helpful in the `Semigroup` module that may have been
 // helpful in defining `mapWithLastEntry`?
 
-export const mapWithConcatenatedEntries: ReadonlyMap<number, string> =
-  unimplemented();
+export const mapWithConcatenatedEntries: ReadonlyMap<number, string> = pipe(
+  associativeArray,
+  readonlyMap.fromFoldable(number.Eq, string.Semigroup, readonlyArray.Foldable),
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                     DIFFERENCE / UNION / INTERSECTION                     //
@@ -137,12 +156,16 @@ export const odds = new Set([1, 3, 5, 7, 9]);
 // HINT:
 // - Be mindful of the order of operands for the operator you will chose.
 
-export const nonPrimeOdds: ReadonlySet<number> = unimplemented();
+export const nonPrimeOdds: ReadonlySet<number> = readonlySet.difference(
+  number.Eq,
+)(odds, primes);
 
 // Construct the set `primeOdds` from the two sets defined above. It should
 // only include the odd numbers that are also prime.
 
-export const primeOdds: ReadonlySet<number> = unimplemented();
+export const primeOdds: ReadonlySet<number> = readonlySet.intersection(
+  number.Eq,
+)(odds, primes);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -178,10 +201,20 @@ export const pageViewsB = new Map(
 //
 // In case a page appears in both sources, their view count should be summed.
 
-export const allPageViews: ReadonlyMap<string, Analytics> = unimplemented();
+const S = semigroup.struct<Analytics>({
+  page: semigroup.first(),
+  views: number.SemigroupSum,
+});
+
+export const allPageViews: ReadonlyMap<string, Analytics> = pipe(
+  pageViewsA,
+  readonlyMap.union(string.Eq, S)(pageViewsB),
+);
 
 // Construct the map with the total page views but only for the pages that
 // appear in both sources of analytics `pageViewsA` and `pageViewsB`.
 
-export const intersectionPageViews: ReadonlyMap<string, Analytics> =
-  unimplemented();
+export const intersectionPageViews: ReadonlyMap<string, Analytics> = pipe(
+  pageViewsA,
+  readonlyMap.intersection(string.Eq, S)(pageViewsB),
+);
