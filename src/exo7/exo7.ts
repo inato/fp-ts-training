@@ -95,6 +95,7 @@ export const associativeArray: ReadonlyArray<[number, string]> = [
 // - You need to provide an `Eq` instance for the key type
 // - You need to provide a `Magma` instance for the value type. In this case,
 //   the `Magma` instance should ignore the first value and return the second.
+//   (You can define your own, or look into the `Magma` or `Semigroup` module)
 // - You need to provide the `Foldable` instance for the input container type.
 //   Just know that you can construct a `Map` from other types than `Array` as
 //   long as they implement `Foldable`. Here, you can simply pass the standard
