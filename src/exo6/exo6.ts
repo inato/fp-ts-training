@@ -76,7 +76,7 @@ export const getConcatenationOfTheBestFriendNameAndUserName: (args: {
 // The challenge of this usecase is to use TimeService in the flow of our `rte`
 type Dependencies = User.Repository.Access & Application.TimeService.Access;
 
-export const getConcatenationOfUserNameAndYear: (args: {
+export const getConcatenationOfUserNameAndCurrentYear: (args: {
   userIdOne: string;
 }) => ReaderTaskEither<
   Dependencies,
