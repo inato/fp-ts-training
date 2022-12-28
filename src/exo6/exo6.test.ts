@@ -5,7 +5,7 @@ import {
   getCapitalizedUserName,
   getConcatenationOfTheBestFriendNameAndUserName,
   getConcatenationOfTheTwoUserNames,
-  getConcatenationOfUserNameAndYear,
+  getConcatenationOfUserNameAndCurrentYear,
 } from './exo6';
 
 describe('exo6', () => {
@@ -34,7 +34,7 @@ describe('exo6', () => {
 
     const result = await usecase();
 
-    expect(result).toEqual(either.right('robscott'));
+    expect(result).toEqual(either.right('RobScott'));
   });
 
   it('should return the concatenation of the two capitalized user names based on the best friend relation', async () => {
@@ -49,13 +49,13 @@ describe('exo6', () => {
 
     const result = await usecase();
 
-    expect(result).toEqual(either.right('robscott'));
+    expect(result).toEqual(either.right('RobScott'));
   });
 
-  it('should return the concatenation of the two capitalized user names based on the best friend relation', async () => {
+  it('should return the concatenation of the user name and the current year', async () => {
     const timeservice = new Application.NodeTimeService.NodeTimeService();
 
-    const usecase = getConcatenationOfUserNameAndYear({
+    const usecase = getConcatenationOfUserNameAndCurrentYear({
       userIdOne: '1',
     })({
       userRepository: new User.Repository.InMemoryUserRepository([
