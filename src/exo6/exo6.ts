@@ -55,11 +55,17 @@ export const getConcatenationOfTheTwoUserNames = ({
 }) =>
   pipe(
     rte.Do,
-    rte.apS('userOne', User.Repository.getById(userIdOne)),
-    rte.apS('userTwo', User.Repository.getById(userIdTwo)),
+    rte.apS(
+      'userOneCapitalizedName',
+      getCapitalizedUserName({ userId: userIdOne }),
+    ),
+    rte.apS(
+      'userTwoCapitalizedName',
+      getCapitalizedUserName({ userId: userIdTwo }),
+    ),
     rte.map(
-      ({ userOne, userTwo }) =>
-        `${capitalize(userOne.name)}${capitalize(userTwo.name)}`,
+      ({ userOneCapitalizedName, userTwoCapitalizedName }) =>
+        userOneCapitalizedName + userTwoCapitalizedName,
     ),
   );
 
