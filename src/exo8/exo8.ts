@@ -2,8 +2,10 @@
 // Define your own combinators
 
 import { Either } from 'fp-ts/Either';
+import { flow } from 'fp-ts/function';
+import { Reader } from 'fp-ts/Reader';
 import { ReaderTaskEither } from 'fp-ts/ReaderTaskEither';
-import { unimplemented } from '../utils';
+import { rte } from '../readerTaskEither';
 
 // Technically, a combinator is a pure function with no free variables in it,
 // ie. one that does not depend on any variable from its enclosing scope.
@@ -50,23 +52,69 @@ export const bindEitherK: <N extends string, A, E, B>(
   R,
   E,
   { readonly [K in N | keyof A]: K extends keyof A ? A[K] : B }
-> = unimplemented;
+> = (name, f) => rte.bind(name, a => rte.fromEither(f(a)));
 
 // Write the implementation and type definition of `bindEitherKW`, the
 // "Widened" version of `bindEitherK`.
 
-export const bindEitherKW = unimplemented;
+export const bindEitherKW: <N extends string, A, E2, B>(
+  name: Exclude<N, keyof A>,
+  f: (a: A) => Either<E2, B>,
+) => <R, E1>(
+  ma: ReaderTaskEither<R, E1, A>,
+) => ReaderTaskEither<
+  R,
+  E1 | E2,
+  { readonly [K in N | keyof A]: K extends keyof A ? A[K] : B }
+> = (name, f) => rte.bindW(name, a => rte.fromEither(f(a)));
 
 // Write the implementations and type definitions of `apEitherK` and
 // `apEitherKW`.
 
-export const apEitherK = unimplemented;
+// Don't understand why I can remove the generic type on ma here ?
+export const apEitherK: <N extends string, A, R, E, B>(
+  name: Exclude<N, keyof A>,
+  f: Either<E, B>,
+) => (
+  ma: ReaderTaskEither<R, E, A>,
+) => ReaderTaskEither<
+  R,
+  E,
+  { readonly [K in N | keyof A]: K extends keyof A ? A[K] : B }
+> = (name, f) => rte.apS(name, rte.fromEither(f));
 
-export const apEitherKW = unimplemented;
+export const apEitherKW: <N extends string, A, E, B>(
+  name: Exclude<N, keyof A>,
+  f: Either<E, B>,
+) => <R, E1>(
+  ma: ReaderTaskEither<R, E1, A>,
+) => ReaderTaskEither<
+  R,
+  E | E1,
+  { readonly [K in N | keyof A]: K extends keyof A ? A[K] : B }
+> = (name, f) => rte.apSW(name, rte.fromEither(f));
 
 // Write the implementations and type definitions of `apEitherK` and
 // `apEitherKW`.
 
-export const bindReaderK = unimplemented;
+export const bindReaderK: <N extends string, A, R, E, B>(
+  name: Exclude<N, keyof A>,
+  f: (a: A) => Reader<R, B>,
+) => (fa: ReaderTaskEither<R, E, A>) => ReaderTaskEither<
+  R,
+  E,
+  {
+    readonly [K in keyof A | N]: K extends keyof A ? A[K] : B;
+  }
+> = (name, f) => rte.bind(name, a => rte.fromReader(f(a)));
 
-export const bindReaderKW = unimplemented;
+export const bindReaderKW: <N extends string, A, R1, E, B>(
+  name: Exclude<N, keyof A>,
+  f: (a: A) => Reader<R1, B>,
+) => <R2>(fa: ReaderTaskEither<R2, E, A>) => ReaderTaskEither<
+  R1 & R2,
+  E,
+  {
+    readonly [K in keyof A | N]: K extends keyof A ? A[K] : B;
+  }
+> = (name, f) => rte.bindW(name, flow(f, rte.rightReader));
