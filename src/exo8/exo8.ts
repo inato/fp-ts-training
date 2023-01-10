@@ -40,6 +40,31 @@ import { unimplemented } from '../utils';
 //   use any other combinators available from the library
 // - you may want to define it using the existing `rte.bind` and somehow
 //   applying some conversion to the result
+//
+// **Read if you are STUCK**:
+//
+// Imagine you have a rte-based pipe, eg:
+//
+// ```ts
+// const foo = pipe(
+//   rte.Do,
+//   rte.apS('user', getUser(userId)),
+//   ...
+// );
+// ```
+//
+// Say you want to apply a function `bar: (user: User) => Either<E, User>`
+// inside that pipe to produce a result.
+// How would you do it without `bindEitherK`?
+//
+// You would probably try to use something like:
+// `rte.bind('newValue', ({ user }) => bar(user))`.
+// Only that doesn't work because `rte.bind` expects a function that returns a
+// `ReaderTaskEither`, not an `Either`. However, you can always convert (lift)
+// an `Either` to a `ReaderTaskEither` with `rte.fromEither`.
+//
+// Well there you have it, `bindEitherK` is nothing more than
+// `rte.bind(name, a => rte.fromEither(f(a)))`
 
 export const bindEitherK: <N extends string, A, E, B>(
   name: Exclude<N, keyof A>,
@@ -59,6 +84,10 @@ export const bindEitherKW = unimplemented;
 
 // Write the implementations and type definitions of `apEitherK` and
 // `apEitherKW`.
+//
+// HINT:
+// - remember that "widen" in the case of `Either` means the union of the
+//   possible error types
 
 export const apEitherK = unimplemented;
 
@@ -66,6 +95,10 @@ export const apEitherKW = unimplemented;
 
 // Write the implementations and type definitions of `bindReaderK` and
 // `bindReaderKW`.
+//
+// HINT:
+// - remember that "widen" in the case of `Reader` means the interesection of
+//   the possible environment types
 
 export const bindReaderK = unimplemented;
 
