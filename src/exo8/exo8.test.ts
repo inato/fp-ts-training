@@ -1,4 +1,4 @@
-import { either, readerTaskEither as rte } from 'fp-ts';
+import { either, reader, readerTaskEither as rte } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
 import {
   apEitherK as rteApEitherK,

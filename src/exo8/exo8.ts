@@ -14,7 +14,7 @@ import { unimplemented } from '../utils';
 //
 // The fp-ts library provides a rich collection for such combinators for each
 // type and module but sometimes, you may want to reach for a combinator that
-// doesn't yet exist in the library and it is usefull to know how to define
+// doesn't yet exist in the library and it is useful to know how to define
 // your own.
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,8 +64,8 @@ export const apEitherK = unimplemented;
 
 export const apEitherKW = unimplemented;
 
-// Write the implementations and type definitions of `apEitherK` and
-// `apEitherKW`.
+// Write the implementations and type definitions of `bindReaderK` and
+// `bindReaderKW`.
 
 export const bindReaderK = unimplemented;
 
