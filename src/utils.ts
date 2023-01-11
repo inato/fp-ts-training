@@ -2,7 +2,7 @@ import { reader } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { Reader } from 'fp-ts/lib/Reader';
 
-export const unimplemented = () => undefined as any;
+export const unimplemented = (..._args: any) => undefined as any;
 export const unimplementedAsync = () => () => undefined as any;
 
 export function sleep(ms: number) {
