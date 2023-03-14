@@ -10,7 +10,7 @@ import { unimplemented } from '../utils';
 //                                   SETUP                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// We are developping a small game, and the player can control either one of
+// We are developing a small game, and the player can control either one of
 // three types of characters, mainly differentiated by the type of damage they
 // can put out.
 

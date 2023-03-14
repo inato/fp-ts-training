@@ -23,7 +23,6 @@ import { User } from './domain';
 // current context. In the following example, we need to fetch a user by its id
 // and then we want to return its capitalized.
 
-
 export const getCapitalizedUserName: (args: {
   userId: string;
 }) => ReaderTaskEither<
@@ -31,6 +30,10 @@ export const getCapitalizedUserName: (args: {
   User.Repository.UserNotFoundError,
   string
 > = unimplemented;
+
+///////////////////////////////////////////////////////////////////////////////
+//                          DO NOTATION - APS                                //
+///////////////////////////////////////////////////////////////////////////////
 
 // Sometimes you will need to get multiple data before performing an operation
 // on them. In this case, it is very convenient to use the `Do` notation.
@@ -55,6 +58,10 @@ export const getConcatenationOfTheTwoUserNames: (args: {
   string
 > = unimplemented;
 
+///////////////////////////////////////////////////////////////////////////////
+//                          DO NOTATION - BIND                               //
+///////////////////////////////////////////////////////////////////////////////
+
 // Sometimes, you will need to feed the current context with data that you can
 // only retrieve after performing some operations, in other words, operations
 // need to be sequential.
@@ -73,7 +80,7 @@ export const getConcatenationOfTheBestFriendNameAndUserName: (args: {
 > = unimplemented;
 
 // Most of the time, you will need to use several external services.
-// The challenge of this usecase is to use TimeService in the flow of our `rte`
+// The challenge of this usecase is to use TimeService in the context of our `rte`
 type Dependencies = User.Repository.Access & Application.TimeService.Access;
 
 export const getConcatenationOfUserNameAndCurrentYear: (args: {
