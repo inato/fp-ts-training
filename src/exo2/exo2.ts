@@ -5,6 +5,10 @@ import { Either } from 'fp-ts/Either';
 import { Option } from 'fp-ts/Option';
 import { Failure } from '../Failure';
 import { unimplemented } from '../utils';
+import { flow, pipe } from 'fp-ts/lib/function';
+import { array, either, option, readonlyArray, readonlyRecord } from 'fp-ts';
+import { sequenceS } from 'fp-ts/lib/Apply';
+import { foldMap, map } from 'fp-ts/lib/ReadonlyRecord';
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   SETUP                                   //
@@ -117,17 +121,65 @@ export const invalidTargetFailure = Failure.builder(
 // common operations done with the `Either` type and it is available through
 // the `chain` operator and its slightly relaxed variant `chainW`.
 
+const checkTargetIsNotNone = either.fromOption(() =>
+  noTargetFailure('No unit currently selected'),
+);
+
+type GuardedType<T> = T extends (x: any) => x is infer T ? T : never;
+
+const checkTarget =
+  <
+    T extends
+      | {
+          typeGuard: (c: Character) => c is Warrior;
+          action: 'smash';
+        }
+      | {
+          typeGuard: (c: Character) => c is Wizard;
+          action: 'burn';
+        }
+      | {
+          typeGuard: (c: Character) => c is Archer;
+          action: 'shoot';
+        },
+    ReturnType extends GuardedType<T['typeGuard']>,
+  >(
+    props: T,
+  ) =>
+  (c: Character) =>
+    pipe(
+      c,
+      either.fromPredicate(props.typeGuard, target =>
+        invalidTargetFailure(
+          `${target.toString()} cannot perform ${props.action}`,
+        ),
+      ),
+      either.map(target => target as ReturnType),
+    );
+
 export const checkTargetAndSmash: (
   target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = flow(
+  checkTargetIsNotNone,
+  either.chainW(checkTarget({ typeGuard: isWarrior, action: 'smash' })),
+  either.map(warrior => warrior.smash()),
+);
 
 export const checkTargetAndBurn: (
   target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = flow(
+  checkTargetIsNotNone,
+  either.chainW(checkTarget({ typeGuard: isWizard, action: 'burn' })),
+  either.map(wizard => wizard.burn()),
+);
 
 export const checkTargetAndShoot: (
   target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = flow(
+  checkTargetIsNotNone,
+  either.chainW(checkTarget({ typeGuard: isArcher, action: 'shoot' })),
+  either.map(archer => archer.shoot()),
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
@@ -146,14 +198,27 @@ export const checkTargetAndShoot: (
 // BONUS POINTS: If you properly defined small private helpers in the previous
 // section, they should be easily reused for those use-cases.
 
-export const smashOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const smashOption: (
+  character: Character,
+) => Option<Damage> = character =>
+  pipe(checkTargetAndSmash(option.some(character)), option.fromEither); // That's the lazy way
 
-export const burnOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const burnOption: (character: Character) => Option<Damage> = flow(
+  // That's without reusing the previous functions, only smaller private helpers
+  option.fromNullable,
+  checkTargetIsNotNone,
+  either.chainW(checkTarget({ typeGuard: isWizard, action: 'burn' })),
+  either.map(wizard => wizard.burn()),
+  option.fromEither,
+);
 
-export const shootOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const shootOption: (character: Character) => Option<Damage> = flow(
+  option.fromNullable,
+  checkTargetIsNotNone,
+  either.chainW(checkTarget({ typeGuard: isArcher, action: 'shoot' })),
+  either.map(archer => archer.shoot()),
+  option.fromEither,
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   ARRAY                                   //
@@ -173,6 +238,17 @@ export interface TotalDamage {
   [Damage.Magical]: number;
   [Damage.Ranged]: number;
 }
+export const attack: (army: ReadonlyArray<Character>) => TotalDamage = army =>
+  pipe(
+    {
+      [Damage.Physical]: countDamage(smashOption),
+      [Damage.Magical]: countDamage(burnOption),
+      [Damage.Ranged]: countDamage(shootOption),
+    },
+    readonlyRecord.map(m => m(army)),
+  );
 
-export const attack: (army: ReadonlyArray<Character>) => TotalDamage =
-  unimplemented;
+const countDamage = (
+  expectedDamageByCharacter: (character: Character) => Option<Damage>,
+): ((fa: readonly Character[]) => number) =>
+  flow(readonlyArray.filterMap(expectedDamageByCharacter), a => a.length);
