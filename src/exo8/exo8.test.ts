@@ -109,7 +109,7 @@ describe('exo8', () => {
       const pipeline = await pipe(
         rte.Do,
         rte.apS('foo', rte.of<{ a: string }, string, number>(42)),
-        rteBindReaderKW('bar', ({ foo }) => reader.of<{ b: number }>(`${foo}`)),
+        rteBindReaderKW('bar', ({ foo }) => reader.of<{ b: number }>(`${foo}`)), // Here, compilation issue. Do we miss a ', string' ? or did I miss something ?
       )({ a: '', b: 0 })();
 
       const expected = await rte.of({ foo: 42, bar: '42' })({})();
