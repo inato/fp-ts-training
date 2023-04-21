@@ -3,8 +3,13 @@ module.exports = {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/dist/', '/node_modules/'],
   globals: {
-    'ts-jest': {
-      diagnostics: { warnOnly: true },
+    transform: {
+      '*': [
+        'ts-jest',
+        {
+          diagnostics: { warnOnly: true },
+        },
+      ],
     },
   },
 };
