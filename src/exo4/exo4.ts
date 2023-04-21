@@ -47,7 +47,7 @@ export enum Country {
 export const exclamation = (sentence: string): Reader<Country, string> =>
   pipe(
     reader.ask<Country>(),
-    reader.map((country) => {
+    reader.map(country => {
       switch (country) {
         case Country.France:
           return `${sentence} !`;
@@ -87,7 +87,7 @@ export const sayHello = (country: Country): string => {
 export const greet = (name: string): Reader<Country, string> =>
   pipe(
     sayHello,
-    reader.map((greeting) => `${greeting}, ${name}`),
+    reader.map(greeting => `${greeting}, ${name}`),
   );
 
 // Finally, we are going to compose multiple `Reader`s together.

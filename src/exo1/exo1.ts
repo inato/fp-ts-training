@@ -64,7 +64,6 @@ export const safeDivideBonus = (a: number, b: number) =>
 // - `either.fromOption(() => leftValue)(option)`
 
 // Here is an simple error type to help you:
-export type DivisionByZeroError = 'Error: Division by zero';
 export const DivisionByZero = 'Error: Division by zero' as const;
 
 export const safeDivideWithError = flow(

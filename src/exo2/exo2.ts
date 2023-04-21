@@ -84,10 +84,8 @@ export enum Exo2FailureType {
   InvalidTarget = 'Exo2FailureType_InvalidTarget',
 }
 
-export type NoTargetFailure = Failure<Exo2FailureType.NoTarget>;
 export const noTargetFailure = Failure.builder(Exo2FailureType.NoTarget);
 
-export type InvalidTargetFailure = Failure<Exo2FailureType.InvalidTarget>;
 export const invalidTargetFailure = Failure.builder(
   Exo2FailureType.InvalidTarget,
 );
@@ -122,31 +120,31 @@ const checkSelected = either.fromOption(() =>
   noTargetFailure('No unit currently selected'),
 );
 
-const checkWarrior = either.fromPredicate(isWarrior, (character) =>
+const checkWarrior = either.fromPredicate(isWarrior, character =>
   invalidTargetFailure(`${character.toString()} cannot perform smash`),
 );
 
-const checkWizard = either.fromPredicate(isWizard, (character) =>
+const checkWizard = either.fromPredicate(isWizard, character =>
   invalidTargetFailure(`${character.toString()} cannot perform burn`),
 );
 
-const checkArcher = either.fromPredicate(isArcher, (character) =>
+const checkArcher = either.fromPredicate(isArcher, character =>
   invalidTargetFailure(`${character.toString()} cannot perform shoot`),
 );
 
 const smash = flow(
   checkWarrior,
-  either.map((warrior) => warrior.smash()),
+  either.map(warrior => warrior.smash()),
 );
 
 const burn = flow(
   checkWizard,
-  either.map((wizard) => wizard.burn()),
+  either.map(wizard => wizard.burn()),
 );
 
 const shoot = flow(
   checkArcher,
-  either.map((archer) => archer.shoot()),
+  either.map(archer => archer.shoot()),
 );
 
 export const checkTargetAndSmash = (target: Option<Character>) =>
@@ -201,7 +199,19 @@ export interface TotalDamage {
 }
 
 export const attack = (army: ReadonlyArray<Character>) => ({
-  [Damage.Physical]: pipe(army, readonlyArray.filterMap(smashOption)).length,
-  [Damage.Magical]: pipe(army, readonlyArray.filterMap(burnOption)).length,
-  [Damage.Ranged]: pipe(army, readonlyArray.filterMap(shootOption)).length,
+  [Damage.Physical]: pipe(
+    army,
+    readonlyArray.filterMap(smashOption),
+    readonlyArray.size,
+  ),
+  [Damage.Magical]: pipe(
+    army,
+    readonlyArray.filterMap(burnOption),
+    readonlyArray.size,
+  ),
+  [Damage.Ranged]: pipe(
+    army,
+    readonlyArray.filterMap(shootOption),
+    readonlyArray.size,
+  ),
 });

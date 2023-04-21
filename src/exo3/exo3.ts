@@ -35,13 +35,9 @@ import { Option } from 'fp-ts/Option';
 // expose some preconstructed instances of `Ord<T>` for said primitives such as
 // `string.Ord: Ord<string>` or `number.Ord: Ord<number>`.
 
-export const sortStrings: (
-  strings: ReadonlyArray<string>,
-) => ReadonlyArray<string> = readonlyArray.sort(string.Ord);
+export const sortStrings = readonlyArray.sort(string.Ord);
 
-export const sortNumbers: (
-  numbers: ReadonlyArray<number>,
-) => ReadonlyArray<number> = readonlyArray.sort(number.Ord);
+export const sortNumbers = readonlyArray.sort(number.Ord);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                REVERSE SORT                               //
@@ -56,9 +52,9 @@ export const sortNumbers: (
 //
 // HINT: Any ordering can be reversed with a simple function `ord.reverse`.
 
-export const sortNumbersDescending: (
-  numbers: ReadonlyArray<number>,
-) => ReadonlyArray<number> = readonlyArray.sort(ord.reverse(number.Ord));
+export const sortNumbersDescending = readonlyArray.sort(
+  ord.reverse(number.Ord),
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                            SORT OPTIONAL VALUES                           //
@@ -74,9 +70,7 @@ export const sortNumbersDescending: (
 // of building an `Ord` instance for their qualified inner type. You may want
 // to take a look at `option.getOrd`.
 
-export const sortOptionalNumbers: (
-  optionalNumbers: ReadonlyArray<Option<number>>,
-) => ReadonlyArray<Option<number>> = readonlyArray.sort(
+export const sortOptionalNumbers = readonlyArray.sort(
   option.getOrd(number.Ord),
 );
 
