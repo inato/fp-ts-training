@@ -109,7 +109,9 @@ describe('exo8', () => {
       const pipeline = await pipe(
         rte.Do,
         rte.apS('foo', rte.of<{ a: string }, string, number>(42)),
-        rteBindReaderKW('bar', ({ foo }) => reader.of<{ b: number }>(`${foo}`)),
+        rteBindReaderKW('bar', ({ foo }) =>
+          reader.of<{ b: number }, string>(`${foo}`),
+        ),
       )({ a: '', b: 0 })();
 
       const expected = await rte.of({ foo: 42, bar: '42' })({})();
