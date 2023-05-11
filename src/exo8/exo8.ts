@@ -82,16 +82,16 @@ export const bindEitherK: <N extends string, A, E, B>(
 
 export const bindEitherKW = unimplemented;
 
-// Write the implementations and type definitions of `apEitherK` and
-// `apEitherKW`.
+// Write the implementations and type definitions of `apSEitherK` and
+// `apSEitherKW`.
 //
 // HINT:
 // - remember that "widen" in the case of `Either` means the union of the
 //   possible error types
 
-export const apEitherK = unimplemented;
+export const apSEitherK = unimplemented;
 
-export const apEitherKW = unimplemented;
+export const apSEitherKW = unimplemented;
 
 // Write the implementations and type definitions of `bindReaderK` and
 // `bindReaderKW`.

@@ -1,8 +1,8 @@
 import { either, reader, readerTaskEither as rte } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
 import {
-  apEitherK as rteApEitherK,
-  apEitherKW as rteApEitherKW,
+  apSEitherK as rteApSEitherK,
+  apSEitherKW as rteApSEitherKW,
   bindEitherK as rteBindEitherK,
   bindEitherKW as rteBindEitherKW,
   bindReaderK as rteBindReaderK,
@@ -52,12 +52,12 @@ describe('exo8', () => {
     });
   });
 
-  describe('apEitherK[W]', () => {
+  describe('apSEitherK[W]', () => {
     it('should be usable in a happy path do-notation rte pipeline', async () => {
       const pipeline = await pipe(
         rte.Do,
         rte.apS('foo', rte.of(42)),
-        rteApEitherK('bar', either.right(1337)),
+        rteApSEitherK('bar', either.right(1337)),
       )({})();
 
       const expected = await rte.of({ foo: 42, bar: 1337 })({})();
@@ -69,8 +69,8 @@ describe('exo8', () => {
       const pipeline = await pipe(
         rte.Do,
         rte.apS('foo', rte.of<unknown, string, number>(42)),
-        rteApEitherK('bar', either.right(1337)),
-        rteApEitherK('baz', either.left(`Error!`)),
+        rteApSEitherK('bar', either.right(1337)),
+        rteApSEitherK('baz', either.left(`Error!`)),
       )({})();
 
       const expected = await rte.left('Error!')({})();
@@ -82,8 +82,8 @@ describe('exo8', () => {
       const pipeline = await pipe(
         rte.Do,
         rte.apS('foo', rte.of<unknown, string, number>(42)),
-        rteApEitherK('bar', either.right(1337)),
-        rteApEitherKW('baz', either.left(0)),
+        rteApSEitherK('bar', either.right(1337)),
+        rteApSEitherKW('baz', either.left(0)),
       )({})();
 
       const expected = await rte.left(0)({})();
