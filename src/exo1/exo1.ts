@@ -20,23 +20,21 @@ export const divide = (a: number, b: number): number => {
 // Write the safe version (meaning it handles the case where b is 0) of `divide` with signature:
 // safeDivide : (a: number, b: number) => Option<number>
 //
-// HINT: Option has two basic contructors:
+// HINT: Option has two basic constructors:
 // - `option.some(value)`
 // - `option.none`
 
 export const safeDivide: (a: number, b: number) => Option<number> =
   unimplemented;
 
-
 // You probably wrote `safeDivide` using `if` statements and it's perfectly valid!
 // There are ways to not use `if` statements.
-// Keep in mind that extracting small functions out of pipes and using `if` statements in them 
+// Keep in mind that extracting small functions out of pipes and using `if` statements in them
 // is perfectly fine and is sometimes more readable than not using `if`.
 //
 // BONUS: Try now to re-write `safeDivide` without any `if`
 //
 // HINT: Have a look at `fromPredicate` constructor
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //

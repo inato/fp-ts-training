@@ -76,6 +76,7 @@ export const naiveGiveCurrencyOfCountryToUser = (
     task.map(getCountryCode),
     task.map(option.map(getCountryCurrency)),
   );
+
 // The result type of this method is: `Task<Option<Task<Currency>>>`
 // Not ideal, right? We would need to await the first `Task`, then check if it's
 // `Some` to get the `Task` inside and finally await the `Task` to retrieve the
@@ -103,7 +104,7 @@ export const getCountryCurrencyOfOptionalCountryCode: (
 // `Task<Option<Currency>>`
 //
 // HINT: You should be able to copy the pipe from naiveGiveCurrencyOfCountryToUser
-// and make only few updates of it. `task.chain` helper may be usefull.
+// and make only few updates of it. The `task.chain` helper may be useful.
 
 export const giveCurrencyOfCountryToUser: (
   countryNameFromUserMock: string,
@@ -123,6 +124,7 @@ export const giveCurrencyOfCountryToUser: (
 export const getCountryCodeOfCountryNames = (
   countryNames: ReadonlyArray<string>,
 ) => countryNames.map(getCountryCode);
+
 // As expected, we end up with a `ReadonlyArray<Option<CountryCode>>`. We know for
 // each item of the array if we have been able to find the corresponding country
 // code or not.
@@ -134,7 +136,7 @@ export const getCountryCodeOfCountryNames = (
 // Doing this allows you to stop the process if you have a `None` to tell the user
 // that some countries are not valid or move on with a `ReadonlyArray<CountryCode>>`
 // if all are valid.
-// Typewise, it means going from `ReadonlyArray<Option<CountryCode>>` to
+// Type-wise, it means going from `ReadonlyArray<Option<CountryCode>>` to
 // `Option<ReadonlyArray<CountryCode>>`
 // This is what traversing array is about.
 
@@ -208,7 +210,7 @@ export const performAsyncComputationInSequence: (
 // `Option<Task>` in our example)
 // Sometimes, you just have two nested containers that you want to 'invert'. It
 // can be because the order of containers is meaningful (like `Either<Option>`
-// and `Option<Either>`) because you got them from an external api, as
+// and `Option<Either>`) or because you got them from an external api, as
 // in the examples.
 // In that case, what you need is `sequence`, which you can find in the modules
 // that have `traverse`.

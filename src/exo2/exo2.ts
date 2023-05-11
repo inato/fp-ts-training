@@ -10,7 +10,7 @@ import { unimplemented } from '../utils';
 //                                   SETUP                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// We are developping a small game, and the player can control either one of
+// We are developing a small game, and the player can control either one of
 // three types of characters, mainly differentiated by the type of damage they
 // can put out.
 
@@ -133,7 +133,7 @@ export const checkTargetAndShoot: (
 //                                  OPTION                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// The next three function take a `Character` and optionally return the
+// The next three functions take a `Character` and optionally return the
 // expected damage type if the unit matches the expected character type.
 //
 // HINT: These functions represent the public API. But it is heavily
