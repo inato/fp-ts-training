@@ -22,7 +22,7 @@ import { pipe } from 'fp-ts/function';
 // In fact, it can sometimes be helpful to think of `Set` as a special case
 // of `Map` where `Set<T>` is strictly equivalent to `Map<T, void>`.
 //
-// To manipulate these collections, we need often need to inform `fp-ts` on
+// To manipulate these collections, we often need to inform `fp-ts` on
 // how to uphold the properties outlined above (eg. how to determine whether
 // two elements or keys have the same value, how to combine values together
 // in case of key collision or how to order the values when converting back
@@ -54,7 +54,7 @@ export const numberSet: ReadonlySet<number> = pipe(
   readonlySet.fromReadonlyArray(number.Eq),
 );
 
-// Convert `numberSet` back to an an array in `numberArrayFromSet`.
+// Convert `numberSet` back to an array in `numberArrayFromSet`.
 // You need to use the `ReadonlySet` module from `fp-ts` instead of the
 // JavaScript standard constructor.
 //
@@ -135,7 +135,7 @@ export const mapWithLastEntry: ReadonlyMap<number, string> = pipe(
 //   The `string` module may contain what you need ;)
 //
 // Bonus point:
-// Did you find something helpful in the `Semigroup` module that may have been
+// Did you find something in the `Semigroup` module that may have been
 // helpful in defining `mapWithLastEntry`?
 
 export const mapWithConcatenatedEntries: ReadonlyMap<number, string> = pipe(
@@ -154,7 +154,7 @@ export const odds = new Set([1, 3, 5, 7, 9]);
 // only include the odd numbers that are not prime.
 //
 // HINT:
-// - Be mindful of the order of operands for the operator you will chose.
+// - Be mindful of the order of operands for the operator you will choose.
 
 export const nonPrimeOdds: ReadonlySet<number> = readonlySet.difference(
   number.Eq,
@@ -174,7 +174,7 @@ export type Analytics = {
   views: number;
 };
 
-// These example maps are voluntarily written in a non fp-ts way to not give
+// These example Maps are voluntarily written in a non fp-ts way to not give
 // away too much obviously ;)
 //
 // As an exercise for the reader, they may rewrite those with what they've
@@ -196,7 +196,7 @@ export const pageViewsB = new Map(
   ].map(entry => [entry.page, entry]),
 );
 
-// Construct the map with the total page views for all the pages in both sources
+// Construct the `Map` with the total page views for all the pages in both sources
 // of analytics `pageViewsA` and `pageViewsB`.
 //
 // In case a page appears in both sources, their view count should be summed.
@@ -211,7 +211,7 @@ export const allPageViews: ReadonlyMap<string, Analytics> = pipe(
   readonlyMap.union(string.Eq, S)(pageViewsB),
 );
 
-// Construct the map with the total page views but only for the pages that
+// Construct the `Map` with the total page views but only for the pages that
 // appear in both sources of analytics `pageViewsA` and `pageViewsB`.
 
 export const intersectionPageViews: ReadonlyMap<string, Analytics> = pipe(

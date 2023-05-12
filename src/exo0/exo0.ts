@@ -2,7 +2,7 @@
 // Composing computations with `pipe` and `flow`
 
 // Functional programming is all about composing small functions together like
-// lego bricks to build more and more complex computations.
+// Lego bricks to build more and more complex computations.
 //
 // Strictly speaking, composing two functions `f` and `g` means applying the
 // result of the first one to the second one. By applying this composition

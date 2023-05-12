@@ -13,7 +13,7 @@ import { readerTaskEither as rte } from 'fp-ts';
 // `Option`, `Either` and the likes such as `map`, `chain` and so on as
 // combinators.
 //
-// The fp-ts library provides a rich collection for such combinators for each
+// The fp-ts library provides a rich collection of such combinators for each
 // type and module but sometimes, you may want to reach for a combinator that
 // doesn't yet exist in the library and it is useful to know how to define
 // your own.
@@ -92,14 +92,14 @@ export const bindEitherKW: <N extends string, A, E2, B>(
   { readonly [K in N | keyof A]: K extends keyof A ? A[K] : B }
 > = (name, f) => rte.bindW(name, a => rte.fromEither(f(a)));
 
-// Write the implementations and type definitions of `apEitherK` and
-// `apEitherKW`.
+// Write the implementations and type definitions of `apSEitherK` and
+// `apSEitherKW`.
 //
 // HINT:
 // - remember that "widen" in the case of `Either` means the union of the
 //   possible error types
 
-export const apEitherK: <N extends string, A, E, B>(
+export const apSEitherK: <N extends string, A, E, B>(
   name: Exclude<N, keyof A>,
   mb: Either<E, B>,
 ) => <R>(
@@ -110,7 +110,7 @@ export const apEitherK: <N extends string, A, E, B>(
   { readonly [K in N | keyof A]: K extends keyof A ? A[K] : B }
 > = (name, b) => rte.apS(name, rte.fromEither(b));
 
-export const apEitherKW: <N extends string, A, E2, B>(
+export const apSEitherKW: <N extends string, A, E2, B>(
   name: Exclude<N, keyof A>,
   mb: Either<E2, B>,
 ) => <R, E1>(
@@ -125,7 +125,7 @@ export const apEitherKW: <N extends string, A, E2, B>(
 // `bindReaderKW`.
 //
 // HINT:
-// - remember that "widen" in the case of `Reader` means the interesection of
+// - remember that "widen" in the case of `Reader` means the intersection of
 //   the possible environment types
 
 export const bindReaderK: <N extends string, A, R, B>(
