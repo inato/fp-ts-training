@@ -148,4 +148,4 @@ export const bindReaderKW: <N extends string, A, R2, B>(
   R1 & R2,
   E,
   { readonly [K in N | keyof A]: K extends keyof A ? A[K] : B }
-> = (name, f) => rte.bindW(name, a => rte.fromReader(f(a)));
+> = (name, f) => rte.bindW(name, a => rte.rightReader(f(a)));
