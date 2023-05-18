@@ -1243,10 +1243,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.15.13":
-  version: 18.15.13
-  resolution: "@types/node@npm:18.15.13"
-  checksum: 79cc5a2b5f98e8973061a4260a781425efd39161a0e117a69cd089603964816c1a14025e1387b4590c8e82d05133b7b4154fa53a7dffb3877890a66145e76515
+"@types/node@npm:^20.2.0":
+  version: 20.2.0
+  resolution: "@types/node@npm:20.2.0"
+  checksum: 9b937367448a07482af14e3518125ae531bff99e16d51e0945f4f93dbd7051d8a270811bdeb57f0b52c629fb0c9c401a238a7352dfbc87e26495b6f0f59cbdb6
   languageName: node
   linkType: hard
 
@@ -2301,7 +2301,7 @@ __metadata:
   resolution: "fp-ts-training@workspace:."
   dependencies:
     "@types/jest": ^29.5.1
-    "@types/node": ^18.15.13
+    "@types/node": ^20.2.0
     decod: ^6.1.6
     eslint: ^8.39.0
     eslint-plugin-fp: ^2.3.0
