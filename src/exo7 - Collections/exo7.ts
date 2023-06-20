@@ -15,7 +15,7 @@ import { unimplemented } from '../utils';
 // of `Map` where `Set<T>` is strictly equivalent to `Map<T, void>`.
 //
 // To manipulate these collections, we often need to inform `fp-ts` on
-// how to uphold the properties outlined above (eg. how to determine whether
+// how to uphold the properties outlined above (e.g. how to determine whether
 // two elements or keys have the same value, how to combine values together
 // in case of key collision or how to order the values when converting back
 // to an array).
@@ -69,7 +69,7 @@ export const numberArrayFromSet: ReadonlyArray<number> = unimplemented();
 // This means than when constructing a `Map` from an `Array`, you need to be
 // explicit on how you wish to combine values in case of key collision (maybe
 // you want to only insert the last value provided, maybe the first, maybe you
-// want to combine both values in a specific way eg. concatenate strings, add
+// want to combine both values in a specific way e.g. concatenate strings, add
 // numbers, etc...)
 
 export const associativeArray: ReadonlyArray<[number, string]> = [

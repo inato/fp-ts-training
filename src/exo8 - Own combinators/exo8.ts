@@ -6,7 +6,7 @@ import { ReaderTaskEither } from 'fp-ts/ReaderTaskEither';
 import { unimplemented } from '../utils';
 
 // Technically, a combinator is a pure function with no free variables in it,
-// ie. one that does not depend on any variable from its enclosing scope.
+// i.e. one that does not depend on any variable from its enclosing scope.
 //
 // We usually refer to functions that allow the manipulation of types like
 // `Option`, `Either` and the likes such as `map`, `chain` and so on as
@@ -14,7 +14,7 @@ import { unimplemented } from '../utils';
 //
 // The fp-ts library provides a rich collection of such combinators for each
 // type and module but sometimes, you may want to reach for a combinator that
-// doesn't yet exist in the library and it is useful to know how to define
+// doesn't yet exist in the library, and it is useful to know how to define
 // your own.
 
 ///////////////////////////////////////////////////////////////////////////////

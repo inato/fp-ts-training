@@ -31,7 +31,7 @@ export enum Country {
 ///////////////////////////////////////////////////////////////////////////////
 
 // These countries have different rules on how to add exclamation to a sentence:
-// - french speakers will add an exclamation point at the end preceded by a
+// - French speakers will add an exclamation point at the end preceded by a
 //   space: "Youpi !"
 // - spanish speakers begin the sentence with an inverted exclamation point and
 //   finish it by a regular one: `¡Olé!`

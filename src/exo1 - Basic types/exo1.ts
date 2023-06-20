@@ -27,7 +27,7 @@ export const divide = (a: number, b: number): number => {
 export const safeDivide: (a: number, b: number) => Option<number> =
   unimplemented;
 
-// You probably wrote `safeDivide` using `if` statements and it's perfectly valid!
+// You probably wrote `safeDivide` using `if` statements, and it's perfectly valid!
 // There are ways to not use `if` statements.
 // Keep in mind that extracting small functions out of pipes and using `if` statements in them
 // is perfectly fine and is sometimes more readable than not using `if`.
@@ -51,7 +51,7 @@ export const safeDivide: (a: number, b: number) => Option<number> =
 // as well as "smarter" constructors like:
 // - `either.fromOption(() => leftValue)(option)`
 
-// Here is an simple error type to help you:
+// Here is a simple error type to help you:
 export type DivisionByZeroError = 'Error: Division by zero';
 export const DivisionByZero = 'Error: Division by zero' as const;
 
