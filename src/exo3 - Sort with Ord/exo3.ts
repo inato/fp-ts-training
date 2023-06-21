@@ -31,7 +31,7 @@ import { unimplemented } from '../utils';
 // ordering function, this sort will only accept an `Ord<T>`.
 //
 // HINT: The primitive type modules from `fp-ts` (`number`, `string`...)
-// expose some preconstructed instances of `Ord<T>` for said primitives such as
+// expose some pre constructed instances of `Ord<T>` for said primitives such as
 // `string.Ord: Ord<string>` or `number.Ord: Ord<number>`.
 
 export const sortStrings: (
@@ -51,7 +51,7 @@ export const sortNumbers: (
 // `number.Ord`).
 //
 // Sure, we could just use `sortNumbers` defined earlier and then reverse the
-// whole array but that would be horribly inefficient wouldn't it?
+// whole array but that would be horribly inefficient, wouldn't it?
 //
 // HINT: Any ordering can be reversed with a simple function `ord.reverse`.
 

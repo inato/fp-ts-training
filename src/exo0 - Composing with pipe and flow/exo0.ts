@@ -66,7 +66,7 @@ export const ifThenElse =
 export const next: (value: number) => number = unimplemented;
 
 // Using only `flow` and `next`, write the function that for any given number
-// a_n from the Collatz sequence, returns the number a_n+3 (ie. the number
+// a_n from the Collatz sequence, returns the number a_n+3 (i.e. the number
 // three steps ahead in the sequence).
 
 export const next3: (value: number) => number = unimplemented;

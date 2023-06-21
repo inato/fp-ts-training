@@ -16,12 +16,12 @@ import { User } from './domain';
 // type ReaderTaskEither<Env, Error, Value> = Reader<Env, Task<Either<Error, Value>>>
 //
 // The ReaderTaskEither module from fp-ts gives us some useful methods to manipulate it.
-// You will learn the usage of the most common in the following usecases.
+// You will learn the usage of the most common in the following use-cases.
 
-// In the following usecase, you will learn the usage of `rte.map()`.
+// In the following use-case, you will learn the usage of `rte.map()`.
 // `rte.map()` allows you to perform an operation on the values stored in the
-// current context. In the following example, we need to fetch a user by its id
-// and then we want to return its capitalized.
+// current context. In the following example, we need to fetch a user by its id,
+// and then we want to return its name capitalized.
 
 export const getCapitalizedUserName: (args: {
   userId: string;
@@ -72,7 +72,7 @@ export const getConcatenationOfTheBestFriendNameAndUserName: (args: {
 > = unimplemented;
 
 // Most of the time, you will need to use several external services.
-// The challenge of this usecase is to use TimeService in the flow of our `rte`
+// The challenge of this use-case is to use TimeService in the flow of our `rte`
 type Dependencies = User.Repository.Access & Application.TimeService.Access;
 
 export const getConcatenationOfUserNameAndCurrentYear: (args: {

@@ -129,8 +129,8 @@ export const getCountryCodeOfCountryNames = (
 // each item of the array if we have been able to find the corresponding country
 // code or not.
 // While this can be useful, you need to handle the option anytime you want to
-// perform any operation on each country code (let's say you want get the currency
-// of each)
+// perform any operation on each country code (let's say you want to get the
+// currency of each)
 // It would be easier to 'merge' all the options into one and have a `Some` only if
 // all the country codes are `Some` and a `None` if at least one is `None`.
 // Doing this allows you to stop the process if you have a `None` to tell the user
