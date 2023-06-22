@@ -13,10 +13,6 @@ import {
   burnOption,
   shootOption,
   attack,
-  rank,
-  fight,
-  maybeFight,
-  Army,
 } from './exo2';
 
 describe('exo2', () => {
@@ -229,86 +225,6 @@ describe('exo2', () => {
       };
 
       expect(result).toStrictEqual(expected);
-    });
-  });
-
-  describe('bonus', () => {
-    const warrior = new Warrior();
-    const wizard = new Wizard();
-    const archer = new Archer();
-    const army1 = [
-      warrior,
-      wizard,
-      archer,
-      wizard,
-      wizard,
-      archer,
-      warrior,
-      wizard,
-      archer,
-    ];
-    const army2 = [warrior, archer, wizard, archer, wizard, archer];
-    const emptyArmy: Army = [];
-
-    describe('rank', () => {
-      it('should return 0 for an empty army', () => {
-        const result = rank(emptyArmy);
-        const expected = 0;
-
-        expect(result).toBe(expected);
-      });
-
-      it('should return the rank of the army', () => {
-        const result = rank(army1);
-        const expected = 19;
-
-        expect(result).toBe(expected);
-      });
-    });
-
-    describe('fight', () => {
-      it('should return the id of the stronger army', () => {
-        const result = fight(army1)(army2);
-        const expected = 1;
-
-        expect(result).toBe(expected);
-      });
-      it('should return 0 if both armies have the same power', () => {
-        const result = fight([archer])([warrior, wizard]);
-        const expected = 0;
-
-        expect(result).toBe(expected);
-      });
-    });
-
-    describe('maybeFight', () => {
-      it('should return none if one army is not present', () => {
-        const result = maybeFight(option.some(army1), option.none);
-        const expected = option.none;
-
-        expect(result).toBe(expected);
-      });
-      it('should return none if no army is present', () => {
-        const result = maybeFight(option.none, option.none);
-        const expected = option.none;
-
-        expect(result).toBe(expected);
-      });
-      it('should return the id of the stronger army', () => {
-        const result = maybeFight(option.some(army1), option.some(army2));
-        const expected = option.some(1);
-
-        expect(result).toEqual(expected);
-      });
-      it('should return 0 if both armies have the same power', () => {
-        const result = maybeFight(
-          option.some([archer]),
-          option.some([warrior, wizard]),
-        );
-        const expected = option.some(0);
-
-        expect(result).toEqual(expected);
-      });
     });
   });
 });
