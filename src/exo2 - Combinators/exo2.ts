@@ -198,7 +198,8 @@ export interface TotalDamage {
   [Damage.Ranged]: number;
 }
 
-export const attack = (army: ReadonlyArray<Character>) => ({
+export type Army = ReadonlyArray<Character>;
+export const attack = (army: Army) => ({
   [Damage.Physical]: pipe(
     army,
     readonlyArray.filterMap(smashOption),
@@ -215,3 +216,91 @@ export const attack = (army: ReadonlyArray<Character>) => ({
     readonlyArray.size,
   ),
 });
+
+///////////////////////////////////////////////////////////////////////////////
+//                                   BONUS                                   //
+///////////////////////////////////////////////////////////////////////////////
+
+// Two armies can fight together. For that we must "rank" them in order to
+// compare them and determine who is the winner.
+// The rank of an Amry will be the weighted sum of its attack power (from the
+// previous section). The weights are:
+// Physical: 1
+// Magical: 2
+// Ranged: 3
+//
+// HINT: you should be able to reuse the previous function attack
+
+export const rank: (army: Army) => number = flow(
+  attack,
+  ({
+    [Damage.Physical]: Physical,
+    [Damage.Magical]: Magical,
+    [Damage.Ranged]: Ranged,
+  }) => 1 * Physical + 2 * Magical + 3 * Ranged,
+);
+
+// When two armies fight, the winner will be the army with highest rank.
+// If two armies have the same rank, then it is a draw, which is represented
+// by the result 0 here.
+//
+// HINT: you should be able to reuse the previous rank function
+type FightOutcome = 0 | 1 | 2;
+export const fight: (army1: Army) => (army2: Army) => FightOutcome =
+  army1 => army2 => {
+    const delta = rank(army1) - rank(army2);
+    if (delta > 0) return 1;
+    if (delta < 0) return 2;
+    return 0;
+  };
+
+// Sometimes one army shows up on the battlefield only to discover that their
+// adversary is not there (alarm problem, wrong date in the calendar)! If one
+// of the two armies (or both!!) does not show up then there is no battle.
+// In the next function, we represent the absence of an army and therefore
+// the absence of a battle with an Option.
+//
+// HINT: you should be able to reuse the previous fight function
+export const maybeFight: (
+  army1: Option<Army>,
+  army2: Option<Army>,
+) => Option<FightOutcome> = (army1, army2) =>
+  pipe(
+    army1,
+    option.flatMap(army1 =>
+      pipe(
+        army2,
+        option.map(army2 => fight(army1)(army2)),
+      ),
+    ),
+  );
+
+// You probably used two flatMap in a row to achieve this and it's ok.
+// The thing is, it means also nesting a pipe inside another one:
+//    pipe(
+//      army1,
+//      option.flatMap(army1 =>
+//        pipe(
+//          army2,
+//          option.map(army2 => ...),
+//        ),
+//      ),
+//    );
+// which makes it harder to read.
+// Another valid approach would be to use the Do notation which will be
+// introduced later in the training (exo6), but the reading experience
+// is still a bit difficult.
+//
+// Option exposes a nice helper function:
+// `option.ap: <A>(fa: Option<A>) => <B>(fab: Option<(a: A) => B>) => Option<B>`
+// which "lifts" the application of a function (a: A) => B in the Option space.
+//
+// Try to rewrite the maybeFight function using `option.ap`
+//
+// NOTE: almost all types in fp-ts expose the `ap` function
+
+export const maybeFightWithAp: (
+  army1: Option<Army>,
+  army2: Option<Army>,
+) => Option<FightOutcome> = (army1, army2) =>
+  pipe(option.of(fight), option.ap(army1), option.ap(army2));
