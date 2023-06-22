@@ -54,6 +54,25 @@ export const getConcatenationOfTheTwoUserNames: (args: {
   string
 > = unimplemented;
 
+// There is an alternative way of writing the previous function without the
+// Do notation. It consists of "lifting" the concatenation function in a rte
+// (using `rte.of()` or `rte.right()`) and then applying the (lifted) arguments
+// one after the other using `rte.ap()`. For this to work, you need to have
+// a curried version of the concatenation function:
+// const concat: (x: string) => (y: string) => string
+//
+// Write another version of getConcatenationOfTheTwoUserNames function
+// using `rte.ap()`:
+
+export const getConcatenationOfTheTwoUserNamesUsingAp: (args: {
+  userIdOne: string;
+  userIdTwo: string;
+}) => ReaderTaskEither<
+  User.Repository.Access,
+  User.Repository.UserNotFoundError,
+  string
+> = unimplemented;
+
 // Sometimes, you will need to feed the current context with data that you can
 // only retrieve after performing some operations, in other words, operations
 // need to be sequential.
