@@ -5,6 +5,7 @@ import {
   getCapitalizedUserName,
   getConcatenationOfTheBestFriendNameAndUserName,
   getConcatenationOfTheTwoUserNames,
+  getConcatenationOfTheTwoUserNamesUsingAp,
   getConcatenationOfUserNameAndCurrentYear,
 } from './exo6';
 
@@ -23,6 +24,22 @@ describe('exo6', () => {
 
   it('should return the concatenation of the two capitalized user names', async () => {
     const usecase = getConcatenationOfTheTwoUserNames({
+      userIdOne: '1',
+      userIdTwo: '2',
+    })({
+      userRepository: new User.Repository.InMemoryUserRepository([
+        { id: '1', name: 'rob', bestFriendId: '' },
+        { id: '2', name: 'scott', bestFriendId: '' },
+      ]),
+    });
+
+    const result = await usecase();
+
+    expect(result).toEqual(either.right('RobScott'));
+  });
+
+  it('should return the concatenation of the two capitalized user names using rte.ap', async () => {
+    const usecase = getConcatenationOfTheTwoUserNamesUsingAp({
       userIdOne: '1',
       userIdTwo: '2',
     })({
