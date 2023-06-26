@@ -87,7 +87,7 @@ export const getConcatenationOfTheTwoUserNamesUsingAp = ({
   userIdTwo: string;
 }) =>
   pipe(
-    rte.of((x: string) => (y: string) => x + y),
+    rte.of((x: string) => (y: string) => `${x}${y}`),
     rte.ap(getCapitalizedUserName({ userId: userIdOne })),
     rte.ap(getCapitalizedUserName({ userId: userIdTwo })),
   );
