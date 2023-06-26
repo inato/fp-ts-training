@@ -69,6 +69,29 @@ export const getConcatenationOfTheTwoUserNames = ({
     ),
   );
 
+// There is an alternative way of writing the previous function without the
+// Do notation. It consists of "lifting" the concatenation function in a rte
+// (using `rte.of()` or `rte.right()`) and then applying the (lifted) arguments
+// one after the other using `rte.ap()`. For this to work, you need to have
+// a curried version of the concatenation function:
+// const concat: (x: string) => (y: string) => string
+//
+// Write another version of getConcatenationOfTheTwoUserNames function
+// using `rte.ap()`:
+
+export const getConcatenationOfTheTwoUserNamesUsingAp = ({
+  userIdOne,
+  userIdTwo,
+}: {
+  userIdOne: string;
+  userIdTwo: string;
+}) =>
+  pipe(
+    rte.of((x: string) => (y: string) => `${x}${y}`),
+    rte.ap(getCapitalizedUserName({ userId: userIdOne })),
+    rte.ap(getCapitalizedUserName({ userId: userIdTwo })),
+  );
+
 // Sometimes, you will need to feed the current context with data that you can
 // only retrieve after performing some operations, in other words, operations
 // need to be sequential.
