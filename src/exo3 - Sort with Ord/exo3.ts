@@ -2,7 +2,14 @@
 // Sort things out with `Ord`
 
 import { Option } from 'fp-ts/Option';
-import { unimplemented } from '../utils';
+import { number, option, ord, readonlyArray, string } from 'fp-ts';
+import { pipe } from 'fp-ts/lib/function';
+
+
+
+/******* I relied heavily on the fp-ts-cheatsheet to solve these problems **********/
+
+
 
 // Have you ever looked at the methods provided by `fp-ts` own `Array` and
 // `ReadonlyArray` modules? They expose a load of functions to manipulate
@@ -34,13 +41,19 @@ import { unimplemented } from '../utils';
 // expose some pre constructed instances of `Ord<T>` for said primitives such as
 // `string.Ord: Ord<string>` or `number.Ord: Ord<number>`.
 
-export const sortStrings: (
+export const sortStrings = (
   strings: ReadonlyArray<string>,
-) => ReadonlyArray<string> = unimplemented;
+): ReadonlyArray<string>  => pipe(
+  strings,
+  readonlyArray.sort(string.Ord)
+);
 
-export const sortNumbers: (
+export const sortNumbers = (
   numbers: ReadonlyArray<number>,
-) => ReadonlyArray<number> = unimplemented;
+): ReadonlyArray<number> => pipe (
+  numbers,
+  readonlyArray.sort(number.Ord)
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                REVERSE SORT                               //
@@ -55,9 +68,12 @@ export const sortNumbers: (
 //
 // HINT: Any ordering can be reversed with a simple function `ord.reverse`.
 
-export const sortNumbersDescending: (
+export const sortNumbersDescending = (
   numbers: ReadonlyArray<number>,
-) => ReadonlyArray<number> = unimplemented;
+): ReadonlyArray<number> => pipe (
+  numbers,
+  readonlyArray.sort(ord.reverse(number.Ord))
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                            SORT OPTIONAL VALUES                           //
@@ -73,9 +89,12 @@ export const sortNumbersDescending: (
 // of building an `Ord` instance for their qualified inner type. You may want
 // to take a look at `option.getOrd`.
 
-export const sortOptionalNumbers: (
+export const sortOptionalNumbers = (
   optionalNumbers: ReadonlyArray<Option<number>>,
-) => ReadonlyArray<Option<number>> = unimplemented;
+): ReadonlyArray<Option<number>> => pipe (
+  optionalNumbers,
+  readonlyArray.sort(option.getOrd(number.Ord))
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                           SORT COMPLEX OBJECTS                            //
@@ -99,13 +118,25 @@ export interface Person {
   readonly age: Option<number>;
 }
 
-export const sortPersonsByName: (
+export const sortPersonsByName = (
   persons: ReadonlyArray<Person>,
-) => ReadonlyArray<Person> = unimplemented;
+): ReadonlyArray<Person>  => pipe (
+  persons,
+  readonlyArray.sortBy([pipe(
+    string.Ord,
+    ord.contramap((person: Person) => person.name)
+  )])
+);
 
-export const sortPersonsByAge: (
+export const sortPersonsByAge = (
   persons: ReadonlyArray<Person>,
-) => ReadonlyArray<Person> = unimplemented;
+): ReadonlyArray<Person> => pipe (
+  persons,
+  readonlyArray.sortBy( [pipe (
+    option.getOrd(number.Ord),
+    ord.contramap((person: Person) => person.age)
+  )])
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                          COMBINE SORTING SCHEMES                          //
@@ -116,6 +147,19 @@ export const sortPersonsByAge: (
 //
 // HINT: Take a look at `readonlyArray.sortBy`
 
-export const sortPersonsByAgeThenByName: (
+const byAge = pipe (
+  option.getOrd(number.Ord),
+    ord.contramap((person: Person) => person.age)
+)
+
+const byName = pipe (
+  string.Ord,
+    ord.contramap((person: Person) => person.name)
+)
+
+export const sortPersonsByAgeThenByName = (
   persons: ReadonlyArray<Person>,
-) => ReadonlyArray<Person> = unimplemented;
+): ReadonlyArray<Person> => pipe (
+  persons,
+  readonlyArray.sortBy([byAge, byName])
+);
