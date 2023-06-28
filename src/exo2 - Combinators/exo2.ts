@@ -4,7 +4,8 @@
 import { Either } from 'fp-ts/Either';
 import { Option } from 'fp-ts/Option';
 import { Failure } from '../Failure';
-import { unimplemented } from '../utils';
+import { flow, pipe } from 'fp-ts/lib/function';
+import { either, option, readonlyArray } from 'fp-ts';
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   SETUP                                   //
@@ -117,17 +118,64 @@ export const invalidTargetFailure = Failure.builder(
 // common operations done with the `Either` type and it is available through
 // the `flatMap` operator.
 
-export const checkTargetAndSmash: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
 
-export const checkTargetAndBurn: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
 
-export const checkTargetAndShoot: (
+//****** I looked at the solution to get help on this one. **********//
+
+const isTargetDefined = 
+    either.fromOption(() => 
+    noTargetFailure("No unit currently selected"));
+
+const isAllowedWarriorAction =
+  either.fromPredicate(isWarrior, target => 
+    invalidTargetFailure(`${target.toString()} cannot perform smash`));
+
+const isAllowedWizardAction =
+  either.fromPredicate(isWizard, target => 
+    invalidTargetFailure(`${target.toString()} cannot perform burn`));
+
+const isAllowedArcherAction =
+  either.fromPredicate(isArcher, target => 
+    invalidTargetFailure(`${target.toString()} cannot perform shoot`));
+
+const smash = flow (
+  isAllowedWarriorAction,
+  either.map(attacker => attacker.smash())  
+)
+
+const burn = flow (
+  isAllowedWizardAction,
+  either.map(attacker => attacker.burn())
+)
+
+const shoot = flow (
+  isAllowedArcherAction,
+  either.map( attacker => attacker.shoot())
+)
+
+export const checkTargetAndSmash = (
   target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+): Either<NoTargetFailure | InvalidTargetFailure, Damage> => pipe(
+  target,
+  isTargetDefined,
+  either.chainW(smash)  
+)
+
+export const checkTargetAndBurn = (
+  target: Option<Character>,
+): Either<NoTargetFailure | InvalidTargetFailure, Damage> => pipe(
+  target,
+  isTargetDefined,
+  either.chainW(burn)
+);
+
+export const checkTargetAndShoot = (
+  target: Option<Character>,
+): Either<NoTargetFailure | InvalidTargetFailure, Damage> => pipe (
+  target,
+  isTargetDefined,
+  either.chainW(shoot)
+);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
@@ -146,14 +194,26 @@ export const checkTargetAndShoot: (
 // BONUS POINTS: If you properly defined small private helpers in the previous
 // section, they should be easily reused for those use-cases.
 
-export const smashOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const smashOption = (character: Character): Option<Damage> =>
+  pipe (
+    character,
+    smash,
+    option.fromEither
+  );
 
-export const burnOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const burnOption = (character: Character) => 
+  pipe (
+    character, 
+    burn,
+    option.fromEither
+  );
 
-export const shootOption: (character: Character) => Option<Damage> =
-  unimplemented;
+export const shootOption = (character: Character) =>
+  pipe (
+    character,
+    shoot,
+    option.fromEither
+  );
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   ARRAY                                   //
@@ -168,11 +228,39 @@ export const shootOption: (character: Character) => Option<Damage> =
 // perform mapping and filtering at the same time by applying a function
 // of type `A => Option<B>` over the collection.
 
+
+
+
+//****** I looked at the solution to get help on this one. **********//
+
 export interface TotalDamage {
   [Damage.Physical]: number;
   [Damage.Magical]: number;
   [Damage.Ranged]: number;
 }
+/*
+Why doesn't the code in the line below work as a replacement for option 1 on line 252?
+    readonlyArray.filterMap(flow(option.filter(isWizard), option.map(character => character))),
+*/
 
-export const attack: (army: ReadonlyArray<Character>) => TotalDamage =
-  unimplemented;
+export const attack = (army: ReadonlyArray<Character>) => ({
+[Damage.Physical]:  
+  pipe (
+    army,
+    readonlyArray.filterMap(smashOption),
+    readonlyArray.size,
+  ),
+  [Damage.Magical]:  
+  pipe (
+    army,
+    readonlyArray.filterMap(burnOption),
+    readonlyArray.size,
+  ),
+  [Damage.Ranged]:  
+  pipe (
+    army,
+    readonlyArray.filterMap(shootOption),
+    readonlyArray.size,
+  ),
+})
+
