@@ -75,34 +75,34 @@ export const isArcher = (character: Character): character is Archer => {
 
 // Finally, we have convenient and expressive error types, defining what can
 // go wrong in our game:
-// - the player can try to perform an action with no character targeted
+// - the player can try to perform an action without first choosing a character as the attacker
 // - the player can try to perform the wrong action for a character class
 
 export enum Exo2FailureType {
-  NoTarget = 'Exo2FailureType_NoTarget',
-  InvalidTarget = 'Exo2FailureType_InvalidTarget',
+  NoAttacker = 'Exo2FailureType_NoAttacker',
+  InvalidAttacker = 'Exo2FailureType_InvalidAttacker',
 }
 
-export type NoTargetFailure = Failure<Exo2FailureType.NoTarget>;
-export const noTargetFailure = Failure.builder(Exo2FailureType.NoTarget);
+export type NoAttackerFailure = Failure<Exo2FailureType.NoAttacker>;
+export const noAttackerFailure = Failure.builder(Exo2FailureType.NoAttacker);
 
-export type InvalidTargetFailure = Failure<Exo2FailureType.InvalidTarget>;
-export const invalidTargetFailure = Failure.builder(
-  Exo2FailureType.InvalidTarget,
+export type InvalidAttackerFailure = Failure<Exo2FailureType.InvalidAttacker>;
+export const invalidAttackerFailure = Failure.builder(
+  Exo2FailureType.InvalidAttacker,
 );
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// The next three functions take the unit currently targeted by the player and
-// return the expected damage type if appropriate.
+// The next three functions take the character currently selected by the player as the attacker 
+// and return the expected damage type if appropriate.
 //
-// If no unit is selected, it should return
-// `either.left(noTargetFailure('No unit currently selected'))`
+// If no attacker is selected, it should return
+// `either.left(noAttackerFailure('No attacker currently selected'))`
 //
-// If a unit of the wrong type is selected, it should return
-// `either.left(invalidTargetFailure('<unit_type> cannot perform <action>'))`
+// If an attacker of the wrong type is selected, it should return
+// `either.left(invalidAttackerFailure('<attacker_type> cannot perform <action>'))`
 //
 // Otherwise, it should return `either.right(<expected_damage_type>)`
 //
@@ -117,24 +117,24 @@ export const invalidTargetFailure = Failure.builder(
 // common operations done with the `Either` type and it is available through
 // the `chain` operator and its slightly relaxed variant `chainW`.
 
-export const checkTargetAndSmash: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+export const checkAttackerAndSmash: (
+  attacker: Option<Character>,
+) => Either<NoAttackerFailure | InvalidAttackerFailure, Damage> = unimplemented;
 
-export const checkTargetAndBurn: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+export const checkAttackerAndBurn: (
+  attacker: Option<Character>,
+) => Either<NoAttackerFailure | InvalidAttackerFailure, Damage> = unimplemented;
 
-export const checkTargetAndShoot: (
-  target: Option<Character>,
-) => Either<NoTargetFailure | InvalidTargetFailure, Damage> = unimplemented;
+export const checkAttackerAndShoot: (
+  attacker: Option<Character>,
+) => Either<NoAttackerFailure | InvalidAttackerFailure, Damage> = unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
 // The next three functions take a `Character` and optionally return the
-// expected damage type if the unit matches the expected character type.
+// expected damage type if the attacker matches the expected character type.
 //
 // HINT: These functions represent the public API. But it is heavily
 // recommended to break those down into smaller private functions that can be
@@ -160,7 +160,7 @@ export const shootOption: (character: Character) => Option<Damage> =
 ///////////////////////////////////////////////////////////////////////////////
 
 // We now want to aggregate all the attacks of a selection of arbitrarily many
-// units and know how many are Physical, Magical or Ranged.
+// attackers and know how many are Physical, Magical or Ranged.
 //
 // HINT: You should be able to reuse the attackOption variants defined earlier
 //
