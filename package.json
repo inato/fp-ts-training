@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "decod": "^6.1.6",
-    "fp-ts": "^2.14.0",
+    "fp-ts": "^2.16.0",
     "tslib": "^2.5.0"
   },
   "devDependencies": {

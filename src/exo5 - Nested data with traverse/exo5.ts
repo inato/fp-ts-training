@@ -12,11 +12,11 @@ import { sleep, unimplemented, unimplementedAsync } from '../utils';
 // get to a point when we have many nested types that we would like to 'merge',
 // like `Task<Option<Task<A>>>` or `Either<E,ReadonlyArray<Either<E,A>>>`
 // It would be nice to have a way to 'move up' the similar types in order to
-// chain them, like merging the `Task` to have a `Task<Option<A>>` or the
+// merge them, like merging the `Task` to have a `Task<Option<A>>` or the
 // `Either` to have a `Either<E,ReadonlyArray<A>>`
 //
 // That's precisely the concept of `traverse`. It will allow us to transform
-// a `Option<Task<A>>` to a `Task<Option<A>>` so we can chain it with another
+// a `Option<Task<A>>` to a `Task<Option<A>>` so we can flatMap it with another
 // `Task` for example, or to transform a `ReadonlyArray<Either<E,A>>` to a
 // `Either<E,ReadonlyArray<A>>`
 
@@ -104,7 +104,7 @@ export const getCountryCurrencyOfOptionalCountryCode: (
 // `Task<Option<Currency>>`
 //
 // HINT: You should be able to copy the pipe from naiveGiveCurrencyOfCountryToUser
-// and make only few updates of it. The `task.chain` helper may be useful.
+// and make only few updates of it. The `task.flatMap` helper may be useful.
 
 export const giveCurrencyOfCountryToUser: (
   countryNameFromUserMock: string,
