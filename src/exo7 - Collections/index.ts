@@ -1,1 +1,1 @@
-export * from './exo7';
+export * from './exo7.problem';

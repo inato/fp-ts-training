@@ -7,7 +7,7 @@ import {
   bindEitherKW as rteBindEitherKW,
   bindReaderK as rteBindReaderK,
   bindReaderKW as rteBindReaderKW,
-} from './exo8';
+} from './exo8.problem';
 
 describe('exo8', () => {
   describe('bindEitherK[W]', () => {

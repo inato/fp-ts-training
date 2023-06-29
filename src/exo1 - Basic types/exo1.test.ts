@@ -6,7 +6,7 @@ import {
   safeDivideWithError,
   asyncDivide,
   asyncSafeDivideWithError,
-} from './exo1';
+} from './exo1.problem';
 
 describe('exo1', () => {
   describe('divide', () => {

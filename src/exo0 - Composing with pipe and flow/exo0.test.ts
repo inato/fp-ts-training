@@ -1,4 +1,4 @@
-import { isOddF, isOddP, next, next3 } from './exo0';
+import { isOddF, isOddP, next, next3 } from './exo0.problem';
 
 describe('exo0', () => {
   describe('isOddP', () => {
