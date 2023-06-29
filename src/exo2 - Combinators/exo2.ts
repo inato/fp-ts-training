@@ -114,7 +114,7 @@ export const invalidTargetFailure = Failure.builder(
 //
 // HINT: Sequentially check for various possible errors is one of the most
 // common operations done with the `Either` type and it is available through
-// the `chain` operator and its slightly relaxed variant `chainW`.
+// the `flatMap` operator.
 
 const checkSelected = either.fromOption(() =>
   noTargetFailure('No unit currently selected'),
@@ -148,13 +148,13 @@ const shoot = flow(
 );
 
 export const checkTargetAndSmash = (target: Option<Character>) =>
-  pipe(target, checkSelected, either.chainW(smash));
+  pipe(target, checkSelected, either.flatMap(smash));
 
 export const checkTargetAndBurn = (target: Option<Character>) =>
-  pipe(target, checkSelected, either.chainW(burn));
+  pipe(target, checkSelected, either.flatMap(burn));
 
 export const checkTargetAndShoot = (target: Option<Character>) =>
-  pipe(target, checkSelected, either.chainW(shoot));
+  pipe(target, checkSelected, either.flatMap(shoot));
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
