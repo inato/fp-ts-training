@@ -158,7 +158,7 @@ export const checkTargetAndSmash = (
 ): Either<NoTargetFailure | InvalidTargetFailure, Damage> => pipe(
   target,
   isTargetDefined,
-  either.chainW(smash)  
+  either.flatMap(smash)  
 )
 
 export const checkTargetAndBurn = (
@@ -166,7 +166,7 @@ export const checkTargetAndBurn = (
 ): Either<NoTargetFailure | InvalidTargetFailure, Damage> => pipe(
   target,
   isTargetDefined,
-  either.chainW(burn)
+  either.flatMap(burn)
 );
 
 export const checkTargetAndShoot = (
@@ -174,7 +174,7 @@ export const checkTargetAndShoot = (
 ): Either<NoTargetFailure | InvalidTargetFailure, Damage> => pipe (
   target,
   isTargetDefined,
-  either.chainW(shoot)
+  either.flatMap(shoot)
 );
 
 ///////////////////////////////////////////////////////////////////////////////
