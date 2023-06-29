@@ -1,11 +1,10 @@
 // `fp-ts` training Exercise 2
 // Let's have fun with combinators!
 
-import { either, option, readonlyArray } from 'fp-ts';
-import { flow, pipe } from 'fp-ts/function';
 import { Option } from 'fp-ts/Option';
-
 import { Failure } from '../Failure';
+import { either, option, readonlyArray } from 'fp-ts';
+import { flow, pipe } from 'fp-ts/lib/function';
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   SETUP                                   //
@@ -76,32 +75,34 @@ export const isArcher = (character: Character): character is Archer => {
 
 // Finally, we have convenient and expressive error types, defining what can
 // go wrong in our game:
-// - the player can try to perform an action with no character targeted
+// - the player can try to perform an action without first choosing a character as the attacker
 // - the player can try to perform the wrong action for a character class
 
 export enum Exo2FailureType {
-  NoTarget = 'Exo2FailureType_NoTarget',
-  InvalidTarget = 'Exo2FailureType_InvalidTarget',
+  NoAttacker = 'Exo2FailureType_NoAttacker',
+  InvalidAttacker = 'Exo2FailureType_InvalidAttacker',
 }
 
-export const noTargetFailure = Failure.builder(Exo2FailureType.NoTarget);
+export type NoAttackerFailure = Failure<Exo2FailureType.NoAttacker>;
+export const noAttackerFailure = Failure.builder(Exo2FailureType.NoAttacker);
 
-export const invalidTargetFailure = Failure.builder(
-  Exo2FailureType.InvalidTarget,
+export type InvalidAttackerFailure = Failure<Exo2FailureType.InvalidAttacker>;
+export const invalidAttackerFailure = Failure.builder(
+  Exo2FailureType.InvalidAttacker,
 );
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
-// The next three functions take the unit currently targeted by the player and
-// return the expected damage type if appropriate.
+// The next three functions take the character currently selected by the player as the attacker
+// and return the expected damage type if appropriate.
 //
-// If no unit is selected, it should return
-// `either.left(noTargetFailure('No unit currently selected'))`
+// If no attacker is selected, it should return
+// `either.left(noAttackerFailure('No attacker currently selected'))`
 //
-// If a unit of the wrong type is selected, it should return
-// `either.left(invalidTargetFailure('<unit_type> cannot perform <action>'))`
+// If an attacker of the wrong type is selected, it should return
+// `either.left(invalidAttackerFailure('<attacker_type> cannot perform <action>'))`
 //
 // Otherwise, it should return `either.right(<expected_damage_type>)`
 //
@@ -117,19 +118,19 @@ export const invalidTargetFailure = Failure.builder(
 // the `flatMap` operator.
 
 const checkSelected = either.fromOption(() =>
-  noTargetFailure('No unit currently selected'),
+  noAttackerFailure('No attacker currently selected'),
 );
 
 const checkWarrior = either.fromPredicate(isWarrior, character =>
-  invalidTargetFailure(`${character.toString()} cannot perform smash`),
+  invalidAttackerFailure(`${character.toString()} cannot perform smash`),
 );
 
 const checkWizard = either.fromPredicate(isWizard, character =>
-  invalidTargetFailure(`${character.toString()} cannot perform burn`),
+  invalidAttackerFailure(`${character.toString()} cannot perform burn`),
 );
 
 const checkArcher = either.fromPredicate(isArcher, character =>
-  invalidTargetFailure(`${character.toString()} cannot perform shoot`),
+  invalidAttackerFailure(`${character.toString()} cannot perform shoot`),
 );
 
 const smash = flow(
@@ -147,21 +148,21 @@ const shoot = flow(
   either.map(archer => archer.shoot()),
 );
 
-export const checkTargetAndSmash = (target: Option<Character>) =>
-  pipe(target, checkSelected, either.flatMap(smash));
+export const checkAttackerAndSmash = (attacker: Option<Character>) =>
+  pipe(attacker, checkSelected, either.flatMap(smash));
 
-export const checkTargetAndBurn = (target: Option<Character>) =>
-  pipe(target, checkSelected, either.flatMap(burn));
+export const checkAttackerAndBurn = (attacker: Option<Character>) =>
+  pipe(attacker, checkSelected, either.flatMap(burn));
 
-export const checkTargetAndShoot = (target: Option<Character>) =>
-  pipe(target, checkSelected, either.flatMap(shoot));
+export const checkAttackerAndShoot = (attacker: Option<Character>) =>
+  pipe(attacker, checkSelected, either.flatMap(shoot));
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  OPTION                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
 // The next three functions take a `Character` and optionally return the
-// expected damage type if the unit matches the expected character type.
+// expected damage type if the attacker matches the expected character type.
 //
 // HINT: These functions represent the public API. But it is heavily
 // recommended to break those down into smaller private functions that can be
@@ -184,7 +185,7 @@ export const shootOption = flow(shoot, option.fromEither);
 ///////////////////////////////////////////////////////////////////////////////
 
 // We now want to aggregate all the attacks of a selection of arbitrarily many
-// units and know how many are Physical, Magical or Ranged.
+// attackers and know how many are Physical, Magical or Ranged.
 //
 // HINT: You should be able to reuse the attackOption variants defined earlier
 //
