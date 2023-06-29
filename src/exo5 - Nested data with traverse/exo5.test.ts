@@ -7,7 +7,7 @@ import {
   performAsyncComputationInSequence,
   sequenceOptionArray,
   sequenceOptionTask,
-} from './exo5.problem';
+} from './exo5.exercise';
 
 describe('exo5', () => {
   describe('getCountryCurrencyOfOptionalCountryCode', () => {

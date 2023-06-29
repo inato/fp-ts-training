@@ -7,7 +7,7 @@ import {
   getConcatenationOfTheTwoUserNames,
   getConcatenationOfTheTwoUserNamesUsingAp,
   getConcatenationOfUserNameAndCurrentYear,
-} from './exo6.problem';
+} from './exo6.exercise';
 
 describe('exo6', () => {
   it('should return the capitalized user name', async () => {

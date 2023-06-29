@@ -1,4 +1,4 @@
-import { Country, exclamation, greet, excitedlyGreet } from './exo4.problem';
+import { Country, exclamation, greet, excitedlyGreet } from './exo4.exercise';
 
 describe('exo4', () => {
   describe('greet', () => {

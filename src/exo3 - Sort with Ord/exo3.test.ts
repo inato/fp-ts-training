@@ -7,7 +7,7 @@ import {
   sortPersonsByName,
   sortPersonsByAge,
   sortPersonsByAgeThenByName,
-} from './exo3.problem';
+} from './exo3.exercise';
 
 describe('exo3', () => {
   describe('sortStrings', () => {

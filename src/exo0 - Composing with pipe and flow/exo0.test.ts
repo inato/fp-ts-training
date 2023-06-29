@@ -1,4 +1,4 @@
-import { isOddF, isOddP, next, next3 } from './exo0.problem';
+import { isOddF, isOddP, next, next3 } from './exo0.exercise';
 
 describe('exo0', () => {
   describe('isOddP', () => {

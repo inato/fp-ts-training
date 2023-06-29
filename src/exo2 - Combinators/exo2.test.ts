@@ -13,7 +13,7 @@ import {
   burnOption,
   shootOption,
   attack,
-} from './exo2.problem';
+} from './exo2.exercise';
 
 describe('exo2', () => {
   describe('checkAttackerAndSmash', () => {

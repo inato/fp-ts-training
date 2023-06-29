@@ -8,7 +8,7 @@ import {
   numberArrayFromSet,
   numberSet,
   primeOdds,
-} from './exo7.problem';
+} from './exo7.exercise';
 
 describe('exo7', () => {
   describe('numberSet', () => {
