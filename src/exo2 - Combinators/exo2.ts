@@ -115,7 +115,7 @@ export const invalidTargetFailure = Failure.builder(
 //
 // HINT: Sequentially check for various possible errors is one of the most
 // common operations done with the `Either` type and it is available through
-// the `chain` operator and its slightly relaxed variant `chainW`.
+// the `flatMap` operator.
 
 export const checkTargetAndSmash: (
   target: Option<Character>,

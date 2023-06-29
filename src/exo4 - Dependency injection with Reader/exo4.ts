@@ -82,7 +82,7 @@ export const greet: (name: string) => Reader<Country, string> = unimplemented();
 // Compose those two to complete the `excitedlyGreet` function below:
 //
 // HINT: As with other wrapper types in `fp-ts`, `reader` offers a way of
-// composing effects with `reader.chain`.
+// composing effects with `reader.flatMap`.
 
 export const excitedlyGreet: (name: string) => Reader<Country, string> =
   unimplemented();

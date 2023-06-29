@@ -9,7 +9,7 @@ import { unimplemented } from '../utils';
 // i.e. one that does not depend on any variable from its enclosing scope.
 //
 // We usually refer to functions that allow the manipulation of types like
-// `Option`, `Either` and the likes such as `map`, `chain` and so on as
+// `Option`, `Either` and the likes such as `map`, `flatMap` and so on as
 // combinators.
 //
 // The fp-ts library provides a rich collection of such combinators for each
@@ -22,7 +22,7 @@ import { unimplemented } from '../utils';
 ///////////////////////////////////////////////////////////////////////////////
 
 // Transformer stacks such as `ReaderTaskEither` already provide useful
-// combinators such as `chainOptionK`, `chainEitherK[W]`, and so on... However,
+// combinators such as `flatMapOption`, `flatMapEither`, and so on... However,
 // these combinators are not available to use in the context of the do-notation
 // (as `bindXXX` variants).
 
@@ -32,7 +32,7 @@ import { unimplemented } from '../utils';
 // the following ones must be carefully defined on your own.
 
 // Write the implementation of `bindEitherK`. It must behave like
-// `rte.chainEitherK` but in the context of the do-notation.
+// `rte.flatMapEither` but in the context of the do-notation.
 //
 // HINTS:
 // - take some time to study the type definition carefully
