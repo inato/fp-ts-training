@@ -1,4 +1,10 @@
-import { isOddF, isOddP, next, next3 } from './exo0';
+import { isTestingSolution } from '../testUtils';
+import * as exercise from './exo0.exercise';
+import * as solution from './exo0.solution';
+
+const { isOddF, isOddP, next, next3 } = isTestingSolution()
+  ? solution
+  : exercise;
 
 describe('exo0', () => {
   describe('isOddP', () => {

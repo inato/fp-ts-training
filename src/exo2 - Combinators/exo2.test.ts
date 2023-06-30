@@ -1,5 +1,9 @@
 import { either, option } from 'fp-ts';
-import {
+import * as exercise from './exo2.exercise';
+import * as solution from './exo2.solution';
+import { isTestingSolution } from '../testUtils';
+
+const {
   Warrior,
   Wizard,
   Archer,
@@ -13,7 +17,7 @@ import {
   burnOption,
   shootOption,
   attack,
-} from './exo2';
+} = isTestingSolution() ? solution : exercise;
 
 describe('exo2', () => {
   describe('checkAttackerAndSmash', () => {
