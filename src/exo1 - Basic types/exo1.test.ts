@@ -1,12 +1,16 @@
 import { either, option } from 'fp-ts';
-import {
+import * as exercise from './exo1.exercise';
+import * as solution from './exo1.solution';
+import { isTestingSolution } from '../testUtils';
+
+const {
   divide,
   DivisionByZero,
   safeDivide,
   safeDivideWithError,
   asyncDivide,
   asyncSafeDivideWithError,
-} from './exo1.exercise';
+} = isTestingSolution() ? solution : exercise;
 
 describe('exo1', () => {
   describe('divide', () => {

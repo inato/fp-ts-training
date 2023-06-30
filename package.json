@@ -14,7 +14,9 @@
     "build": "yarn tsc -b",
     "check": "yarn tsc --noEmit",
     "test": "jest --runInBand",
-    "test:watch": "jest --runInBand --watch"
+    "test:watch": "jest --runInBand --watch",
+    "test:solution": "TEST_SOLUTION=true jest --runInBand",
+    "test:solution-watch": "yarn test:solution --watch"
   },
   "dependencies": {
     "decod": "^6.1.6",

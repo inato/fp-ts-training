@@ -1,4 +1,10 @@
-import { Country, exclamation, greet, excitedlyGreet } from './exo4.exercise';
+import { isTestingSolution } from '../testUtils';
+import * as exercise from './exo4.exercise';
+import * as solution from './exo4.solution';
+
+const { Country, exclamation, greet, excitedlyGreet } = isTestingSolution()
+  ? solution
+  : exercise;
 
 describe('exo4', () => {
   describe('greet', () => {

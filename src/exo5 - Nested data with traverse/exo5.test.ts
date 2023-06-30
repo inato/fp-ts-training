@@ -1,5 +1,9 @@
 import { option } from 'fp-ts';
-import {
+import * as exercise from './exo5.exercise';
+import * as solution from './exo5.solution';
+import { isTestingSolution } from '../testUtils';
+
+const {
   getCountryCurrencyOfOptionalCountryCode,
   getValidCountryCodeOfCountryNames,
   giveCurrencyOfCountryToUser,
@@ -7,7 +11,7 @@ import {
   performAsyncComputationInSequence,
   sequenceOptionArray,
   sequenceOptionTask,
-} from './exo5.exercise';
+} = isTestingSolution() ? solution : exercise;
 
 describe('exo5', () => {
   describe('getCountryCurrencyOfOptionalCountryCode', () => {

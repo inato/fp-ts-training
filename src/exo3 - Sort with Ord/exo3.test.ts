@@ -1,5 +1,9 @@
 import { option } from 'fp-ts';
-import {
+import * as exercise from './exo3.exercise';
+import * as solution from './exo3.solution';
+import { isTestingSolution } from '../testUtils';
+
+const {
   sortStrings,
   sortNumbers,
   sortNumbersDescending,
@@ -7,7 +11,7 @@ import {
   sortPersonsByName,
   sortPersonsByAge,
   sortPersonsByAgeThenByName,
-} from './exo3.exercise';
+} = isTestingSolution() ? solution : exercise;
 
 describe('exo3', () => {
   describe('sortStrings', () => {
