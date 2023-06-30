@@ -124,7 +124,7 @@ export const invalidAttackerFailure = Failure.builder(
 
 const isAttackerDefined = 
     either.fromOption(() => 
-    noAttackerFailure("No unit currently selected"));
+    noAttackerFailure("No attacker currently selected"));
 
 const isAllowedWarriorAction =
   either.fromPredicate(isWarrior, target => 
