@@ -7,7 +7,7 @@ import { ReaderTaskEither } from 'fp-ts/ReaderTaskEither';
 import { readerTaskEither as rte } from 'fp-ts';
 
 // Technically, a combinator is a pure function with no free variables in it,
-// ie. one that does not depend on any variable from its enclosing scope.
+// i.e. one that does not depend on any variable from its enclosing scope.
 //
 // We usually refer to functions that allow the manipulation of types like
 // `Option`, `Either` and the likes such as `map`, `flatMap` and so on as
@@ -15,7 +15,7 @@ import { readerTaskEither as rte } from 'fp-ts';
 //
 // The fp-ts library provides a rich collection of such combinators for each
 // type and module but sometimes, you may want to reach for a combinator that
-// doesn't yet exist in the library and it is useful to know how to define
+// doesn't yet exist in the library, and it is useful to know how to define
 // your own.
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ import { readerTaskEither as rte } from 'fp-ts';
 ///////////////////////////////////////////////////////////////////////////////
 
 // Transformer stacks such as `ReaderTaskEither` already provide useful
-// combinators such as `flatMapOption`, `flatMapEitherK`, and so on... However,
+// combinators such as `flatMapOption`, `flatMapEither`, and so on... However,
 // these combinators are not available to use in the context of the do-notation
 // (as `bindXXX` variants).
 

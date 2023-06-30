@@ -23,7 +23,7 @@ import { pipe } from 'fp-ts/function';
 // of `Map` where `Set<T>` is strictly equivalent to `Map<T, void>`.
 //
 // To manipulate these collections, we often need to inform `fp-ts` on
-// how to uphold the properties outlined above (eg. how to determine whether
+// how to uphold the properties outlined above (e.g. how to determine whether
 // two elements or keys have the same value, how to combine values together
 // in case of key collision or how to order the values when converting back
 // to an array).
