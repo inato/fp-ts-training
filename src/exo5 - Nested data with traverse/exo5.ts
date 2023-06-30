@@ -1,12 +1,12 @@
 // `fp-ts` training Exercise 5
 // Managing nested effectful data with `traverse`
 
-import { option, readonlyRecord, task } from 'fp-ts';
+import { option, readonlyArray, readonlyRecord, task } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { Option } from 'fp-ts/lib/Option';
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord';
 import { Task } from 'fp-ts/lib/Task';
-import { sleep, unimplemented, unimplementedAsync } from '../utils';
+import { sleep } from '../utils';
 
 // When using many different Functors in a complex application, we can easily
 // get to a point when we have many nested types that we would like to 'merge',
@@ -94,9 +94,12 @@ export const naiveGiveCurrencyOfCountryToUser = (
 // HINT: `option.traverse` asks for an Applicative as the first parameter. You
 // can find it for `Task` in `task.ApplicativePar`
 
-export const getCountryCurrencyOfOptionalCountryCode: (
+export const getCountryCurrencyOfOptionalCountryCode = (
   optionalCountryCode: Option<CountryCode>,
-) => Task<Option<Currency>> = unimplementedAsync;
+): Task<Option<Currency>>  => 
+  pipe (
+    option.traverse(task.ApplicativePar)(getCountryCurrency)(optionalCountryCode)
+  );
 
 // Let's now use this function in our naive implementation's pipe to see how it
 // improves it.
@@ -106,13 +109,19 @@ export const getCountryCurrencyOfOptionalCountryCode: (
 // HINT: You should be able to copy the pipe from naiveGiveCurrencyOfCountryToUser
 // and make only few updates of it. The `task.flatMap` helper may be useful.
 
-export const giveCurrencyOfCountryToUser: (
+export const giveCurrencyOfCountryToUser = (
   countryNameFromUserMock: string,
-) => Task<Option<Currency>> = unimplementedAsync;
+): Task<Option<Currency>>  => 
+pipe (
+  getCountryNameFromUser(countryNameFromUserMock),
+  task.map(getCountryCode),
+  task.flatMap(countryCode => getCountryCurrencyOfOptionalCountryCode(countryCode))
+);
 
 // BONUS: We don't necessarily need `traverse` to do this. Try implementing
 // `giveCurrencyOfCountryToUser` by lifting some of the functions' results to
 // `TaskOption`
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //                             TRAVERSING ARRAYS                             //
@@ -146,9 +155,13 @@ export const getCountryCodeOfCountryNames = (
 // HINT: while `readonlyArray.traverse` exists, you have a shortcut in the `option`
 // module: `option.traverseArray`
 
-export const getValidCountryCodeOfCountryNames: (
+export const getValidCountryCodeOfCountryNames = (
   countryNames: ReadonlyArray<string>,
-) => Option<ReadonlyArray<CountryCode>> = unimplemented;
+): Option<ReadonlyArray<CountryCode>>  => 
+  pipe (
+    countryNames,
+    option.traverseArray(getCountryCode)
+  );
 
 ///////////////////////////////////////////////////////////////////////////////
 //                   TRAVERSING ARRAYS ASYNCHRONOUSLY                        //
@@ -184,9 +197,11 @@ const createSimulatedAsyncMethod = (): ((toAdd: number) => Task<number>) => {
 // module to traverse arrays
 
 export const simulatedAsyncMethodForParallel = createSimulatedAsyncMethod();
-export const performAsyncComputationInParallel: (
+export const performAsyncComputationInParallel = (
   numbers: ReadonlyArray<number>,
-) => Task<ReadonlyArray<number>> = unimplementedAsync;
+): Task<ReadonlyArray<number>> => {
+  return task.traverseArray(simulatedAsyncMethodForParallel)(numbers)
+};
 
 // Write a method to traverse an array by running the method
 // `simulatedAsyncMethodForSequence: (toAdd: number) => Task<number>`
@@ -196,9 +211,11 @@ export const performAsyncComputationInParallel: (
 // module to traverse arrays
 
 export const simulatedAsyncMethodForSequence = createSimulatedAsyncMethod();
-export const performAsyncComputationInSequence: (
+export const performAsyncComputationInSequence = (
   numbers: ReadonlyArray<number>,
-) => Task<ReadonlyArray<number>> = unimplementedAsync;
+): Task<ReadonlyArray<number>>  => {
+  return task.traverseSeqArray(simulatedAsyncMethodForSequence)(numbers)
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 //                               SEQUENCE                                    //
@@ -218,13 +235,16 @@ export const performAsyncComputationInSequence: (
 // Use the `sequence` methods from the `option` module to implement the two
 // functions below
 
-export const sequenceOptionTask: (
+export const sequenceOptionTask = (
   optionOfTask: Option<Task<Currency>>,
-) => Task<Option<Currency>> = unimplementedAsync;
+): Task<Option<Currency>> => 
+  option.sequence(task.ApplicativeSeq)(optionOfTask);
 
-export const sequenceOptionArray: (
+
+export const sequenceOptionArray = (
   arrayOfOptions: ReadonlyArray<Option<CountryCode>>,
-) => Option<ReadonlyArray<CountryCode>> = unimplemented;
+): Option<ReadonlyArray<CountryCode>> => 
+  readonlyArray.sequence(option.Applicative)(arrayOfOptions);
 
 // BONUS: try using these two functions in the exercises 'TRAVERSING OPTIONS'
 // and 'TRAVERSING ARRAYS' above
