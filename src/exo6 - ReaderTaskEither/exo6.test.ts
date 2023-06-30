@@ -1,13 +1,17 @@
 import { either } from 'fp-ts';
 import { Application } from './application';
 import { User } from './domain';
-import {
+import * as exercise from './exo6.exercise';
+import * as solution from './exo6.solution';
+import { isTestingSolution } from '../testUtils';
+
+const {
   getCapitalizedUserName,
   getConcatenationOfTheBestFriendNameAndUserName,
   getConcatenationOfTheTwoUserNames,
   getConcatenationOfTheTwoUserNamesUsingAp,
   getConcatenationOfUserNameAndCurrentYear,
-} from './exo6';
+} = isTestingSolution() ? solution : exercise;
 
 describe('exo6', () => {
   it('should return the capitalized user name', async () => {

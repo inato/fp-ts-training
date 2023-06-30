@@ -4,7 +4,7 @@ Training material to onboard people on using `fp-ts` efficiently.
 
 The exercises consist of unimplemented functions and their associated failing tests.
 
-If needed, you can always refer to the `solution` branch where you will find the solutions for each exercices.
+If needed, you can always refer to the `exoN.solution.ts` file where you will find the solution of the exercise.
 
 But first, it is essential to understand why we are using `fp-ts`. We suggest you to read this [article](https://medium.com/inato/our-journey-to-functional-programing-36854a370de1) and then start the exercises.
 

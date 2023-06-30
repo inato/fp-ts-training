@@ -1,13 +1,17 @@
 import { either, reader, readerTaskEither as rte } from 'fp-ts';
 import { pipe } from 'fp-ts/function';
-import {
-  apSEitherK as rteApSEitherK,
-  apSEitherKW as rteApSEitherKW,
-  bindEitherK as rteBindEitherK,
-  bindEitherKW as rteBindEitherKW,
-  bindReaderK as rteBindReaderK,
-  bindReaderKW as rteBindReaderKW,
-} from './exo8';
+import * as exercise from './exo8.exercise';
+import * as solution from './exo8.solution';
+import { isTestingSolution } from '../testUtils';
+
+const {
+  apSEitherK: rteApSEitherK,
+  apSEitherKW: rteApSEitherKW,
+  bindEitherK: rteBindEitherK,
+  bindEitherKW: rteBindEitherKW,
+  bindReaderK: rteBindReaderK,
+  bindReaderKW: rteBindReaderKW,
+} = isTestingSolution() ? solution : exercise;
 
 describe('exo8', () => {
   describe('bindEitherK[W]', () => {

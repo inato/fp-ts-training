@@ -1,4 +1,8 @@
-import {
+import { isTestingSolution } from '../testUtils';
+import * as exercise from './exo7.exercise';
+import * as solution from './exo7.solution';
+
+const {
   allPageViews,
   intersectionPageViews,
   mapWithConcatenatedEntries,
@@ -8,7 +12,7 @@ import {
   numberArrayFromSet,
   numberSet,
   primeOdds,
-} from './exo7';
+} = isTestingSolution() ? solution : exercise;
 
 describe('exo7', () => {
   describe('numberSet', () => {
