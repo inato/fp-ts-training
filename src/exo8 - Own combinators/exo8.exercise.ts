@@ -66,6 +66,10 @@ import { unimplemented } from '../utils';
 // Well there you have it, `bindEitherK` is nothing more than
 // `rte.bind(name, a => rte.fromEither(f(a)))`
 
+const unimplementedBindCombinator = (_name: any, _f: (...props: any) => any) =>
+  unimplemented;
+const unimplementedApSCombinator = (_name: any, _thing: any) => unimplemented;
+
 export const bindEitherK: <N extends string, A, E, B>(
   name: Exclude<N, keyof A>,
   f: (a: A) => Either<E, B>,
@@ -80,7 +84,7 @@ export const bindEitherK: <N extends string, A, E, B>(
 // Write the implementation and type definition of `bindEitherKW`, the
 // "Widened" version of `bindEitherK`.
 
-export const bindEitherKW = unimplemented;
+export const bindEitherKW = unimplementedBindCombinator;
 
 // Write the implementations and type definitions of `apSEitherK` and
 // `apSEitherKW`.
@@ -89,9 +93,9 @@ export const bindEitherKW = unimplemented;
 // - remember that "widen" in the case of `Either` means the union of the
 //   possible error types
 
-export const apSEitherK = unimplemented;
+export const apSEitherK = unimplementedApSCombinator;
 
-export const apSEitherKW = unimplemented;
+export const apSEitherKW = unimplementedApSCombinator;
 
 // Write the implementations and type definitions of `bindReaderK` and
 // `bindReaderKW`.
@@ -100,6 +104,6 @@ export const apSEitherKW = unimplemented;
 // - remember that "widen" in the case of `Reader` means the intersection of
 //   the possible environment types
 
-export const bindReaderK = unimplemented;
+export const bindReaderK = unimplementedBindCombinator;
 
-export const bindReaderKW = unimplemented;
+export const bindReaderKW = unimplementedBindCombinator;
