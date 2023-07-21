@@ -102,13 +102,13 @@ export const getConcatenationOfTheTwoUserNamesUsingAp = ({
 // and bind the return value to feed the context and use this data.
 
 export const getConcatenationOfTheBestFriendNameAndUserName = ({
-  userIdOne,
+  userId,
 }: {
-  userIdOne: string;
+  userId: string;
 }) =>
   pipe(
     rte.Do,
-    rte.apS('userOne', User.Repository.getById(userIdOne)),
+    rte.apS('userOne', User.Repository.getById(userId)),
     rte.bind('userTwo', ({ userOne }) =>
       User.Repository.getById(userOne.bestFriendId),
     ),
