@@ -1,7 +1,9 @@
 // `fp-ts` training Exercise 7
 // Manipulate collections with type-classes
 
-import { unimplemented } from '../utils';
+import { number, readonlyArray, readonlyMap, readonlySet, semigroup, string } from 'fp-ts';
+import { pipe } from 'fp-ts/lib/function';
+
 
 // In this exercise, we will learn how to manipulate essential collections
 // such as `Set` and `Map`.
@@ -41,7 +43,18 @@ export const numberArray: ReadonlyArray<number> = [7, 42, 1337, 1, 0, 1337, 42];
 // - `fp-ts` doesn't know how you want to define equality for the inner type
 //   and requires you to provide an `Eq` instance
 
-export const numberSet: ReadonlySet<number> = unimplemented();
+// const eqNumber: Eq<number> = {
+//   equals: (x: number, y: number) => x === y
+// }
+// export const numberSet = 
+//   readonlySet.fromReadonlyArray(eqNumber)(numberArray);
+
+export const numberSet: ReadonlySet<number> = 
+  pipe(
+    numberArray,
+    readonlySet.fromReadonlyArray(number.Eq)
+  )
+
 
 // Convert `numberSet` back to an array in `numberArrayFromSet`.
 // You need to use the `ReadonlySet` module from `fp-ts` instead of the
@@ -57,7 +70,11 @@ export const numberSet: ReadonlySet<number> = unimplemented();
 //   the values to be ordered in the output array, by providing an `Ord`
 //   instance.
 
-export const numberArrayFromSet: ReadonlyArray<number> = unimplemented();
+export const numberArrayFromSet: ReadonlyArray<number> = 
+  pipe (
+    numberSet,
+    readonlySet.toReadonlyArray(number.Ord)
+  )
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                    MAP                                    //
@@ -95,13 +112,22 @@ export const associativeArray: ReadonlyArray<[number, string]> = [
 // - You need to provide an `Eq` instance for the key type
 // - You need to provide a `Magma` instance for the value type. In this case,
 //   the `Magma` instance should ignore the first value and return the second.
-//   (You can define your own, or look into the `Magma` or `Semigroup` module)
+//   (You can define your own, or look into the `Magma` or `Semigroup` (THIS ONE) module)
 // - You need to provide the `Foldable` instance for the input container type.
 //   Just know that you can construct a `Map` from other types than `Array` as
 //   long as they implement `Foldable`. Here, you can simply pass the standard
 //   `readonlyArray.Foldable` instance.
 
-export const mapWithLastEntry: ReadonlyMap<number, string> = unimplemented();
+
+///// I looked at the solution to understand how to use semigroup.last()
+// Note to self: the last argument (readonlyArray.Foldable) types the input (associativeArray)
+
+export const mapWithLastEntry: ReadonlyMap<number, string> = 
+  pipe (
+    associativeArray,
+    readonlyMap.fromFoldable(number.Eq, semigroup.last(), readonlyArray.Foldable)
+  )
+  
 
 // Same thing as above, except that upon key collision we don't want to simply
 // select the newest entry value but append it to the previous one.
@@ -122,7 +148,12 @@ export const mapWithLastEntry: ReadonlyMap<number, string> = unimplemented();
 // helpful in defining `mapWithLastEntry`?
 
 export const mapWithConcatenatedEntries: ReadonlyMap<number, string> =
-  unimplemented();
+  pipe (
+    associativeArray,
+    readonlyMap.fromFoldable(number.Eq, string.Semigroup, readonlyArray.Foldable)
+  )
+
+  //Note to self: In fp-ts/lib/Semigroup, string.Semigroup is a built-in Semigroup for strings that concatenates them
 
 ///////////////////////////////////////////////////////////////////////////////
 //                     DIFFERENCE / UNION / INTERSECTION                     //
@@ -136,13 +167,24 @@ export const odds = new Set([1, 3, 5, 7, 9]);
 //
 // HINT:
 // - Be mindful of the order of operands for the operator you will choose.
+const isInPrimesSet = (entry: number) => {
+ return primes.has(entry)
+}
 
-export const nonPrimeOdds: ReadonlySet<number> = unimplemented();
+export const nonPrimeOdds: ReadonlySet<number> = 
+  pipe (
+    odds,
+    readonlySet.filter(entry => !isInPrimesSet(entry))
+  );
 
 // Construct the set `primeOdds` from the two sets defined above. It should
 // only include the odd numbers that are also prime.
 
-export const primeOdds: ReadonlySet<number> = unimplemented();
+export const primeOdds: ReadonlySet<number> = 
+  pipe (
+    odds,
+    readonlySet.filter(entry => isInPrimesSet(entry))
+  );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -178,10 +220,25 @@ export const pageViewsB = new Map(
 //
 // In case a page appears in both sources, their view count should be summed.
 
-export const allPageViews: ReadonlyMap<string, Analytics> = unimplemented();
+
+////// I needed to look at the solution for this part. I don't feel like I had the tools to figure this out on my own.
+const S = semigroup.struct<Analytics>({
+  page: semigroup.first(),
+  views: number.SemigroupSum,
+});
+
+export const allPageViews: ReadonlyMap<string, Analytics> = 
+pipe(
+  pageViewsA,
+  readonlyMap.union(string.Eq, S)(pageViewsB) 
+)
+ 
 
 // Construct the `Map` with the total page views but only for the pages that
 // appear in both sources of analytics `pageViewsA` and `pageViewsB`.
 
 export const intersectionPageViews: ReadonlyMap<string, Analytics> =
-  unimplemented();
+  pipe(
+  pageViewsA,
+  readonlyMap.intersection(string.Eq, S)(pageViewsB) 
+)
