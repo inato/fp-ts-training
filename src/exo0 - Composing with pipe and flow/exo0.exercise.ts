@@ -45,7 +45,7 @@ export const not = (value: boolean) => !value;
 
 export const isOddP = (value: number)  => pipe(value, isEven, not);
 
-export const isOddF: (value: number) => boolean = value => flow(isEven, not)(value);
+export const isOddF: (value: number) => boolean = flow(isEven, not);
 
 // We will write a function that for any given number, computes the next
 // one according to the following rules:
@@ -70,4 +70,4 @@ export const next = (value: number) => pipe(value, isOddP, ifThenElse(() => valu
 // a_n from the Collatz sequence, returns the number a_n+3 (i.e. the number
 // three steps ahead in the sequence).
 
-export const next3 = (value: number) => flow(next, next, next)(value);
+export const next3: (value: number) => number = flow(next, next, next);
