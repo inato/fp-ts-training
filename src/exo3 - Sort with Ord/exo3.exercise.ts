@@ -41,19 +41,30 @@ import { pipe } from 'fp-ts/lib/function';
 // expose some pre constructed instances of `Ord<T>` for said primitives such as
 // `string.Ord: Ord<string>` or `number.Ord: Ord<number>`.
 
+// export const sortStrings = (
+//   strings: ReadonlyArray<string>,
+// ): ReadonlyArray<string>  => pipe(
+//   strings,
+//   readonlyArray.sort(string.Ord)
+// );
+
 export const sortStrings = (
   strings: ReadonlyArray<string>,
-): ReadonlyArray<string>  => pipe(
-  strings,
-  readonlyArray.sort(string.Ord)
-);
+): ReadonlyArray<string>  => 
+  readonlyArray.sort(string.Ord)(strings);
+
+// export const sortNumbers = (
+//   numbers: ReadonlyArray<number>,
+// ): ReadonlyArray<number> => pipe (
+//   numbers,
+//   readonlyArray.sort(number.Ord)
+// );
 
 export const sortNumbers = (
   numbers: ReadonlyArray<number>,
-): ReadonlyArray<number> => pipe (
-  numbers,
-  readonlyArray.sort(number.Ord)
-);
+): ReadonlyArray<number> => 
+  readonlyArray.sort(number.Ord)(numbers);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                REVERSE SORT                               //
@@ -70,10 +81,9 @@ export const sortNumbers = (
 
 export const sortNumbersDescending = (
   numbers: ReadonlyArray<number>,
-): ReadonlyArray<number> => pipe (
-  numbers,
-  readonlyArray.sort(ord.reverse(number.Ord))
-);
+): ReadonlyArray<number> => 
+  readonlyArray.sort(ord.reverse(number.Ord))(numbers);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //                            SORT OPTIONAL VALUES                           //
@@ -91,10 +101,8 @@ export const sortNumbersDescending = (
 
 export const sortOptionalNumbers = (
   optionalNumbers: ReadonlyArray<Option<number>>,
-): ReadonlyArray<Option<number>> => pipe (
-  optionalNumbers,
-  readonlyArray.sort(option.getOrd(number.Ord))
-);
+): ReadonlyArray<Option<number>> => 
+  readonlyArray.sort(option.getOrd(number.Ord))(optionalNumbers);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                           SORT COMPLEX OBJECTS                            //
@@ -159,7 +167,6 @@ const byName = pipe (
 
 export const sortPersonsByAgeThenByName = (
   persons: ReadonlyArray<Person>,
-): ReadonlyArray<Person> => pipe (
-  persons,
-  readonlyArray.sortBy([byAge, byName])
-);
+): ReadonlyArray<Person> => 
+  readonlyArray.sortBy([byAge, byName])( persons);
+
