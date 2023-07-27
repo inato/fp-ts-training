@@ -1,7 +1,8 @@
 // `fp-ts` training Exercise 4
 // Dependency injection with `Reader`
 
-import { Reader, ask, flatMap, map } from 'fp-ts/Reader';
+import { reader } from 'fp-ts';
+import { Reader } from 'fp-ts/Reader';
 import { pipe } from 'fp-ts/lib/function';
 
 // Sometimes, a function can have a huge amount of dependencies (services,
@@ -56,8 +57,8 @@ export const addPunctuation = (country: Country, sentence: string): string => {
 
 export const exclamation = (sentence: string): Reader<Country, string> => 
   pipe(
-    ask<Country>(),
-    map(country => addPunctuation(country, sentence))
+    reader.ask<Country>(),
+    reader.map(country => addPunctuation(country, sentence))
   );
 
 // Obviously, different countries often mean different languages and so
@@ -85,9 +86,9 @@ export const sayHello = (country: Country): string => {
 
 export const greet = (name: string): Reader<Country, string> => 
   pipe (
-    ask<Country>(),
-    map(country => sayHello(country)),
-    map(hello => `${hello}, ${name}`)
+    reader.ask<Country>(),
+    reader.map(country => sayHello(country)),
+    reader.map(hello => `${hello}, ${name}`)
   );
 
 // Finally, we are going to compose multiple `Reader`s together.
@@ -104,6 +105,7 @@ export const greet = (name: string): Reader<Country, string> =>
 
 export const excitedlyGreet = (name: string): Reader<Country, string> => 
   pipe (
-    greet(name),
-    flatMap(greeting => exclamation(greeting))
+    name,
+    greet,
+    reader.flatMap(greeting => exclamation(greeting))
   );
