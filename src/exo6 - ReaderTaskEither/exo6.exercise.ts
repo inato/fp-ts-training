@@ -25,7 +25,7 @@ import { pipe } from 'fp-ts/lib/function';
 // and then we want to return its name capitalized.
 
 const capitalizeName = (name: string) => {
-  return `${name[0].toUpperCase() + name.slice(1)}`;
+  return `${name[0].toUpperCase()}${name.slice(1)}`;
 }
 
 export const getCapitalizedUserName = ({userId}: {
@@ -59,7 +59,7 @@ export const getConcatenationOfTheTwoUserNames = ({userIdOne, userIdTwo}: {
   rte.Do,
   rte.apS('firstCapitalizedName', getCapitalizedUserName({userId: userIdOne})),
   rte.apS('secondCapitalizedName', getCapitalizedUserName({userId: userIdTwo})),
-  rte.map(({firstCapitalizedName, secondCapitalizedName}) => firstCapitalizedName + secondCapitalizedName)
+  rte.map(({firstCapitalizedName, secondCapitalizedName}) => `${firstCapitalizedName}${secondCapitalizedName}`)
 )
 
 
@@ -99,7 +99,7 @@ export const getConcatenationOfTheBestFriendNameAndUserName = ({userId}: {
 
   rte.apS('user', User.Repository.getById(userId)),
   rte.bindW('bestFriend', ({user}) => User.Repository.getById(user.bestFriendId)), 
-  rte.map(({user, bestFriend}) => capitalizeName(user.name) + capitalizeName(bestFriend.name)),
+  rte.map(({user, bestFriend}) => `${capitalizeName(user.name)}${capitalizeName(bestFriend.name)}`)
 
   // rte.apS('user', User.Repository.getById(userId)),
   // rte.apS('userName', getCapitalizedUserName({userId})),
@@ -124,4 +124,4 @@ export const getConcatenationOfUserNameAndCurrentYear = ({userIdOne}: {
 )
 
 // I checked the solution for the above exercise because I was unable to figure out
-// that "rte.fromReader" needed to proceed the code accessing the TimeService dependency.
+// that "rte.fromReader" needed to precede the code accessing the TimeService dependency.

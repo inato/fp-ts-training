@@ -7,6 +7,7 @@
 import { Option } from 'fp-ts/Option';
 import { sleep } from '../utils';
 import { either, option, taskEither } from 'fp-ts';
+import { pipe } from 'fp-ts/lib/function';
 
 export const divide = (a: number, b: number): number => {
   return a / b;
@@ -72,8 +73,16 @@ export const DivisionByZero = 'Error: Division by zero' as const;
  
 export const safeDivideWithError = (
   a: number,
-  b: number) =>  b === 0 ? either.left(DivisionByZero) :
-    either.right(divide(a, b));
+  b: number) =>  
+  pipe(
+    b, 
+    either.fromPredicate(
+      n => n!== 0,
+      () => DivisionByZero,
+    ),
+    either.map(b => a/b)
+  )
+  
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                TASKEITHER                                 //
@@ -87,7 +96,6 @@ export const asyncDivide = async (a: number, b: number) => {
   if (b === 0) {
     throw new Error('BOOM!');
   }
-
   return a / b;
 };
 

@@ -1,7 +1,7 @@
 // `fp-ts` training Exercise 5
 // Managing nested effectful data with `traverse`
 
-import { option, readonlyArray, readonlyRecord, task } from 'fp-ts';
+import { option, readonlyRecord, task } from 'fp-ts';
 import { pipe } from 'fp-ts/lib/function';
 import { Option } from 'fp-ts/lib/Option';
 import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord';
@@ -94,12 +94,11 @@ export const naiveGiveCurrencyOfCountryToUser = (
 // HINT: `option.traverse` asks for an Applicative as the first parameter. You
 // can find it for `Task` in `task.ApplicativePar`
 
-export const getCountryCurrencyOfOptionalCountryCode = (
+export const getCountryCurrencyOfOptionalCountryCode: (
   optionalCountryCode: Option<CountryCode>,
-): Task<Option<Currency>>  => 
-  pipe (
-    option.traverse(task.ApplicativePar)(getCountryCurrency)(optionalCountryCode)
-  );
+) => Task<Option<Currency>>  =
+  option.traverse(task.ApplicativePar)(getCountryCurrency);
+
 
 // Let's now use this function in our naive implementation's pipe to see how it
 // improves it.
@@ -115,7 +114,7 @@ export const giveCurrencyOfCountryToUser = (
 pipe (
   getCountryNameFromUser(countryNameFromUserMock),
   task.map(getCountryCode),
-  task.flatMap(countryCode => getCountryCurrencyOfOptionalCountryCode(countryCode))
+  task.flatMap(countryCode => getCountryCurrencyOfOptionalCountryCode(countryCode)),
 );
 
 // BONUS: We don't necessarily need `traverse` to do this. Try implementing
@@ -244,7 +243,8 @@ export const sequenceOptionTask = (
 export const sequenceOptionArray = (
   arrayOfOptions: ReadonlyArray<Option<CountryCode>>,
 ): Option<ReadonlyArray<CountryCode>> => 
-  readonlyArray.sequence(option.Applicative)(arrayOfOptions);
+  // readonlyArray.sequence(option.Applicative)(arrayOfOptions);
+  option.sequenceArray(arrayOfOptions)
 
 // BONUS: try using these two functions in the exercises 'TRAVERSING OPTIONS'
 // and 'TRAVERSING ARRAYS' above

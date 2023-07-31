@@ -167,23 +167,35 @@ export const odds = new Set([1, 3, 5, 7, 9]);
 //
 // HINT:
 // - Be mindful of the order of operands for the operator you will choose.
-const isInPrimesSet = (entry: number) => {
- return primes.has(entry)
-}
+// const isInPrimesSet = (entry: number) => {
+//  return primes.has(entry)
+// }
+
+// export const nonPrimeOdds: ReadonlySet<number> = 
+//   pipe (
+//     odds,
+//     readonlySet.filter(entry => !isInPrimesSet(entry))
+//   );
 
 export const nonPrimeOdds: ReadonlySet<number> = 
   pipe (
     odds,
-    readonlySet.filter(entry => !isInPrimesSet(entry))
+    readonlySet.difference(number.Eq)(primes)
   );
 
 // Construct the set `primeOdds` from the two sets defined above. It should
 // only include the odd numbers that are also prime.
 
+// export const primeOdds: ReadonlySet<number> = 
+//   pipe (
+//     odds,
+//     readonlySet.filter(entry => isInPrimesSet(entry))
+//   );
+
 export const primeOdds: ReadonlySet<number> = 
   pipe (
-    odds,
-    readonlySet.filter(entry => isInPrimesSet(entry))
+    primes,
+    readonlySet.intersection(number.Eq)(odds)
   );
 
 ///////////////////////////////////////////////////////////////////////////////
