@@ -83,7 +83,7 @@ export const getConcatenationOfTheTwoUserNamesUsingAp: (args: {
 // and bind the return value to feed the context and use this data.
 
 export const getConcatenationOfTheBestFriendNameAndUserName: (args: {
-  userIdOne: string;
+  userId: string;
 }) => ReaderTaskEither<
   User.Repository.Access,
   User.Repository.UserNotFoundError,
@@ -95,7 +95,7 @@ export const getConcatenationOfTheBestFriendNameAndUserName: (args: {
 type Dependencies = User.Repository.Access & Application.TimeService.Access;
 
 export const getConcatenationOfUserNameAndCurrentYear: (args: {
-  userIdOne: string;
+  userId: string;
 }) => ReaderTaskEither<
   Dependencies,
   User.Repository.UserNotFoundError,
