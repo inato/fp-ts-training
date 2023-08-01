@@ -108,13 +108,13 @@ export const getConcatenationOfTheBestFriendNameAndUserName = ({
 }) =>
   pipe(
     rte.Do,
-    rte.apS('userOne', User.Repository.getById(userId)),
-    rte.bind('userTwo', ({ userOne }) =>
-      User.Repository.getById(userOne.bestFriendId),
+    rte.apS('user', User.Repository.getById(userId)),
+    rte.bind('bestFriend', ({ user }) =>
+      User.Repository.getById(user.bestFriendId),
     ),
     rte.map(
-      ({ userOne, userTwo }) =>
-        `${capitalize(userOne.name)}${capitalize(userTwo.name)}`,
+      ({ user, bestFriend }) =>
+        `${capitalize(user.name)}${capitalize(bestFriend.name)}`,
     ),
   );
 
