@@ -1,9 +1,9 @@
 // `fp-ts` training Exercise 4
 // Dependency injection with `Reader`
 
+import { reader } from 'fp-ts';
 import { Reader } from 'fp-ts/Reader';
-
-import { unimplemented } from '../utils';
+import { pipe } from 'fp-ts/lib/function';
 
 // Sometimes, a function can have a huge amount of dependencies (services,
 // repositories, ...) and it is often impractical (not to say truly annoying)
@@ -44,8 +44,22 @@ export enum Country {
 //
 // HINT: Take a look at `reader.ask` to access the environment value
 
-export const exclamation: (sentence: string) => Reader<Country, string> =
-  unimplemented();
+export const addPunctuation = (country: Country, sentence: string): string => {
+  switch (country) {
+    case Country.France:
+      return `${sentence} !`;
+    case Country.Spain:
+      return `¡${sentence}!`;
+    case Country.USA:
+      return `${sentence}!`;
+  }
+};
+
+export const exclamation = (sentence: string): Reader<Country, string> => 
+  pipe(
+    reader.ask<Country>(),
+    reader.map(country => addPunctuation(country, sentence))
+  );
 
 // Obviously, different countries often mean different languages and so
 // different words for saying "Hello":
@@ -70,7 +84,12 @@ export const sayHello = (country: Country): string => {
 // HINT: You can look into `reader.map` to modify the output of a `Reader`
 // action.
 
-export const greet: (name: string) => Reader<Country, string> = unimplemented();
+export const greet = (name: string): Reader<Country, string> => 
+  pipe (
+    reader.ask<Country>(),
+    reader.map(country => sayHello(country)),
+    reader.map(hello => `${hello}, ${name}`)
+  );
 
 // Finally, we are going to compose multiple `Reader`s together.
 //
@@ -84,5 +103,9 @@ export const greet: (name: string) => Reader<Country, string> = unimplemented();
 // HINT: As with other wrapper types in `fp-ts`, `reader` offers a way of
 // composing effects with `reader.flatMap`.
 
-export const excitedlyGreet: (name: string) => Reader<Country, string> =
-  unimplemented();
+export const excitedlyGreet = (name: string): Reader<Country, string> => 
+  pipe (
+    name,
+    greet,
+    reader.flatMap(greeting => exclamation(greeting))
+  );
