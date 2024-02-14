@@ -102,19 +102,19 @@ export const getConcatenationOfTheTwoUserNamesUsingAp = ({
 // and bind the return value to feed the context and use this data.
 
 export const getConcatenationOfTheBestFriendNameAndUserName = ({
-  userIdOne,
+  userId,
 }: {
-  userIdOne: string;
+  userId: string;
 }) =>
   pipe(
     rte.Do,
-    rte.apS('userOne', User.Repository.getById(userIdOne)),
-    rte.bind('userTwo', ({ userOne }) =>
-      User.Repository.getById(userOne.bestFriendId),
+    rte.apS('user', User.Repository.getById(userId)),
+    rte.bind('bestFriend', ({ user }) =>
+      User.Repository.getById(user.bestFriendId),
     ),
     rte.map(
-      ({ userOne, userTwo }) =>
-        `${capitalize(userOne.name)}${capitalize(userTwo.name)}`,
+      ({ user, bestFriend }) =>
+        `${capitalize(user.name)}${capitalize(bestFriend.name)}`,
     ),
   );
 
@@ -122,13 +122,13 @@ export const getConcatenationOfTheBestFriendNameAndUserName = ({
 // The challenge of this use-case is to use TimeService in the flow of our `rte`
 
 export const getConcatenationOfUserNameAndCurrentYear = ({
-  userIdOne,
+  userId,
 }: {
-  userIdOne: string;
+  userId: string;
 }) =>
   pipe(
     rte.Do,
-    rte.apS('user', User.Repository.getById(userIdOne)),
+    rte.apS('user', User.Repository.getById(userId)),
     rte.apSW('year', rte.fromReader(Application.TimeService.thisYear())),
     rte.map(({ user, year }) => `${user.name}${year}`),
   );
