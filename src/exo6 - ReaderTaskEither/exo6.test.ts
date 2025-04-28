@@ -60,7 +60,7 @@ describe('exo6', () => {
 
   it('should return the concatenation of the two capitalized user names based on the best friend relation', async () => {
     const usecase = getConcatenationOfTheBestFriendNameAndUserName({
-      userIdOne: '1',
+      userId: '1',
     })({
       userRepository: new User.Repository.InMemoryUserRepository([
         { id: '1', name: 'rob', bestFriendId: '2' },
@@ -77,7 +77,7 @@ describe('exo6', () => {
     const timeservice = new Application.NodeTimeService.NodeTimeService();
 
     const usecase = getConcatenationOfUserNameAndCurrentYear({
-      userIdOne: '1',
+      userId: '1',
     })({
       userRepository: new User.Repository.InMemoryUserRepository([
         { id: '1', name: 'rob', bestFriendId: '2' },
