@@ -5,11 +5,7 @@ pnpm-debug.log*
 yalc.lock
 node_modules
 
-# yarn artifacts (to be removed)
-.yarn/
-yarn-error.log*
-yarn.lock
-
 dist
 
 .DS_Store
+.idea/*
