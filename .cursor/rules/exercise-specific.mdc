@@ -1,0 +1,140 @@
+---
+description: Exercise-specific guidance and rules
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+alwaysApply: true
+---
+# Exercise-Specific Rules
+
+## Exercise 0 - Composing with pipe and flow
+
+Rules for the pipe and flow composition exercise.
+
+**Good:**
+```typescript
+// Implementing isOdd using pipe and flow
+import { pipe, flow } from "effect/Function";
+
+// Using pipe
+export const isOddP = (value: number) => pipe(value, isEven, not);
+
+// Using flow
+export const isOddF = flow(isEven, not);
+```
+
+**Bad:**
+```typescript
+// Direct function calls without pipe or flow
+export const isOddP = (value: number) => not(isEven(value));
+export const isOddF = (value: number) => not(isEven(value));
+```
+
+## Exercise 1 - Basic Types
+
+Rules for working with basic functional types.
+
+**Good:**
+```typescript
+// Using Option for optional values
+import * as O from "effect/Option";
+import { pipe } from "effect/Function";
+
+export const safeDivide = (a: number, b: number): O.Option<number> =>
+  b === 0 ? O.none() : O.some(a / b);
+
+export const computeAndFormat = (a: number, b: number): string =>
+  pipe(
+    safeDivide(a, b),
+    O.map(result => result.toFixed(2)),
+    O.getOrElse(() => "Cannot divide by zero")
+  );
+```
+
+**Bad:**
+```typescript
+// Using null checks
+export const safeDivide = (a: number, b: number): number | null =>
+  b === 0 ? null : a / b;
+
+export const computeAndFormat = (a: number, b: number): string => {
+  const result = safeDivide(a, b);
+  return result !== null ? result.toFixed(2) : "Cannot divide by zero";
+};
+```
+
+## Exercise 4 - Dependency Injection
+
+Rules for dependency injection using Effect's Context.
+
+**Good:**
+```typescript
+// Using Effect's Context for dependency injection
+import { Effect, Context } from "effect";
+import { pipe } from "effect/Function";
+
+interface Logger {
+  log: (message: string) => void;
+}
+
+const Logger = Context.Tag<Logger>();
+
+const logMessage = (message: string) =>
+  Effect.serviceWith(Logger, logger => logger.log(message));
+
+const program = pipe(
+  logMessage("Hello, world!"),
+  Effect.provide(Logger.of({
+    log: console.log
+  }))
+);
+```
+
+**Bad:**
+```typescript
+// Using global dependencies
+const logger = {
+  log: console.log
+};
+
+const logMessage = (message: string) => {
+  logger.log(message);
+};
+```
+
+## Exercise 6 - Async Operations
+
+Rules for handling asynchronous operations.
+
+**Good:**
+```typescript
+// Using Effect for async operations with proper error handling
+import { Effect } from "effect";
+import { pipe } from "effect/Function";
+
+const fetchData = (url: string) =>
+  Effect.tryPromise({
+    try: () => fetch(url).then(res => res.json()),
+    catch: error => new Error(`Failed to fetch data: ${error}`)
+  });
+
+const program = pipe(
+  fetchData("https://api.example.com/data"),
+  Effect.map(data => processData(data)),
+  Effect.catchAll(error => Effect.succeed(fallbackData))
+);
+```
+
+**Bad:**
+```typescript
+// Using raw promises with try/catch
+const fetchData = async (url: string) => {
+  try {
+    const response = await fetch(url);
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to fetch data:", error);
+    return fallbackData;
+  }
+};
+```
+
+@exo0-pipe-flow-example.ts

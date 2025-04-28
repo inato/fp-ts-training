@@ -1,0 +1,136 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Effect Option and Either Patterns
+
+## Use Option for Optional Values
+
+Use Effect's Option type to handle values that may be undefined or null.
+
+**Good:**
+```typescript
+// Using Option for optional values
+import { Option, pipe } from "effect";
+
+const findUser = (id: string): Option.Option<User> => {
+  const user = users.find(u => u.id === id);
+  return user ? Option.some(user) : Option.none();
+};
+
+const userName = pipe(
+  findUser("123"),
+  Option.map(user => user.name),
+  Option.getOrElse(() => "Guest")
+);
+```
+
+**Bad:**
+```typescript
+// Using null checks or undefined
+const findUser = (id: string): User | null => {
+  return users.find(u => u.id === id) || null;
+};
+
+const user = findUser("123");
+const userName = user ? user.name : "Guest";
+```
+
+## Use Either for Error Handling
+
+Use Effect's Either type to handle operations that may fail.
+
+**Good:**
+```typescript
+// Using Either for error handling
+import { Either, pipe } from "effect";
+
+const parseJSON = (input: string): Either.Either<Error, unknown> => {
+  try {
+    return Either.right(JSON.parse(input));
+  } catch (e) {
+    return Either.left(new Error("Invalid JSON"));
+  }
+};
+
+const result = pipe(
+  parseJSON(jsonString),
+  Either.map(data => processData(data)),
+  Either.getOrElse(error => defaultResult)
+);
+```
+
+**Bad:**
+```typescript
+// Using try-catch or error checking
+const parseJSON = (input: string): unknown => {
+  try {
+    return JSON.parse(input);
+  } catch (e) {
+    return null;
+  }
+};
+
+const data = parseJSON(jsonString);
+const result = data ? processData(data) : defaultResult;
+```
+
+## Use Combinators for Transformations
+
+Use Effect's combinators to transform Option and Either values.
+
+**Good:**
+```typescript
+// Using combinators
+import { Option, pipe } from "effect";
+
+const result = pipe(
+  optionalValue,
+  Option.map(value => value * 2),
+  Option.filter(value => value > 10),
+  Option.getOrElse(() => 0)
+);
+```
+
+**Bad:**
+```typescript
+// Manual handling
+let result = 0;
+if (optionalValue !== null && optionalValue !== undefined) {
+  const doubled = optionalValue * 2;
+  if (doubled > 10) {
+    result = doubled;
+  }
+}
+```
+
+## Chain Error Handling
+
+Chain Effect's operations that may fail without disrupting the flow.
+
+**Good:**
+```typescript
+// Chaining operations with flatMap
+import { Either, pipe } from "effect";
+
+const result = pipe(
+  validateInput(input),
+  Either.flatMap(processInput),
+  Either.flatMap(saveResult),
+  Either.getOrElse(error => handleError(error))
+);
+```
+
+**Bad:**
+```typescript
+// Nested error handling
+let result;
+try {
+  const validatedInput = validateInput(input);
+  const processed = processInput(validatedInput);
+  result = saveResult(processed);
+} catch (error) {
+  result = handleError(error);
+}
+```
