@@ -1,8 +1,8 @@
 {
   "name": "fp-ts-training",
   "version": "1.0.0",
-  "description": "Learning Effect while having fun",
-  "author": "Inato <engineering@inato.com>",
+  "description": "Learning fp-ts while having fun",
+  "author": "Inato engineering <engineering@inato.com>",
   "private": true,
   "license": "UNLICENSED",
   "repository": {
