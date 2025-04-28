@@ -1,16 +1,11 @@
-# yarn stuff
-yarn-error.log*
+# pnpm
+pnpm-debug.log*
+.pnpm-store/
 .yalc
 yalc.lock
-.yarn/*
-!.yarn/cache
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
 node_modules
 
 dist
 
 .DS_Store
+.idea/*

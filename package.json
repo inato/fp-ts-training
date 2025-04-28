@@ -2,7 +2,7 @@
   "name": "fp-ts-training",
   "version": "1.0.0",
   "description": "Learning fp-ts while having fun",
-  "author": "Hugo Saracino <hugo@inato.com>",
+  "author": "Inato engineering <engineering@inato.com>",
   "private": true,
   "license": "UNLICENSED",
   "repository": {
@@ -11,16 +11,16 @@
   },
   "homepage": "https://github.com/inato/fp-ts-training",
   "scripts": {
-    "build": "yarn tsc -b",
-    "check": "yarn tsc --noEmit",
+    "build": "pnpm tsc -b",
+    "check": "pnpm tsc --noEmit",
     "test": "jest --runInBand",
     "test:watch": "jest --runInBand --watch",
     "test:solution": "TEST_SOLUTION=true jest --runInBand",
-    "test:solution-watch": "yarn test:solution --watch"
+    "test:solution-watch": "pnpm test:solution --watch"
   },
   "dependencies": {
     "decod": "^6.1.6",
-    "fp-ts": "^2.16.0",
+    "fp-ts": "^2.16.10",
     "tslib": "^2.5.0"
   },
   "devDependencies": {
@@ -32,5 +32,5 @@
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4"
   },
-  "packageManager": "yarn@3.5.0"
+  "packageManager": "pnpm@8.15.4"
 }
