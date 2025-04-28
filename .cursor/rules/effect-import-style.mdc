@@ -1,0 +1,42 @@
+---
+description: Consistent import style for Effect modules
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+alwaysApply: true
+---
+# Effect Import Style
+
+Use a consistent import style across the codebase.
+
+## Recommended Import Style
+
+Use consolidated imports from 'effect'.
+
+**Good:**
+```typescript
+import { Option, Either, Effect, pipe, flow } from 'effect';
+
+// Usage
+const result = pipe(
+  Option.some(42),
+  Option.map(x => x * 2),
+);
+```
+
+## Legacy Import Style (Do Not Use)
+
+Avoid using individual module imports.
+
+**Bad:**
+```typescript
+import * as O from 'effect/Option';
+import * as E from 'effect/Either';
+import { pipe, flow } from 'effect/Function';
+import { Effect } from 'effect';
+
+// Usage
+const result = pipe(
+  O.some(42),
+  O.map(x => x * 2),
+);
+```
+
