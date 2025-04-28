@@ -1,7 +1,7 @@
 {
-  "name": "fp-ts-training",
+  "name": "Effect training",
   "version": "1.0.0",
-  "description": "Learning fp-ts while having fun",
+  "description": "Learning Effect while having fun",
   "author": "Inato engineering <engineering@inato.com>",
   "private": true,
   "license": "UNLICENSED",
@@ -19,7 +19,9 @@
     "test:solution-watch": "pnpm test:solution --watch"
   },
   "dependencies": {
+    "@effect-ts/core": "^0.60.5",
     "decod": "^6.1.6",
+    "effect": "^3.14.8",
     "fp-ts": "^2.16.10",
     "tslib": "^2.5.0"
   },
