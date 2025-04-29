@@ -1,0 +1,46 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Effect Order Type Naming Conventions
+
+## Use Order.string and Order.number instead of String.Order and Number.Order
+
+Always use `Order.string` and `Order.number` instead of `String.Order` and `Number.Order` for consistency.
+
+**Good:**
+```typescript
+// Using Order.string and Order.number
+import { Order, Array } from "effect";
+
+// Sort strings
+const sortedStrings = Array.sort(strings, Order.string);
+
+// Sort numbers
+const sortedNumbers = Array.sort(numbers, Order.number);
+
+// Reverse order for descending sort
+const sortedDescending = Array.sort(numbers, Order.reverse(Order.number));
+
+// Create a custom order
+const byName = Order.mapInput(Order.string, (person) => person.name);
+```
+
+**Bad:**
+```typescript
+// Using String.Order and Number.Order
+import { String, Number, Array } from "effect";
+
+// Sort strings
+const sortedStrings = Array.sort(strings, String.Order);
+
+// Sort numbers
+const sortedNumbers = Array.sort(numbers, Number.Order);
+
+// Reverse order for descending sort
+const sortedDescending = Array.sort(numbers, Order.reverse(Number.Order));
+
+// Create a custom order
+const byName = Order.mapInput(String.Order, (person) => person.name);
+```

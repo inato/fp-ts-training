@@ -1,0 +1,71 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Functional Programming Principles
+
+## Use Immutable Programming Style
+
+Always use immutable data structures and avoid mutations.
+
+**Good:**
+```typescript
+// Creating a new array with the mapped values
+const doubled = numbers.map(n => n * 2);
+```
+
+**Bad:**
+```typescript
+// Mutating the array in place
+for (let i = 0; i < numbers.length; i++) {
+  numbers[i] = numbers[i] * 2;
+}
+```
+
+## Avoid Side Effects
+
+Functions should not cause side effects outside their scope.
+
+**Good:**
+```typescript
+const calculateTotal = (items) => items.reduce((sum, item) => sum + item.price, 0);
+```
+
+**Bad:**
+```typescript
+let total = 0;
+const calculateTotal = (items) => {
+  items.forEach(item => { total += item.price; });
+  return total;
+};
+```
+
+## Prefer Pure Functions
+
+Functions should always return the same output for the same input.
+
+**Good:**
+```typescript
+const double = (x) => x * 2;
+```
+
+**Bad:**
+```typescript
+let factor = 2;
+const double = (x) => x * factor;
+```
+
+## Use Type Annotations
+
+Add TypeScript type annotations to improve code clarity.
+
+**Good:**
+```typescript
+const getUserName = (user: User): string => user.name;
+```
+
+**Bad:**
+```typescript
+const getUserName = (user) => user.name;
+```

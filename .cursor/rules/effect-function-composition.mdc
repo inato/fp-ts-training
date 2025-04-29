@@ -1,0 +1,94 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Effect Function Composition
+
+## Use Pipe for Sequential Operations
+
+Use pipe to apply a sequence of functions to an initial value.
+
+**Good:**
+```typescript
+// Using pipe for sequential operations
+import { pipe } from "effect";
+
+const result = pipe(
+  5,
+  double,
+  addOne
+);
+```
+
+**Bad:**
+```typescript
+// Nested function calls
+const result = addOne(double(5));
+```
+
+## Use Flow for Function Composition
+
+Use flow to create a new function from a composition of functions.
+
+**Good:**
+```typescript
+// Using flow to compose functions
+import { flow } from "effect";
+
+const doubleThenAddOne = flow(
+  double,
+  addOne
+);
+const result = doubleThenAddOne(5);
+```
+
+**Bad:**
+```typescript
+// Manual composition
+const doubleThenAddOne = (x) => addOne(double(x));
+const result = doubleThenAddOne(5);
+```
+
+## Avoid Intermediate Variables
+
+Use pipe and flow to eliminate intermediate variables.
+
+**Good:**
+```typescript
+// No intermediate variables
+import { pipe } from "effect";
+
+const result = pipe(
+  users,
+  array.filter(user => user.active),
+  array.map(user => user.name),
+  array.sort(string.Ord)
+);
+```
+
+**Bad:**
+```typescript
+// Using intermediate variables
+const activeUsers = users.filter(user => user.active);
+const activeUserNames = activeUsers.map(user => user.name);
+const result = activeUserNames.sort();
+```
+
+## Prefer Point-Free Style
+
+Use point-free style when possible by omitting unnecessary parameter declarations.
+
+**Good:**
+```typescript
+// Point-free style
+import { flow } from "effect";
+
+const isOdd = flow(isEven, not);
+```
+
+**Bad:**
+```typescript
+// Explicitly declaring parameters
+const isOdd = (x) => not(isEven(x));
+```
