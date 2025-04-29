@@ -40,7 +40,7 @@ export const getConcatenationOfTheTwoUserNames = ({
   userIdOne: string;
   userIdTwo: string;
 }): UserEffect<string> =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const userOneCapitalizedName = yield* getCapitalizedUserName({ userId: userIdOne });
     const userTwoCapitalizedName = yield* getCapitalizedUserName({ userId: userIdTwo });
     
@@ -82,7 +82,7 @@ export const getConcatenationOfTheBestFriendNameAndUserName = ({
 }: {
   userIdOne: string;
 }): UserEffect<string> =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const userOne = yield* getById(userIdOne);
     const userTwo = yield* getById(userOne.bestFriendId);
     
@@ -103,9 +103,34 @@ export const getConcatenationOfUserNameAndCurrentYear = ({
 }: {
   userIdOne: string;
 }): CombinedEffect<string> =>
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const user = yield* getById(userIdOne);
     const year = yield* thisYear();
     
     return `${user.name}${year}`;
+  });
+
+export const getUser = (id: string): Effect.Effect<User, Error, never> =>
+  Effect.gen(function* () {
+    const user = users.find(u => u.id === id);
+    if (!user) {
+      throw new Error(`User ${id} not found`);
+    }
+    return user;
+  });
+
+export const getPost = (id: string): Effect.Effect<Post, Error, never> =>
+  Effect.gen(function* () {
+    const post = posts.find(p => p.id === id);
+    if (!post) {
+      throw new Error(`Post ${id} not found`);
+    }
+    return post;
+  });
+
+export const getPostAuthor = (postId: string): Effect.Effect<User, Error, never> =>
+  Effect.gen(function* () {
+    const post = yield* getPost(postId);
+    const author = yield* getUser(post.authorId);
+    return author;
   }); 

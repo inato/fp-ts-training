@@ -44,7 +44,7 @@ export class CountryService extends Context.Tag('CountryService')<CountryService
 // proper exclamation style.
 
 export const exclamation = (sentence: string): Effect.Effect<string, never, CountryService> => {
-  return Effect.gen(function* (_) {
+  return Effect.gen(function* () {
     const country = yield* CountryService;
     switch (country) {
       case Country.France:
@@ -76,7 +76,7 @@ export const sayHello = (country: Country): string => {
 // The output should look something like `${hello}, ${name}`.
 
 export const greet = (name: string): Effect.Effect<string, never, CountryService> => {
-  return Effect.gen(function* (_) {
+  return Effect.gen(function* () {
     const country = yield* CountryService;
     const greeting = sayHello(country);
     return `${greeting}, ${name}`;

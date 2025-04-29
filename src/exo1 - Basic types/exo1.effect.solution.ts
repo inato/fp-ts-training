@@ -37,36 +37,32 @@ export const safeDivide = (a: number, b: number): Option.Option<number> => {
 //
 // BONUS: Try now to re-write `safeDivide` without any `if`
 //
-// HINT: Have a look at `fromPredicate` constructor
+// HINT: Have a look at `liftPredicate` constructor
 
-export const safeDivideBonus = (a: number, b: number): Option.Option<number> => {
-  // First create an Option from b, ensuring it's not zero
-  const nonZeroB = pipe(
-    Option.some(b),
-    Option.filter((n: number) => n !== 0)
-  );
-  
-  // Then map it to perform the division
-  return pipe(
-    nonZeroB,
-    Option.map((b) => a / b)
-  );
-};
+export const safeDivideBonus = (a: number, b: number): Option.Option<number> => pipe(
+  b,
+  Option.liftPredicate(n => n!= 0),
+  Option.map(b => a / b)
+);
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                  EITHER                                   //
 ///////////////////////////////////////////////////////////////////////////////
 
 // Write the safe version of `divide` with signature:
-// safeDivideWithError : (a: number, b: number) => Either<DivideByZeroError, number>
+// safeDivideWithError : (a: number, b: number) => Either<number, DivisionByZeroError>
 //
 // BONUS POINT: Implement `safeDivideWithError` in terms of `safeDivide`.
 //
 // HINT : Either has two basic constructors:
-// - `E.left(leftValue)`
-// - `E.right(rightValue)`
+// - `Either.left(leftValue)`
+// - `Either.right(rightValue)`
 // as well as "smarter" constructors like:
-// - `E.fromOption(() => leftValue)(option)`
+// supported - `Either.fromOption(() => leftValue)(option)`
+// preferred - `Either.fromOption(option, () => leftValue)`
+// because Effect supports dual API.
 
 // Here is a simple error type to help you:
 export type DivisionByZeroError = 'Error: Division by zero';
@@ -97,16 +93,17 @@ export const asyncDivide = async (a: number, b: number) => {
 };
 
 // Write the safe version of `asyncDivide` with signature:
-// asyncSafeDivideWithError : (a: number, b: number) => Effect.Effect<never, DivideByZeroError, number>
-//
+// asyncSafeDivideWithError : (a: number, b: number) => Effect.Effect<number, DivisionByZeroError>
+
 // HINT: Effect has a special constructor to transform a Promise<T> into
-// an Effect<never, Error, T>:
-// - `Effect.tryPromise({try: () => promise, catch: reason => leftValue})`
+// an Effect<T, Error, never> (Success, Error, Environment):
+// - `Effect.tryPromise({try: () => promise, catch: reason => error})`
 
 // Note: In Effect, Effect.Effect<A, E, R> where:
-// - A is the success type
+// - A is the success value type
 // - E is the error type
-// - R is the environment type
+// - R is the requirements type
+// (When no requirements are needed, use 'never' or omit the last argument)
 export const asyncSafeDivideWithError = (
   a: number,
   b: number
@@ -114,4 +111,4 @@ export const asyncSafeDivideWithError = (
   Effect.tryPromise({
     try: () => asyncDivide(a, b),
     catch: () => DivisionByZero
-  }); 
+  });

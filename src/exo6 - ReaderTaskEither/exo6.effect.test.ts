@@ -15,7 +15,7 @@ const getCapitalizedUserName = ({ userId }: { userId: string }): UserEffect<stri
   pipe(getById(userId), Effect.map(user => capitalize(user.name)));
 
 const getConcatenationOfTheTwoUserNames = ({ userIdOne, userIdTwo }: { userIdOne: string; userIdTwo: string }): UserEffect<string> => 
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const user1Name = yield* getCapitalizedUserName({ userId: userIdOne });
     const user2Name = yield* getCapitalizedUserName({ userId: userIdTwo });
     return user1Name + user2Name;
@@ -31,14 +31,14 @@ const getConcatenationOfTheTwoUserNamesUsingZip = ({ userIdOne, userIdTwo }: { u
   );
 
 const getConcatenationOfTheBestFriendNameAndUserName = ({ userIdOne }: { userIdOne: string }): UserEffect<string> => 
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const user1 = yield* getById(userIdOne);
     const user2 = yield* getById(user1.bestFriendId);
     return `${capitalize(user1.name)}${capitalize(user2.name)}`;
   });
 
 const getConcatenationOfUserNameAndCurrentYear = ({ userIdOne }: { userIdOne: string }): CombinedEffect<string> => 
-  Effect.gen(function* (_) {
+  Effect.gen(function* () {
     const user = yield* getById(userIdOne);
     const year = yield* thisYear();
     return `${user.name}${year}`;
@@ -148,5 +148,60 @@ describe('exo6.effect', () => {
 
     // THEN it should return the name concatenated with the year
     expect(result).toEqual(`rob${year}`);
+  });
+
+  it('getCapitalizedUserName', async () => {
+    const userRepo = new InMemoryUserRepository([
+      { id: 'user1', name: 'alice', bestFriendId: 'user2' }
+    ]);
+    
+    await Effect.runPromise(
+      pipe(
+        Effect.gen(function* () {
+          const result = yield* getCapitalizedUserName({ userId: 'user1' });
+          expect(result).toBe('Alice');
+        }),
+        Effect.provideService(UserRepositoryService, userRepo)
+      )
+    );
+  });
+
+  it('getConcatenationOfTheTwoUserNames', async () => {
+    const userRepo = new InMemoryUserRepository([
+      { id: 'user1', name: 'alice', bestFriendId: 'user2' },
+      { id: 'user2', name: 'bob', bestFriendId: 'user1' }
+    ]);
+    
+    await Effect.runPromise(
+      pipe(
+        Effect.gen(function* () {
+          const result = yield* getConcatenationOfTheTwoUserNames({
+            userIdOne: 'user1',
+            userIdTwo: 'user2',
+          });
+          expect(result).toBe('AliceBob');
+        }),
+        Effect.provideService(UserRepositoryService, userRepo)
+      )
+    );
+  });
+
+  it('getConcatenationOfTheBestFriendNameAndUserName', async () => {
+    const userRepo = new InMemoryUserRepository([
+      { id: 'user1', name: 'alice', bestFriendId: 'user2' },
+      { id: 'user2', name: 'bob', bestFriendId: 'user1' }
+    ]);
+    
+    await Effect.runPromise(
+      pipe(
+        Effect.gen(function* () {
+          const result = yield* getConcatenationOfTheBestFriendNameAndUserName({
+            userIdOne: 'user1',
+          });
+          expect(result).toBe('AliceBob');
+        }),
+        Effect.provideService(UserRepositoryService, userRepo)
+      )
+    );
   });
 }); 

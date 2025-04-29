@@ -70,24 +70,17 @@ describe('exo1.effect', () => {
     });
 
     it('should eventually return an Effect with error DivisionByZero if the denominator is zero', async () => {
-      // Using try/catch to handle the error case
-      try {
-        await Effect.runPromise(asyncSafeDivideWithError(25, 0));
-        // Should not reach this point
-        expect(true).toBe(false);
-      } catch (error: any) {
-        // Error is wrapped in a FiberFailure, check if it contains our expected error message
-        expect(error.toString()).toContain(DivisionByZero);
-      }
+      const program = Effect.gen(function* () {
+        // Test first case with Effect.either
+        const resultA = yield* asyncSafeDivideWithError(25, 0).pipe(Effect.either);
+        expect(resultA).toStrictEqual(Either.left(DivisionByZero));
 
-      try {
-        await Effect.runPromise(asyncSafeDivideWithError(-25, 0));
-        // Should not reach this point
-        expect(true).toBe(false);
-      } catch (error: any) {
-        // Error is wrapped in a FiberFailure, check if it contains our expected error message
-        expect(error.toString()).toContain(DivisionByZero);
-      }
+        // Test second case with Effect.flip
+        const resultB = yield* asyncSafeDivideWithError(-25, 0).pipe(Effect.flip);
+        expect(resultB).toBe(DivisionByZero);
+      });
+
+      await Effect.runPromise(program);
     });
   });
 }); 
