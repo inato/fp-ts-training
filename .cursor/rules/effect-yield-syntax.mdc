@@ -1,0 +1,185 @@
+---
+description: Guide for Effect yield syntax
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+alwaysApply: true
+---
+# Effect Yield Syntax
+
+Use `Effect.gen` with yield syntax for complex Effect compositions that involve multiple steps, error handling, or conditional logic.
+
+## When to Use Yield Syntax
+
+Choose yield syntax when:
+- You have multiple sequential operations that depend on each other
+- You need to handle errors with try/catch blocks
+- You have conditional logic or complex control flow
+- You need to access multiple services from the context
+- You want to run operations in parallel with `Effect.all`
+- Your code would require multiple nested flatMaps with pipe syntax
+
+## Basic Effect.gen Usage
+
+Use Effect.gen for composing Effects in a more readable way.
+
+**Good:**
+```typescript
+import { Effect } from "effect";
+
+const program = Effect.gen(function* (_) {
+  const a = yield* _(Effect.succeed(1));
+  const b = yield* _(Effect.succeed(2));
+  return a + b;
+});
+```
+
+**Bad:**
+```typescript
+import { Effect, pipe } from "effect";
+
+// Complex nested pipes are harder to read
+const program = pipe(
+  Effect.succeed(1),
+  Effect.flatMap(a => 
+    pipe(
+      Effect.succeed(2),
+      Effect.map(b => a + b)
+    )
+  )
+);
+```
+
+## Error Handling with Yield
+
+Use yield syntax for handling Effects that may fail. When an Effect fails, its error propagates through the generator:
+
+**Good:**
+```typescript
+import { Effect } from "effect"
+
+// Function to apply a discount safely to a transaction amount
+const applyDiscount = (
+  total: number,
+  discountRate: number
+): Effect.Effect<number, Error> =>
+  discountRate === 0
+    ? Effect.fail(new Error("Discount rate cannot be zero"))
+    : Effect.succeed(total - (total * discountRate) / 100)
+
+// Using Effect.gen for composition
+const program = Effect.gen(function* () {
+  // If applyDiscount fails with discountRate = 0,
+  // the generator will short-circuit and
+  // addServiceCharge will not be called
+  const discountedAmount = yield* applyDiscount(100, 0)
+  const finalAmount = addServiceCharge(discountedAmount)
+  return finalAmount
+})
+```
+
+This allows for:
+- Automatic error propagation through the Effect's error channel
+- Short-circuiting when an Effect fails
+- Clean, synchronous-looking code that handles failures properly
+
+## Accessing Services with Yield
+
+Use yield for clean service access patterns.
+
+**Good:**
+```typescript
+const program = Effect.gen(function* (_) {
+  const logger = yield* _(Logger);
+  const config = yield* _(Config);
+  
+  yield* _(Effect.sync(() => logger.log(config.message)));
+});
+```
+
+**Bad:**
+```typescript
+const program = Effect.flatMap(
+  Logger,
+  logger => Effect.flatMap(
+    Config,
+    config => Effect.sync(() => logger.log(config.message))
+  )
+);
+```
+
+## Parallel Execution with Yield
+
+Use Effect.all with yield for clear parallel execution.
+
+**Good:**
+```typescript
+const program = Effect.gen(function* (_) {
+  const [users, posts, comments] = yield* _(Effect.all([
+    fetchUsers,
+    fetchPosts,
+    fetchComments
+  ]));
+  
+  return combineResults(users, posts, comments);
+});
+```
+
+**Bad:**
+```typescript
+const program = pipe(
+  Effect.all([fetchUsers, fetchPosts, fetchComments]),
+  Effect.map(([users, posts, comments]) => 
+    combineResults(users, posts, comments)
+  )
+);
+```
+
+## Conditional Logic with Yield
+
+Use standard control flow with yield for better readability.
+
+**Good:**
+```typescript
+const program = Effect.gen(function* (_) {
+  const user = yield* _(fetchUser);
+  
+  if (user.isAdmin) {
+    yield* _(adminOperation);
+  } else {
+    yield* _(userOperation);
+  }
+});
+```
+
+**Bad:**
+```typescript
+const program = pipe(
+  fetchUser,
+  Effect.flatMap(user => 
+    user.isAdmin ? adminOperation : userOperation
+  )
+);
+```
+
+## Combining with Pipe Syntax
+
+You can combine yield and pipe syntax when appropriate:
+
+**Good:**
+```typescript
+const program = Effect.gen(function* (_) {
+  const data = yield* _(
+    pipe(
+      rawData,
+      Effect.map(normalize),
+      Effect.map(validate)
+    )
+  );
+  
+  // Complex logic continues with yield syntax
+  if (data.needsProcessing) {
+    yield* _(processData(data));
+  }
+  
+  return data;
+});
+```

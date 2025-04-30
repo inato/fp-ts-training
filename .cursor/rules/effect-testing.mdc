@@ -1,0 +1,146 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Testing in Effect
+
+## Running Effects in Tests
+
+Use appropriate ways to run Effects in your tests.
+
+**Good:**
+```typescript
+import { Effect } from "effect";
+
+describe("myFeature", () => {
+  it("works with successful effects", async () => {
+    const result = await Effect.runPromise(
+      mySuccessfulOperation(42)
+    );
+    expect(result).toEqual(expectedValue);
+  });
+});
+```
+
+## Testing Error Cases
+
+Handle errors properly in tests by using try/catch with Effect.runPromise.
+
+**Good:**
+```typescript
+import { Effect } from "effect";
+
+describe("myFeature", () => {
+  it("handles errors correctly", async () => {
+    try {
+      await Effect.runPromise(myFailingOperation());
+      // If we reach here, the test should fail
+      expect(true).toBe(false);
+    } catch (error) {
+      // Errors are wrapped in FiberFailure
+      expect(error.toString()).toContain(expectedErrorMessage);
+    }
+  });
+});
+```
+
+**Bad:**
+```typescript
+import { Effect } from "effect";
+
+describe("myFeature", () => {
+  it("handles errors incorrectly", async () => {
+    // This will throw an uncaught exception
+    const result = await Effect.runPromise(myFailingOperation());
+    expect(result).toBeDefined(); // This line won't be reached
+  });
+});
+```
+
+## Using Effect.runSync for Synchronous Effects
+
+Use runSync for simple synchronous effects.
+
+**Good:**
+```typescript
+import { Effect } from "effect";
+
+describe("myFeature", () => {
+  it("works with sync effects", () => {
+    const result = Effect.runSync(
+      mySyncOperation(42)
+    );
+    expect(result).toEqual(expectedValue);
+  });
+});
+```
+
+## Testing with Custom Environments
+
+Provide test implementations for services in your tests.
+
+**Good:**
+```typescript
+import { Effect, Context } from "effect";
+
+// Define your service
+interface UserService {
+  getUser: (id: string) => Effect.Effect<User, Error, never>;
+}
+const UserService = Context.Tag<UserService>();
+
+// In tests
+describe("userFeatures", () => {
+  it("works with mocked services", async () => {
+    const testUser = { id: "123", name: "Test User" };
+    
+    const mockUserService: UserService = {
+      getUser: (_id) => Effect.succeed(testUser)
+    };
+    
+    const program = Effect.provide(
+      myFeatureThatUsesUserService("123"),
+      UserService.of(mockUserService)
+    );
+    
+    const result = await Effect.runPromise(program);
+    expect(result).toEqual(expectedOutput);
+  });
+});
+```
+
+## Using Effect.runPromiseExit for Testing Both Success and Failure
+
+When you need to test both success and failure cases more elegantly.
+
+**Good:**
+```typescript
+import { Effect, Exit } from "effect";
+
+describe("myFeature", () => {
+  it("succeeds correctly", async () => {
+    const exit = await Effect.runPromiseExit(
+      myOperation(validInput)
+    );
+    
+    // Check if operation succeeded
+    expect(Exit.isSuccess(exit)).toBe(true);
+    if (Exit.isSuccess(exit)) {
+      expect(exit.value).toEqual(expectedValue);
+    }
+  });
+  
+  it("fails correctly", async () => {
+    const exit = await Effect.runPromiseExit(
+      myOperation(invalidInput)
+    );
+    
+    // Check if operation failed
+    expect(Exit.isFailure(exit)).toBe(true);
+    if (Exit.isFailure(exit)) {
+      expect(exit.cause.toString()).toContain(expectedErrorMessage);
+    }
+  });
+});
+```

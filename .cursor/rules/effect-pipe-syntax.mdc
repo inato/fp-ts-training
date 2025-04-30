@@ -1,0 +1,174 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Effect Pipe Syntax
+
+Use pipe syntax for simple transformations and point-free style compositions in Effect.
+
+## When to Use Pipe Syntax
+
+Choose pipe syntax when:
+- You have simple, linear transformations
+- You want to use point-free style
+- You're working with Option or Either transformations
+- You have simple error handling with `catchAll` or `catchTag`
+- You're composing functions without complex control flow
+- You want to chain method-style operations
+
+## Import and Basic Usage
+
+Import pipe directly from Effect, not from a separate function module.
+
+**Good:**
+```typescript
+import { pipe } from "effect";
+
+const result = pipe(
+  initialValue,
+  transformOne,
+  transformTwo
+);
+```
+
+**Bad:**
+```typescript
+import { pipe } from "effect/Function";
+// or
+import * as F from "effect/Function";
+```
+
+## Using Pipe with Option
+
+Use pipe for simple Option transformations.
+
+**Good:**
+```typescript
+import { Option, pipe } from "effect";
+
+const processNumber = (n: number): Option.Option<string> => pipe(
+  Option.some(n),
+  Option.filter(n => n > 0),
+  Option.map(n => n * 2),
+  Option.map(String)
+);
+```
+
+**Bad:**
+```typescript
+const processNumber = (n: number): Option.Option<string> => {
+  if (n <= 0) return Option.none();
+  return Option.some(String(n * 2));
+};
+```
+
+## Using Pipe with Either
+
+Use pipe for Either transformations when error handling is straightforward.
+
+**Good:**
+```typescript
+import { Either, pipe } from "effect";
+
+const processData = <E>(data: unknown): Either.Either<string, E> => pipe(
+  Either.right(data),
+  Either.filterOrLeft(
+    (d): d is Record<string, unknown> => typeof d === 'object' && d !== null,
+    () => "Not an object"
+  ),
+  Either.flatMap(obj => 
+    obj.id 
+      ? Either.right(obj.id) 
+      : Either.left("Missing id")
+  )
+);
+```
+
+**Bad:**
+```typescript
+const processData = <E>(data: unknown): Either.Either<string, E> => {
+  if (typeof data !== 'object' || data === null) {
+    return Either.left("Not an object");
+  }
+  if (!('id' in data)) {
+    return Either.left("Missing id");
+  }
+  return Either.right(data.id);
+};
+```
+
+## Simple Effect Transformations
+
+Use pipe for straightforward Effect transformations.
+
+**Good:**
+```typescript
+const program = pipe(
+  Effect.succeed(42),
+  Effect.map(n => n * 2),
+  Effect.map(String),
+  Effect.catchAll(error => Effect.succeed(`Error: ${error.message}`))
+);
+```
+
+**Bad:**
+```typescript
+const program = Effect.catchAll(
+  Effect.map(
+    Effect.map(
+      Effect.succeed(42),
+      n => n * 2
+    ),
+    String
+  ),
+  error => Effect.succeed(`Error: ${error.message}`)
+);
+```
+
+## Method Syntax Alternative
+
+For very simple chains, you can use method syntax instead of pipe.
+
+**Good:**
+```typescript
+import { Effect } from "effect";
+
+const program = Effect.succeed(42)
+  .map(n => n * 2)
+  .map(String)
+  .catchAll(error => Effect.succeed(`Error: ${error.message}`));
+```
+
+## When to Consider Yield Syntax Instead
+
+Consider switching to yield syntax when your pipe chains become complex:
+
+**Switch to Yield:**
+```typescript
+// Complex pipe chain that should use yield syntax instead
+const program = pipe(
+  fetchUser(userId),
+  Effect.flatMap(user => 
+    pipe(
+      fetchPosts(user.id),
+      Effect.flatMap(posts => 
+        pipe(
+          checkUserPermissions(user),
+          Effect.flatMap(permissions => 
+            processUserData(user, posts, permissions)
+          )
+        )
+      )
+    )
+  )
+);
+
+// Better with yield syntax
+const program = Effect.gen(function* (_) {
+  const user = yield* _(fetchUser(userId));
+  const posts = yield* _(fetchPosts(user.id));
+  const permissions = yield* _(checkUserPermissions(user));
+  return yield* _(processUserData(user, posts, permissions));
+});
+```

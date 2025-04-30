@@ -1,0 +1,187 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Immutable Data Structures
+
+## Use ReadonlyArray
+
+Use ReadonlyArray for immutable array operations.
+
+**Good:**
+```typescript
+// Using ReadonlyArray
+import { ReadonlyArray, pipe } from "effect";
+
+const numbers: ReadonlyArray<number> = [1, 2, 3, 4];
+const doubled = pipe(
+  numbers,
+  ReadonlyArray.map(n => n * 2)
+);
+```
+
+**Bad:**
+```typescript
+// Using mutable arrays
+const numbers: number[] = [1, 2, 3, 4];
+const doubled = numbers.map(n => n * 2);
+```
+
+## Use ReadonlyRecord
+
+Use ReadonlyRecord for immutable object operations.
+
+**Good:**
+```typescript
+// Using ReadonlyRecord
+import { ReadonlyRecord, pipe } from "effect";
+
+const userAges: ReadonlyRecord.ReadonlyRecord<string, number> = {
+  alice: 30,
+  bob: 25,
+  charlie: 35
+};
+
+const incrementedAges = pipe(
+  userAges,
+  ReadonlyRecord.map(age => age + 1)
+);
+```
+
+**Bad:**
+```typescript
+// Using mutable objects
+const userAges: Record<string, number> = {
+  alice: 30,
+  bob: 25,
+  charlie: 35
+};
+
+const incrementedAges = {};
+for (const [name, age] of Object.entries(userAges)) {
+  incrementedAges[name] = age + 1;
+}
+```
+
+## Use HashMap for Complex Collections
+
+Use HashMap for immutable key-value collections.
+
+**Good:**
+```typescript
+import { HashMap, pipe } from "effect";
+
+const users = pipe(
+  HashMap.empty<string, User>(),
+  HashMap.set("user1", { id: "user1", name: "Alice" }),
+  HashMap.set("user2", { id: "user2", name: "Bob" })
+);
+
+const updatedUsers = pipe(
+  users,
+  HashMap.modify("user1", user => ({ ...user, name: "Alice Smith" }))
+);
+```
+
+**Bad:**
+```typescript
+const users = new Map<string, User>();
+users.set("user1", { id: "user1", name: "Alice" });
+users.set("user2", { id: "user2", name: "Bob" });
+
+// Mutable update
+users.get("user1")!.name = "Alice Smith";
+```
+
+## Use HashSet for Unique Collections
+
+Use HashSet for immutable unique value collections.
+
+**Good:**
+```typescript
+import { HashSet, pipe } from "effect";
+
+const uniqueNumbers = pipe(
+  HashSet.empty<number>(),
+  HashSet.add(1),
+  HashSet.add(2),
+  HashSet.add(2) // Duplicate ignored
+);
+
+const hasTwo = pipe(uniqueNumbers, HashSet.has(2));
+```
+
+**Bad:**
+```typescript
+const uniqueNumbers = new Set<number>();
+uniqueNumbers.add(1);
+uniqueNumbers.add(2);
+uniqueNumbers.add(2);
+
+const hasTwo = uniqueNumbers.has(2);
+```
+
+## Use Combinators for Collection Operations
+
+Use functional combinators instead of loops for collection operations.
+
+**Good:**
+```typescript
+import { ReadonlyArray, pipe } from "effect";
+
+const result = pipe(
+  users,
+  ReadonlyArray.filter(user => user.active),
+  ReadonlyArray.map(user => user.name),
+  ReadonlyArray.sort(byName)
+);
+```
+
+**Bad:**
+```typescript
+const activeUsers = [];
+for (const user of users) {
+  if (user.active) {
+    activeUsers.push(user);
+  }
+}
+
+const activeUserNames = [];
+for (const user of activeUsers) {
+  activeUserNames.push(user.name);
+}
+
+activeUserNames.sort(byName);
+```
+
+## Use Pattern Matching with Data Structures
+
+Use pattern matching for handling complex data structures.
+
+**Good:**
+```typescript
+import { match } from "effect/Match";
+
+const result = match(data)
+  .when({ type: "user", active: true }, user => processActiveUser(user))
+  .when({ type: "user", active: false }, user => processInactiveUser(user))
+  .when({ type: "admin" }, admin => processAdmin(admin))
+  .otherwise(() => handleUnknownData());
+```
+
+**Bad:**
+```typescript
+let result;
+if (data.type === "user") {
+  if (data.active) {
+    result = processActiveUser(data);
+  } else {
+    result = processInactiveUser(data);
+  }
+} else if (data.type === "admin") {
+  result = processAdmin(data);
+} else {
+  result = handleUnknownData();
+}
+```

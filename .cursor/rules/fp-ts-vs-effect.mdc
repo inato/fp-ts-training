@@ -1,0 +1,173 @@
+---
+description: Guide for migrating from fp-ts to Effect
+globs: ["src/**/*.ts", "src/**/*.tsx"]
+alwaysApply: true
+---
+# fp-ts to Effect Migration Guide
+
+## Type Parameter Order Differences
+
+Remember that Effect has a different type parameter order than fp-ts.
+
+**Effect (correct):**
+```typescript
+import { Either, Effect } from "effect";
+
+// Either.Either<Right, Left> - Right/Success type comes first
+const result: Either.Either<number, Error> = Either.right(42);
+
+// Effect.Effect<Success, Error, Environment>
+const asyncTask: Effect.Effect<number, Error, never> = Effect.succeed(42);
+```
+
+**fp-ts (for reference):**
+```typescript
+import { either } from 'fp-ts';
+
+// either.Either<Left, Right> - Left/Error type comes first
+const result: either.Either<Error, number> = either.right(42);
+```
+
+## Option Usage Migration
+
+Migrate from fp-ts Option to Effect Option.
+
+**Effect (correct):**
+```typescript
+import { Option, pipe } from "effect";
+
+// Basic Option usage
+const divideWithOption = (a: number, b: number): Option.Option<number> => {
+  if (b === 0) {
+    return Option.none();
+  }
+  return Option.some(a / b);
+};
+
+// Using pipe with Option
+const divideWithOptionPipe = (a: number, b: number): Option.Option<number> =>
+  pipe(
+    Option.some(b),
+    Option.filter((n: number) => n !== 0),
+    Option.map(b => a / b)
+  );
+```
+
+**fp-ts (for reference):**
+```typescript
+import { option } from 'fp-ts';
+import { pipe } from 'fp-ts/function';
+
+const divideWithOptionFpTs = (a: number, b: number) => {
+  if (b === 0) {
+    return option.none;
+  }
+  return option.some(a / b);
+};
+
+const divideWithOptionPipeFpTs = (a: number, b: number) =>
+  pipe(
+    b,
+    option.fromPredicate(n => n !== 0),
+    option.map(b => a / b)
+  );
+```
+
+## Either Usage Migration
+
+Migrate from fp-ts Either to Effect Either.
+
+**Effect (correct):**
+```typescript
+import { Either, Option, pipe } from "effect";
+
+const DivisionByZero = 'Error: Division by zero' as const;
+type DivisionByZeroError = typeof DivisionByZero;
+
+const divideWithEither = (a: number, b: number): Either.Either<number, DivisionByZeroError> =>
+  pipe(
+    divideWithOption(a, b),
+    Either.fromOption(() => DivisionByZero)
+  );
+```
+
+**fp-ts (for reference):**
+```typescript
+import { either } from 'fp-ts';
+
+const DivideByZeroFpTs = 'Error: Division by zero' as const;
+type DivideByZeroFpTs = typeof DivideByZeroFpTs;
+
+const divideWithEitherFpTs = (a: number, b: number) =>
+  pipe(
+    divideWithOptionFpTs(a, b),
+    either.fromOption(() => DivideByZeroFpTs)
+  );
+```
+
+## Async Operations Migration
+
+Migrate from fp-ts TaskEither to Effect Effect.
+
+**Effect (correct):**
+```typescript
+import { Effect } from "effect";
+
+// Async operation with Effect
+const asyncDivideWithEffect = (a: number, b: number): Effect.Effect<number, DivisionByZeroError, never> =>
+  Effect.tryPromise({
+    try: () => asyncDivide(a, b),
+    catch: () => DivisionByZero
+  });
+
+// Running an Effect
+const executeExample = async () => {
+  try {
+    const result = await Effect.runPromise(asyncDivideWithEffect(10, 2));
+    console.log(`Result: ${result}`);
+  } catch (error) {
+    console.error(`Error: ${error.toString()}`);
+  }
+};
+```
+
+**fp-ts (for reference):**
+```typescript
+import { taskEither } from 'fp-ts';
+
+const asyncDivideWithTaskEitherFpTs = (a: number, b: number) =>
+  taskEither.tryCatch(
+    () => asyncDivideFpTs(a, b),
+    () => DivideByZeroFpTs
+  );
+
+// Running a TaskEither
+const executeFpTs = async () => {
+  const result = await asyncDivideWithTaskEitherFpTs(10, 2)();
+  if (either.isRight(result)) {
+    console.log(`Result: ${result.right}`);
+  } else {
+    console.error(`Error: ${result.left}`);
+  }
+};
+```
+
+## Key Differences Summary
+
+1. Type Parameter Order:
+   - Effect: `Either<Right, Left>`, `Effect<Success, Error, Env>`
+   - fp-ts: `Either<Left, Right>`, `TaskEither<Left, Right>`
+
+2. Option Construction:
+   - Effect: `Option.none()` (with parentheses)
+   - fp-ts: `option.none` (without parentheses)
+
+3. Async Operations:
+   - Effect: Uses `Effect.Effect` with `Effect.tryPromise`
+   - fp-ts: Uses `TaskEither` with `tryCatch`
+
+4. Running Operations:
+   - Effect: `Effect.runPromise` returns the value directly
+   - fp-ts: TaskEither execution returns an Either that needs to be checked
+
+@fp-ts-to-effect-examples.ts
