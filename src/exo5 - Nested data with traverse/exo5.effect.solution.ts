@@ -2,6 +2,7 @@
 // Managing nested effectful data with Effect's data transformation capabilities
 
 import { Effect, Option, Array, pipe } from 'effect';
+import { transposeOption } from 'effect/Effect';
 
 // When using many different effect types in a complex application, we can easily
 // get to a point when we have many nested types that we would like to 'merge',
@@ -45,6 +46,32 @@ export const getCountryNameFromUser = (countryName: string): Effect.Effect<strin
 export const getCountryCode = (countryName: string): Option.Option<CountryCode> =>
   Option.fromNullable(countryNameToCountryCode[countryName]);
 
+
+///////////////////////////////////////////////////////////////////////////////
+//                               FLIP Options                                //
+///////////////////////////////////////////////////////////////////////////////
+
+// `traverse` is nice when you need to get the value inside a container (let's
+// say `Option`), apply a method to it that returns another container type (let's
+// say `Effect`) and 'invert' the container (to get a `Effect<Option>` instead of a
+// `Option<Effect>` in our example)
+// Sometimes, you just have two nested containers that you want to 'invert'. It
+// can be because the order of containers is meaningful or because you got them 
+// from an external api, as in the examples.
+// In that case, what you need is `sequence`, which is available in Effect for various 
+// data types.
+
+export const sequenceOptionTask = (
+  optionOfTask: Option.Option<Effect.Effect<Currency>>
+): Effect.Effect<Option.Option<Currency>> =>
+  Effect.transposeOption(optionOfTask);
+
+export const sequenceOptionArray = (
+  arrayOfOptions: ReadonlyArray<Option.Option<CountryCode>>
+): Option.Option<ReadonlyArray<CountryCode>> =>
+  Option.all(arrayOfOptions);
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //                            TRAVERSING OPTIONS                             //
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,19 +104,9 @@ export const naiveGiveCurrencyOfCountryToUser = (countryNameFromUserMock: string
 export const getCountryCurrencyOfOptionalCountryCode = (
   optionalCountryCode: Option.Option<CountryCode>
 ): Effect.Effect<Option.Option<Currency>> =>
-  // Implement this function using Effect's APIs
-  pipe(
-    optionalCountryCode,
-    Option.match({
-      onNone: () => Effect.succeed(Option.none()),
-      onSome: code => pipe(
-        getCountryCurrency(code),
-        Effect.map(Option.some)
-      )
-    })
-  );
+  Effect.transposeMapOption(optionalCountryCode, getCountryCurrency);
 
-// Let's now use this function in our naive implementation's pipe to see how it
+  // Let's now use this function in our naive implementation's pipe to see how it
 // improves it.
 // Implement `giveCurrencyOfCountryToUser` below so that it returns a
 // `Effect<Option<Currency>>`
@@ -101,6 +118,21 @@ export const giveCurrencyOfCountryToUser = (
     getCountryNameFromUser(countryNameFromUserMock),
     Effect.map(getCountryCode),
     Effect.flatMap(getCountryCurrencyOfOptionalCountryCode)
+  );
+
+// BONUS: We don't necessarily need `traverse` to do this. Try implementing
+// `giveCurrencyOfCountryToUser` by lifting some of the functions' results to
+// `TaskOption`
+
+export const giveCurrencyOfCountryToUserWithTaskOption: (
+  countryNameFromUserMock: string,
+) => Effect.Effect<Option.Option<Currency>> = countryNameFromUserMock =>
+  pipe(
+    getCountryNameFromUser(countryNameFromUserMock),
+    Effect.map(getCountryCode),
+    Effect.flatMap(
+      Effect.transposeMapOption(getCountryCurrency),
+    ),
   );
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -133,25 +165,15 @@ export const getCountryCodeOfCountryNames = (
 // Let's write a method that gets the country code for each element of an array
 // of country names and returns an option of an array of country codes.
 
-export const getValidCountryCodeOfCountryNames = (
-  countryNames: ReadonlyArray<string>
-): Option.Option<ReadonlyArray<CountryCode>> => {
-  const optionArray = countryNames.map(getCountryCode);
-  return pipe(
-    optionArray,
-    Array.reduce(Option.some([]) as Option.Option<Array<CountryCode>>, (acc, current) =>
-      pipe(
-        acc,
-        Option.flatMap(arr =>
-          pipe(
-            current,
-            Option.map(val => [...arr, val])
-          )
-        )
-      )
-    )
-  );
-};
+export const getValidCountryCodeOfCountryNames= (
+  countryNames: ReadonlyArray<string>,
+) : Option.Option<ReadonlyArray<CountryCode>>  =>
+pipe(
+  countryNames,
+  Array.map(getCountryCode),
+  Option.all
+);
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //                   TRAVERSING ARRAYS ASYNCHRONOUSLY                        //
@@ -206,50 +228,3 @@ export const performAsyncComputationInSequence = (
     simulatedAsyncMethodForSequence,
     { concurrency: 1 }
   );
-
-///////////////////////////////////////////////////////////////////////////////
-//                               SEQUENCE                                    //
-///////////////////////////////////////////////////////////////////////////////
-
-// `traverse` is nice when you need to get the value inside a container (let's
-// say `Option`), apply a method to it that returns another container type (let's
-// say `Effect`) and 'invert' the container (to get a `Effect<Option>` instead of a
-// `Option<Effect>` in our example)
-// Sometimes, you just have two nested containers that you want to 'invert'. It
-// can be because the order of containers is meaningful or because you got them 
-// from an external api, as in the examples.
-// In that case, what you need is `sequence`, which is available in Effect for various 
-// data types.
-
-export const sequenceOptionTask = (
-  optionOfTask: Option.Option<Effect.Effect<Currency>>
-): Effect.Effect<Option.Option<Currency>> =>
-  pipe(
-    optionOfTask,
-    Option.match({
-      onNone: () => Effect.succeed(Option.none()),
-      onSome: effect => pipe(
-        effect,
-        Effect.map(Option.some)
-      )
-    })
-  );
-
-export const sequenceOptionArray = (
-  arrayOfOptions: ReadonlyArray<Option.Option<CountryCode>>
-): Option.Option<ReadonlyArray<CountryCode>> => {
-  return pipe(
-    arrayOfOptions,
-    Array.reduce(Option.some([]) as Option.Option<Array<CountryCode>>, (acc, current) =>
-      pipe(
-        acc,
-        Option.flatMap(arr =>
-          pipe(
-            current,
-            Option.map(val => [...arr, val])
-          )
-        )
-      )
-    )
-  );
-}; 

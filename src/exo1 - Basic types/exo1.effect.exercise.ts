@@ -39,15 +39,15 @@ export const safeDivide: (a: number, b: number) => Option.Option<number> =
 ///////////////////////////////////////////////////////////////////////////////
 
 // Write the safe version of `divide` with signature:
-// safeDivideWithError : (a: number, b: number) => Either<DivideByZeroError, number>
+// safeDivideWithError : (a: number, b: number) => Either<number, DivideByZeroError>
 //
 // BONUS POINT: Implement `safeDivideWithError` in terms of `safeDivide`.
 //
 // HINT : Either has two basic constructors:
-// - `E.left(leftValue)`
-// - `E.right(rightValue)`
+// - `Either.left(leftValue)`
+// - `Either.right(rightValue)`
 // as well as "smarter" constructors like:
-// - `E.fromOption(() => leftValue)(option)`
+// - `Either.fromOption(() => leftValue)(option)`
 
 // Here is a simple error type to help you:
 export type DivisionByZeroError = 'Error: Division by zero';
@@ -56,7 +56,7 @@ export const DivisionByZero = 'Error: Division by zero' as const;
 export const safeDivideWithError: (
   a: number,
   b: number,
-) => Either.Either<DivisionByZeroError, number> = unimplemented;
+) => Either.Either<number, DivisionByZeroError> = unimplemented;
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                   EFFECT                                  //

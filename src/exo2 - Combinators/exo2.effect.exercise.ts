@@ -114,7 +114,7 @@ export const invalidAttackerFailure = Failure.builder(
 // HINT: Sequentially check for various possible errors is one of the most
 // common operations done with the `Either` type.
 //
-// NOTE: In Effect, Either is Either<Right, Left> (opposite to fp-ts)
+// NOTE: In Effect, Either is Either<Right, Left>
 
 export const checkAttackerAndSmash = (attacker: Option.Option<Character>): Either.Either<Damage, NoAttackerFailure | InvalidAttackerFailure> => {
   if (Option.isNone(attacker)) {
