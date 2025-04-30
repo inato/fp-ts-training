@@ -32,11 +32,9 @@ import { Option, Array, Order } from 'effect';
 // expose some pre-constructed instances of `Order<T>` for said primitives such as
 // `Order.string: Order<string>` or `Order.number: Order<number>`.
 
-export const sortStrings = (strings: ReadonlyArray<string>): ReadonlyArray<string> => 
-  Array.sort(strings, Order.string);
+export const sortStrings = Array.sort(Order.string);
 
-export const sortNumbers = (numbers: ReadonlyArray<number>): ReadonlyArray<number> => 
-  Array.sort(numbers, Order.number);
+export const sortNumbers = Array.sort(Order.number);
 
 ///////////////////////////////////////////////////////////////////////////////
 //                                REVERSE SORT                               //
